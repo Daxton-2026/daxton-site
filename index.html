@@ -684,8 +684,7 @@ footer {
       <source src="video-daxton.mp4" type="video/mp4">
       <track kind="subtitles" src="video-daxton.vtt" srclang="pt" label="Português" default>
     </video>
-    <div class="video-play-btn" id="videoPlayBtn" style="cursor:pointer;pointer-events:all;" onclick="var v=document.getElementById("heroVideo");var p=v.play();if(p!==undefined){p.then(function(){document.getElementById("videoPlayBtn").classList.add("hidden");}).catch(function(e){console.warn(e);});} else {document.getElementById("videoPlayBtn").classList.add("hidden");}">
-      <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <div class="video-play-btn" id="videoPlayBtn" style="cursor:pointer;pointer-events:all;" onclick="var v=document.getElementById('heroVideo');var p=v.play();if(p!==undefined){p.then(function(){document.getElementById('videoPlayBtn').style.display='none';}).catch(function(e){console.warn(e);});}else{document.getElementById('videoPlayBtn').style.display='none';}"><svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="40" cy="40" r="39" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
         <circle cx="40" cy="40" r="39" class="play-ring" stroke="var(--amber)" stroke-width="1.5" stroke-dasharray="245" stroke-dashoffset="245"/>
         <polygon points="32,24 58,40 32,56" fill="white"/>
