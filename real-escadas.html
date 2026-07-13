@@ -887,29 +887,33 @@ footer {
           <input type="text" id="f-empresa" required placeholder="Razão social ou nome fantasia">
         </div>
         <div class="form-group">
-          <label for="f-cidade">Cidade</label>
-          <input type="text" id="f-cidade" required placeholder="Cidade / SC">
+          <label for="f-cnpj">CNPJ</label>
+          <input type="text" id="f-cnpj" required placeholder="00.000.000/0000-00">
         </div>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label for="f-canal">Canal</label>
-          <select id="f-canal" required>
-            <option value="Revenda/Ferragens">Revenda / Ferragens</option>
-            <option value="Locadora">Locadora</option>
-            <option value="Industrial NR12/NR35">Industrial (NR12/NR35)</option>
-          </select>
+          <label for="f-cidade">Cidade</label>
+          <input type="text" id="f-cidade" required placeholder="Cidade / SC">
         </div>
         <div class="form-group">
           <label for="f-telefone">Telefone</label>
           <input type="tel" id="f-telefone" required placeholder="(47) 90000-0000">
         </div>
       </div>
+      <div class="form-group">
+        <label for="f-canal">Canal</label>
+        <select id="f-canal" required>
+          <option value="Revenda/Ferragens">Revenda / Ferragens</option>
+          <option value="Locadora">Locadora</option>
+          <option value="Industrial NR12/NR35">Industrial (NR12/NR35)</option>
+        </select>
+      </div>
       <button type="submit" class="btn-primary">
         Solicitar tabela pelo WhatsApp
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </button>
-      <p class="form-note">Ao enviar, você será redirecionado ao WhatsApp do representante com seus dados já preenchidos.</p>
+      <p class="form-note">Ao enviar, você será redirecionado ao WhatsApp do representante com seus dados já preenchidos.<br>Atendimento exclusivo para pessoa jurídica (CNPJ) — não vendemos ao consumidor final.</p>
     </form>
   </div>
 </section>
@@ -1020,10 +1024,11 @@ document.getElementById('leadForm').addEventListener('submit', function(e) {
   e.preventDefault();
   const nome = document.getElementById('f-nome').value;
   const empresa = document.getElementById('f-empresa').value;
+  const cnpj = document.getElementById('f-cnpj').value;
   const cidade = document.getElementById('f-cidade').value;
   const canal = document.getElementById('f-canal').value;
   const telefone = document.getElementById('f-telefone').value;
-  const msg = `Olá, me chamo ${nome} da empresa ${empresa} (${cidade}/SC). Tenho interesse no canal ${canal} da Real Escadas. Telefone para contato: ${telefone}. Podem me enviar a tabela de preços?`;
+  const msg = `Olá, me chamo ${nome} da empresa ${empresa} (CNPJ ${cnpj}), em ${cidade}/SC. Tenho interesse no canal ${canal} da Real Escadas. Telefone para contato: ${telefone}. Podem me enviar a tabela de preços?`;
   const url = 'https://wa.me/5547991029909?text=' + encodeURIComponent(msg);
   gtag_report_conversion(url);
 });
