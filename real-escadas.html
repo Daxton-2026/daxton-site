@@ -887,8 +887,8 @@ footer {
           <input type="text" id="f-empresa" required placeholder="Razão social ou nome fantasia">
         </div>
         <div class="form-group">
-          <label for="f-cnpj">CNPJ</label>
-          <input type="text" id="f-cnpj" required placeholder="00.000.000/0000-00">
+          <label for="f-cnpj">CNPJ (opcional)</label>
+          <input type="text" id="f-cnpj" placeholder="00.000.000/0000-00">
         </div>
       </div>
       <div class="form-row">
@@ -1028,7 +1028,8 @@ document.getElementById('leadForm').addEventListener('submit', function(e) {
   const cidade = document.getElementById('f-cidade').value;
   const canal = document.getElementById('f-canal').value;
   const telefone = document.getElementById('f-telefone').value;
-  const msg = `Olá, me chamo ${nome} da empresa ${empresa} (CNPJ ${cnpj}), em ${cidade}/SC. Tenho interesse no canal ${canal} da Real Escadas. Telefone para contato: ${telefone}. Podem me enviar a tabela de preços?`;
+  const cnpjParte = cnpj ? ` (CNPJ ${cnpj})` : '';
+  const msg = `Olá, me chamo ${nome} da empresa ${empresa}${cnpjParte}, em ${cidade}/SC. Tenho interesse no canal ${canal} da Real Escadas. Telefone para contato: ${telefone}. Podem me enviar a tabela de preços?`;
   const url = 'https://wa.me/5547991029909?text=' + encodeURIComponent(msg);
   gtag_report_conversion(url);
 });
