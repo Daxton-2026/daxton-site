@@ -305,6 +305,12 @@ section { padding: 96px 5%; }
   margin-bottom: 20px;
 }
 .produto-icon svg { width: 24px; height: 24px; fill: none; stroke: var(--amber); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.produto-img-wrap {
+  height: 230px; margin: -32px -28px 20px; padding: 14px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--gray-50); border-bottom: 1px solid var(--gray-100);
+}
+.produto-img-wrap img { max-height: 100%; max-width: 100%; object-fit: contain; }
 .produto-title { font-size: 16px; font-weight: 700; color: var(--navy-deep); margin-bottom: 10px; }
 .produto-text { font-size: 13px; color: var(--text-light); line-height: 1.7; margin-bottom: 16px; }
 .produto-link {
@@ -317,6 +323,7 @@ section { padding: 96px 5%; }
 .produto-card.destaque .produto-title, .produto-card.destaque .produto-text { color: var(--white); }
 .produto-card.destaque .produto-icon { background: var(--amber); }
 .produto-card.destaque .produto-icon svg { stroke: var(--navy-deep); }
+.produto-card.destaque .produto-img-wrap { background: rgba(255,255,255,0.06); border-bottom-color: rgba(255,255,255,0.1); }
 
 /* ── DIFERENCIAIS ── */
 .diferenciais { background: var(--white); }
@@ -533,10 +540,11 @@ footer {
 
 <!-- NAV -->
 <nav id="main-nav">
-  <a href="#inicio" class="nav-logo-wrap">
+  <a href="/" class="nav-logo-wrap">
     <img class="nav-logo" src="daxton-logo.png" alt="Daxton Força de Vendas">
   </a>
   <div class="nav-links">
+    <a href="/">Home</a>
     <a href="#produtos">Produtos</a>
     <a href="#diferenciais">Diferenciais</a>
     <a href="#nr35">NR-35</a>
@@ -548,6 +556,7 @@ footer {
   </button>
 </nav>
 <div class="mobile-menu" id="mobile-menu">
+  <a href="/">Home</a>
   <a href="#produtos" onclick="closeMobileMenu()">Produtos</a>
   <a href="#diferenciais" onclick="closeMobileMenu()">Diferenciais</a>
   <a href="#nr35" onclick="closeMobileMenu()">NR-35</a>
@@ -653,17 +662,17 @@ footer {
     <div class="tab-panel active" id="tab-revenda">
       <div class="produtos-grid">
         <div class="produto-card fade-up">
-          <div class="produto-icon"><svg viewBox="0 0 24 24"><path d="M4 21V9l8-6 8 6v12M9 21v-6h6v6"/></svg></div>
+          <div class="produto-img-wrap"><img src="produtos/domestica-6-degraus.jpg" alt="Escada Doméstica de Alumínio Real Escadas" loading="lazy"></div>
           <div class="produto-title">Escada Doméstica 4 e 6 degraus</div>
           <p class="produto-text">Ticket de entrada baixo, alto giro, fácil de expor na loja.</p>
         </div>
         <div class="produto-card fade-up">
-          <div class="produto-icon"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 12h16"/></svg></div>
+          <div class="produto-img-wrap"><img src="produtos/banqueta-3-degraus.jpg" alt="Banqueta de Alumínio Real Escadas" loading="lazy"></div>
           <div class="produto-title">Banqueta de Alumínio 3 degraus</div>
           <p class="produto-text">Complementa o mix, baixo custo, venda por impulso no balcão.</p>
         </div>
         <div class="produto-card fade-up">
-          <div class="produto-icon"><svg viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg></div>
+          <div class="produto-img-wrap"><img src="produtos/regua-pedreiro-varal.jpg" alt="Régua de Pedreiro e Varal em Alumínio Real Escadas" loading="lazy"></div>
           <div class="produto-title">Régua de Pedreiro e Varal</div>
           <p class="produto-text">Item de reposição frequente e ampliação de ticket médio, sem sair da categoria alumínio.</p>
         </div>
@@ -681,17 +690,17 @@ footer {
     <div class="tab-panel" id="tab-locadora">
       <div class="produtos-grid">
         <div class="produto-card fade-up">
-          <div class="produto-icon"><svg viewBox="0 0 24 24"><path d="M4 20V4l16 8-16 8z"/></svg></div>
+          <div class="produto-img-wrap"><img src="produtos/extensivel-ex08.jpg" alt="Escada Extensível EX08 Real Escadas" loading="lazy"></div>
           <div class="produto-title">Extensível EX08 (8 degraus, 4x2)</div>
           <p class="produto-text">Alta procura em locação, suporta uso intensivo, até 150kg. Item de maior giro no canal.</p>
         </div>
         <div class="produto-card fade-up">
-          <div class="produto-icon"><svg viewBox="0 0 24 24"><path d="M3 3v18h18M9 17V9m4 8V5m4 12v-5"/></svg></div>
+          <div class="produto-img-wrap"><img src="produtos/articulada-13em1.jpg" alt="Escada Articulada 13 em 1 Real Escadas" loading="lazy"></div>
           <div class="produto-title">Articulada 13 em 1 (12 degraus)</div>
           <p class="produto-text">Multifuncional — atende várias necessidades do locatário com um único item, alta margem.</p>
         </div>
         <div class="produto-card fade-up">
-          <div class="produto-icon"><svg viewBox="0 0 24 24"><path d="M4 21V9l8-6 8 6v12"/></svg></div>
+          <div class="produto-img-wrap"><img src="produtos/encosto-paralela-8-degraus.jpg" alt="Escada Encosto Paralela Real Escadas" loading="lazy"></div>
           <div class="produto-title">Encosto Paralela 8 degraus</div>
           <p class="produto-text">Alternativa mais simples e de menor custo de reposição para o giro do dia a dia.</p>
         </div>
@@ -702,17 +711,23 @@ footer {
     <div class="tab-panel" id="tab-industrial">
       <div class="produtos-grid">
         <div class="produto-card fade-up">
-          <div class="produto-icon"><svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="10" rx="1"/><path d="M7 8V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"/></svg></div>
+          <div class="produto-img-wrap"><img src="produtos/plataforma-250kg.jpg" alt="Escada Plataforma Trepadeira Real Escadas" loading="lazy"></div>
           <div class="produto-title">Plataforma Trepadeira (até 250kg)</div>
           <p class="produto-text">Uso industrial padrão, degraus amplos e corrimãos de proteção para operação segura.</p>
         </div>
-        <div class="produto-card fade-up destaque">
-          <div class="produto-icon"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6z"/></svg></div>
+        <div class="produto-card fade-up">
+          <div class="produto-img-wrap"><img src="produtos/plataforma-nr12.jpg" alt="Escada Plataforma Trepadeira NR12 Real Escadas" loading="lazy"></div>
           <div class="produto-title">Plataforma Trepadeira NR12</div>
           <p class="produto-text">Conformidade direta com a norma — argumento de fechamento mais forte com SESMT e compradores.</p>
         </div>
         <div class="produto-card fade-up">
-          <div class="produto-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+          <div class="produto-img-wrap produto-img-wrap--selo">
+            <svg viewBox="0 0 100 100" width="120" height="120">
+              <rect x="20" y="20" width="60" height="60" rx="7" transform="rotate(45 50 50)" fill="var(--amber)" stroke="var(--navy-deep)" stroke-width="4"/>
+              <text x="50" y="46" text-anchor="middle" font-family="'Barlow Condensed', sans-serif" font-weight="700" font-size="19" letter-spacing="1" fill="var(--navy-deep)">NR</text>
+              <text x="50" y="70" text-anchor="middle" font-family="'Barlow Condensed', sans-serif" font-weight="700" font-size="27" fill="var(--navy-deep)">35</text>
+            </svg>
+          </div>
           <div class="produto-title">Prazo NR-35: marcação até 01/01/2027</div>
           <p class="produto-text">Portaria MTE 1.680/2025 (Anexo III) exige marcação obrigatória de escadas portáteis. Veja detalhes abaixo.</p>
         </div>
