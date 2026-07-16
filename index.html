@@ -337,10 +337,14 @@ nav.scrolled {
 .marca-name { font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; color: var(--navy-deep); line-height: 1.1; }
 .marca-cat { font-size: 13px; color: var(--text-light); }
 .marca-cta {
-  margin-top: 10px; font-size: 13px; font-weight: 700; color: var(--amber-dark);
-  display: flex; align-items: center; gap: 5px;
+  margin-top: 14px; font-size: 13px; font-weight: 700; color: var(--navy-deep);
+  background: var(--amber);
+  display: inline-flex; align-items: center; gap: 6px; align-self: flex-start;
+  padding: 10px 20px; border-radius: 999px;
+  transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
 }
 .marca-cta svg { width: 14px; height: 14px; transition: transform var(--transition); }
+.marca-badge:hover .marca-cta { background: var(--amber-dark); box-shadow: 0 6px 16px rgba(245,166,35,.35); }
 .marca-badge:hover .marca-cta svg { transform: translateX(4px); }
 
 /* ── SECTIONS ── */
@@ -629,6 +633,7 @@ footer {
   .marca-media { width: 100%; height: 100px; padding: 12px; border-right: none; border-bottom: 1px solid var(--gray-100); }
   .marca-body { padding: 16px 14px; align-items: center; text-align: center; }
   .marca-name { font-size: 19px; }
+  .marca-cta { align-self: center; }
 }
 @media (max-width: 540px) {
   .setores-grid { grid-template-columns: 1fr; }
@@ -769,8 +774,8 @@ footer {
         <img src="marcas/csm-betoneira-izi.jpg" alt="CSM — Betoneira 400L IZI Max" loading="lazy">
       </div>
       <div class="marca-body">
-        <div class="marca-name">CSM</div>
-        <div class="marca-cat">Equipamentos para Construção</div>
+        <div class="marca-name">CSM Equipamentos</div>
+        <div class="marca-cat">Construção Civil</div>
         <div class="marca-cta">Ver linha completa <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
       </div>
     </a>
