@@ -44,6 +44,8 @@ Ao escrever/revisar texto de produto CSM, conferir contra o site oficial **csmeq
 
 **Gotcha já resolvido (2026-06-30):** o projeto tinha `autoAssignCustomDomains: false` nas configurações do Vercel — todo push gerava um deploy "Ready" mas o domínio customizado não era promovido automaticamente, ficando preso numa versão antiga até alguém rodar `vercel alias set <deployment-url> daxton.com.br` manualmente. Já foi corrigido (ativado via API). Se voltar a acontecer (domínio servindo versão desatualizada mesmo após push), primeiro suspeitar dessa configuração antes de qualquer outra coisa.
 
+**Gotcha em aberto (desde 2026-07-15) — `.git` dentro do iCloud Drive corrompe:** este repositório local vive em `C:\Users\Carlos\iCloudDrive\...\daxton-deploy`, uma pasta sincronizada pelo iCloud Drive. O iCloud não lida bem com a estrutura interna do `.git` (muitos arquivos pequenos, mmap, append atômico) e periodicamente corrompe arquivos como `HEAD`, `config`, `info/exclude`, `logs/*`, chegando a bloquear `git push` com `fatal: mmap failed`. Workaround usado: clonar o repo fresco pra um caminho local fora do iCloud (`C:\Users\Carlos\git-local\daxton-site-fresh`), copiar os arquivos alterados por cima, commitar/pushar de lá. **Correção definitiva planejada (ainda não aplicada):** mover o `.git` pra fora do iCloud permanentemente e deixar um arquivo `.git` apontador (`gitdir: ...`) no lugar, mantendo os arquivos de trabalho no iCloud normalmente. Antes de investigar qualquer outro problema de git nesse repo, checar se esse já foi corrigido (ver se `.git` é pasta ou arquivo apontador).
+
 ## Tag do Google Ads
 
 - Tag base: `AW-17062055869`, presente no `<head>` de `index.html`, `real-escadas.html` e `csm.html`
