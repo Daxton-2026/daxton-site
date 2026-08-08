@@ -310,8 +310,10 @@ nav.scrolled {
   display: flex; flex-direction: column; flex: 1 1 280px; max-width: 320px;
 }
 .marca-label {
-  font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 800;
-  color: var(--navy-deep); line-height: 1.1; margin-bottom: 12px; text-align: center;
+  font-family: 'Barlow Condensed', sans-serif; font-size: 34px; font-weight: 800;
+  color: var(--navy-deep); line-height: 1.1; margin-bottom: 14px; text-align: center;
+  display: flex; align-items: flex-end; justify-content: center;
+  min-height: 76px;
 }
 .marca-badge {
   display: flex; flex-direction: column; flex: 1;
@@ -638,7 +640,7 @@ footer {
   .marca-item { flex: 1 1 200px; max-width: 260px; }
   .marca-media { height: 170px; padding: 18px; }
   .marca-body { padding: 14px 16px 18px; align-items: center; text-align: center; }
-  .marca-label { font-size: 22px; }
+  .marca-label { font-size: 27px; min-height: 60px; }
   .marca-cta { align-self: center; }
 }
 @media (max-width: 540px) {
@@ -651,7 +653,7 @@ footer {
   .marca-item { max-width: 360px; margin: 0 auto; width: 100%; }
   .marca-media { height: 190px; padding: 20px; }
   .marca-body { padding: 14px 16px 18px; }
-  .marca-label { font-size: 20px; }
+  .marca-label { font-size: 24px; min-height: 54px; }
   .marca-cat { font-size: 12px; }
   .marca-cta { font-size: 12px; justify-content: center; }
 }
