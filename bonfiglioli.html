@@ -105,6 +105,10 @@ nav.scrolled {
 .nav-logo-wrap:hover { opacity: .88; }
 .nav-logo { height: 52px; cursor: pointer; display: block; }
 .footer-logo { height: 60px; margin-bottom: 16px; background: white; border-radius: 6px; padding: 5px 10px; }
+.nav-brands { display: flex; align-items: center; gap: 12px; }
+.nav-brand-sep { color: rgba(255,255,255,0.35); font-size: 18px; font-weight: 300; line-height: 1; }
+.nav-partner-logo-wrap { display: flex; align-items: center; background: white; border-radius: 6px; padding: 4px 10px; }
+.nav-partner-logo { height: 52px; display: block; }
 .nav-links { display: flex; gap: 1.7rem; align-items: center; }
 .nav-links a { color: #ffffff; text-decoration: none; font-size: 13px; font-weight: 500; letter-spacing: .3px; transition: color var(--transition); }
 .nav-links a:hover { color: var(--amber); }
@@ -425,8 +429,6 @@ footer {
 .footer-col a { display: block; color: rgba(255,255,255,0.5); text-decoration: none; font-size: 13px; margin-bottom: 10px; transition: color var(--transition); }
 .footer-col a:hover { color: var(--amber); }
 .footer-bottom { max-width: 1100px; margin: 40px auto 0; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.07); font-size: 12px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
-.footer-brand-badge { display: inline-flex; align-items: center; gap: 8px; }
-.footer-brand-logo { height: 24px; width: auto; background: #fff; border-radius: 3px; padding: 3px 6px; display: block; }
 
 /* ── FLOAT WHATSAPP ── */
 .wa-float {
@@ -478,6 +480,10 @@ footer {
   .regioes-grid { grid-template-columns: 1fr; }
   .hero-stats { gap: 24px; }
   .form-row { grid-template-columns: 1fr; }
+  .nav-brands { gap: 8px; }
+  .nav-logo-wrap, .nav-partner-logo-wrap { padding: 3px 8px; }
+  .nav-logo, .nav-partner-logo { height: 38px; }
+  .nav-brand-sep { font-size: 14px; }
 }
 @media (max-width: 540px) {
   .setores-grid { grid-template-columns: 1fr; }
@@ -498,9 +504,15 @@ footer {
 
 <!-- NAV -->
 <nav id="main-nav">
-  <a href="/" class="nav-logo-wrap">
-    <img class="nav-logo" src="daxton-logo.png" alt="Daxton Força de Vendas">
-  </a>
+  <div class="nav-brands">
+    <a href="/" class="nav-logo-wrap">
+      <img class="nav-logo" src="daxton-logo.png" alt="Daxton Força de Vendas">
+    </a>
+    <span class="nav-brand-sep">×</span>
+    <div class="nav-partner-logo-wrap">
+      <img class="nav-partner-logo" src="bonfiglioli-logo.png" alt="Bonfiglioli">
+    </div>
+  </div>
   <div class="nav-links">
     <a href="/">Home</a>
     <a href="#continuidade">Continuidade</a>
@@ -896,10 +908,7 @@ footer {
   </div>
   <div class="footer-bottom">
     <span>© 2026 Daxton Desenvolvimento de Negócios. Todos os direitos reservados.</span>
-    <span class="footer-brand-badge">
-      <img src="bonfiglioli-logo.png" alt="Bonfiglioli" class="footer-brand-logo">
-      Representante comercial Bonfiglioli em Santa Catarina e Curitiba
-    </span>
+    <span>Representante comercial Bonfiglioli em Santa Catarina e Curitiba</span>
   </div>
 </footer>
 
