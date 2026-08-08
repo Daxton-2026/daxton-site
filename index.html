@@ -333,11 +333,11 @@ nav.scrolled {
   flex-shrink: 0;
 }
 .marca-icon svg { width: 30px; height: 30px; }
-.marca-body { padding: 24px 26px; display: flex; flex-direction: column; justify-content: center; gap: 5px; }
+.marca-body { padding: 24px 26px; display: flex; flex-direction: column; justify-content: flex-start; gap: 5px; }
 .marca-name { font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; color: var(--navy-deep); line-height: 1.1; }
 .marca-cat { font-size: 13px; color: var(--text-light); }
 .marca-cta {
-  margin-top: 14px; font-size: 13px; font-weight: 700; color: var(--navy-deep);
+  margin-top: auto; font-size: 13px; font-weight: 700; color: var(--navy-deep);
   background: var(--amber);
   display: inline-flex; align-items: center; gap: 6px; align-self: flex-start;
   padding: 10px 20px; border-radius: 999px;
@@ -631,20 +631,9 @@ footer {
   .marcas-logos { gap: 16px; flex-wrap: nowrap; }
   .marca-badge { flex: 1 1 0; max-width: none; min-width: 0; flex-direction: column; }
   .marca-media { width: 100%; height: 100px; padding: 12px; border-right: none; border-bottom: 1px solid var(--gray-100); }
-  .marca-body { padding: 16px 14px; align-items: center; text-align: center; }
+  .marca-body { padding: 16px 14px; align-items: center; text-align: center; flex: 1; }
   .marca-name { font-size: 19px; }
   .marca-cta { align-self: center; }
-}
-@media (max-width: 600px) {
-  /* Abaixo de 600px, 3 colunas lado a lado ficam estreitas demais pra qualquer
-     texto de categoria caber numa linha — empilha os cards em coluna única,
-     card volta ao layout horizontal (imagem à esquerda, texto à direita). */
-  .marcas-logos { flex-direction: column; flex-wrap: nowrap; gap: 14px; }
-  .marca-badge { flex-direction: row; max-width: none; }
-  .marca-media { width: 92px; height: auto; min-height: 92px; padding: 14px; border-right: 1px solid var(--gray-100); border-bottom: none; }
-  .marca-body { align-items: flex-start; text-align: left; padding: 14px 16px; justify-content: center; }
-  .marca-name { font-size: 18px; }
-  .marca-cta { align-self: flex-start; }
 }
 @media (max-width: 540px) {
   .setores-grid { grid-template-columns: 1fr; }
@@ -653,11 +642,11 @@ footer {
   .produtos-grid { grid-template-columns: 1fr; }
   .footer-inner { grid-template-columns: 1fr; }
   .marcas-logos { gap: 10px; }
-  .marca-media { width: 80px; min-height: 80px; padding: 10px; }
-  .marca-body { padding: 12px 14px; }
+  .marca-media { height: 84px; padding: 10px; }
+  .marca-body { padding: 12px 10px; }
   .marca-name { font-size: 16px; }
   .marca-cat { font-size: 11px; }
-  .marca-cta { font-size: 12px; margin-top: 8px; }
+  .marca-cta { font-size: 12px; justify-content: center; }
 }
 
 .produto-img-wrap {
@@ -784,7 +773,7 @@ footer {
       <div class="marca-media"><img src="marcas/bonfiglioli-redutor-planetario.jpg" alt="Bonfiglioli — Redutor Planetário" loading="lazy"></div>
       <div class="marca-body">
         <div class="marca-name">Bonfiglioli</div>
-        <div class="marca-cat">Redutores Industriais</div>
+        <div class="marca-cat">Redutores e Motorredutores Industriais</div>
         <div class="marca-cta">Ver linha completa <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
       </div>
     </a>
