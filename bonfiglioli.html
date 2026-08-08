@@ -303,8 +303,15 @@ section { padding: 96px 5%; }
   background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
   border-radius: var(--radius-lg); padding: 28px 22px;
   transition: background var(--transition), border-color var(--transition);
+  position: relative; overflow: hidden;
 }
 .setor-card:hover { background: rgba(255,255,255,0.07); border-color: rgba(245,166,35,0.3); }
+.setor-img-wrap {
+  height: 110px; margin: -28px -22px 18px; padding: 8px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--white); border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.setor-img-wrap img { max-height: 100%; max-width: 100%; object-fit: contain; }
 .setor-icon {
   width: 44px; height: 44px; border-radius: var(--radius);
   background: rgba(245,166,35,0.12); border: 1px solid rgba(245,166,35,0.2);
@@ -651,22 +658,22 @@ footer {
     <p class="section-sub fade-up">Cada segmento tem um critério de especificação diferente. Especificar por catálogo genérico, sem entender a aplicação, é onde nasce o retrabalho.</p>
     <div class="setores-grid setores-grid-5">
       <div class="setor-card fade-up">
-        <div class="setor-icon"><svg viewBox="0 0 24 24"><path d="M12.89 1.45l8 4A2 2 0 0122 7.24v9.53a2 2 0 01-1.11 1.79l-8 4a2 2 0 01-1.79 0l-8-4a2 2 0 01-1.1-1.79V7.24a2 2 0 011.11-1.79l8-4a2 2 0 011.78 0z"/><path d="M2.32 6.16L12 11l9.68-4.84"/><path d="M12 22.5V11"/></svg></div>
+        <div class="setor-img-wrap"><img src="marcas/bonfiglioli-aplicacao-embalagem.jpg" alt="Linha de embalagem com motorredutores Bonfiglioli integrados" loading="lazy"></div>
         <div class="setor-name">Máquinas para embalagem</div>
         <div class="setor-desc">Precisão de torque e repetibilidade de posicionamento. Onde o backlash importa, especificar por catálogo genérico gera retrabalho de ajuste na partida.</div>
       </div>
       <div class="setor-card fade-up">
-        <div class="setor-icon"><svg viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10"/><path d="M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg></div>
+        <div class="setor-img-wrap"><img src="marcas/bonfiglioli-aplicacao-reciclagem.jpg" alt="Planta de reciclagem com motorredutores Bonfiglioli integrados" loading="lazy"></div>
         <div class="setor-name">Equipamentos para reciclagem</div>
         <div class="setor-desc">Carga elevada, choque e ciclo intenso. O critério aqui é fator de serviço e capacidade de torque de pico — não potência nominal.</div>
       </div>
       <div class="setor-card fade-up">
-        <div class="setor-icon"><svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div>
+        <div class="setor-img-wrap"><img src="marcas/bonfiglioli-aplicacao-alimentos.jpg" alt="Linha de processamento de alimentos e bebidas com motorredutores Bonfiglioli" loading="lazy"></div>
         <div class="setor-name">Processamento de alimentos</div>
         <div class="setor-desc">Requisitos de higienização e lavagem frequente. Exige definição correta de vedação, acabamento e classe de proteção desde o projeto.</div>
       </div>
       <div class="setor-card fade-up">
-        <div class="setor-icon"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+        <div class="setor-img-wrap"><img src="marcas/bonfiglioli-aplicacao-agricola.jpg" alt="Máquina agrícola com motorredutor Bonfiglioli integrado" loading="lazy"></div>
         <div class="setor-name">Máquinas agrícolas</div>
         <div class="setor-desc">Ambiente agressivo, carga variável e manutenção em campo. Robustez e disponibilidade de reposição pesam mais que preço inicial.</div>
       </div>
