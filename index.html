@@ -306,8 +306,15 @@ nav.scrolled {
   display: flex; align-items: stretch; justify-content: center;
   gap: 28px; flex-wrap: wrap; max-width: 1000px; margin: 0 auto;
 }
+.marca-item {
+  display: flex; flex-direction: column; flex: 1 1 280px; max-width: 320px;
+}
+.marca-label {
+  font-family: 'Barlow Condensed', sans-serif; font-size: 21px; font-weight: 800;
+  color: var(--navy-deep); line-height: 1.1; margin-bottom: 10px; padding-left: 2px;
+}
 .marca-badge {
-  display: flex; align-items: stretch; flex: 1 1 400px; max-width: 460px;
+  display: flex; flex-direction: column; flex: 1;
   background: var(--white); border: 1px solid var(--gray-100);
   border-radius: var(--radius-lg); overflow: hidden; position: relative;
   transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
@@ -321,10 +328,10 @@ nav.scrolled {
 .marca-badge:hover::before { transform: scaleX(1); }
 .marca-badge:hover { border-color: var(--navy-mid); box-shadow: var(--shadow-md); transform: translateY(-4px); }
 .marca-media {
-  width: 150px; flex-shrink: 0;
+  width: 100%; height: 230px; flex-shrink: 0;
   background: linear-gradient(160deg, rgba(245,166,35,0.12), var(--gray-50));
-  display: flex; align-items: center; justify-content: center; padding: 18px;
-  border-right: 1px solid var(--gray-100);
+  display: flex; align-items: center; justify-content: center; padding: 26px;
+  border-bottom: 1px solid var(--gray-100);
 }
 .marca-media img { max-width: 100%; max-height: 100%; object-fit: contain; }
 .marca-icon {
@@ -333,8 +340,7 @@ nav.scrolled {
   flex-shrink: 0;
 }
 .marca-icon svg { width: 30px; height: 30px; }
-.marca-body { padding: 24px 26px; display: flex; flex-direction: column; justify-content: flex-start; gap: 5px; }
-.marca-name { font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; color: var(--navy-deep); line-height: 1.1; }
+.marca-body { padding: 18px 22px 22px; display: flex; flex-direction: column; justify-content: flex-start; gap: 5px; flex: 1; }
 .marca-cat { font-size: 13px; color: var(--text-light); }
 .marca-cta {
   margin-top: auto; font-size: 13px; font-weight: 700; color: var(--navy-deep);
@@ -628,11 +634,11 @@ footer {
   .hamburger { display: flex; }
   .regioes-grid { grid-template-columns: 1fr 1fr; }
   .hero-stats { gap: 24px; }
-  .marcas-logos { gap: 16px; flex-wrap: nowrap; }
-  .marca-badge { flex: 1 1 0; max-width: none; min-width: 0; flex-direction: column; }
-  .marca-media { width: 100%; height: 100px; padding: 12px; border-right: none; border-bottom: 1px solid var(--gray-100); }
-  .marca-body { padding: 16px 14px; align-items: center; text-align: center; flex: 1; }
-  .marca-name { font-size: 19px; }
+  .marcas-logos { gap: 18px; }
+  .marca-item { flex: 1 1 200px; max-width: 260px; }
+  .marca-media { height: 170px; padding: 18px; }
+  .marca-body { padding: 14px 16px 18px; align-items: center; text-align: center; }
+  .marca-label { font-size: 18px; text-align: center; padding-left: 0; }
   .marca-cta { align-self: center; }
 }
 @media (max-width: 540px) {
@@ -641,11 +647,12 @@ footer {
   .regioes-grid { grid-template-columns: 1fr; }
   .produtos-grid { grid-template-columns: 1fr; }
   .footer-inner { grid-template-columns: 1fr; }
-  .marcas-logos { gap: 10px; }
-  .marca-media { height: 84px; padding: 10px; }
-  .marca-body { padding: 12px 10px; }
-  .marca-name { font-size: 16px; }
-  .marca-cat { font-size: 11px; }
+  .marcas-logos { flex-direction: column; gap: 20px; }
+  .marca-item { max-width: 360px; margin: 0 auto; width: 100%; }
+  .marca-media { height: 190px; padding: 20px; }
+  .marca-body { padding: 14px 16px 18px; }
+  .marca-label { font-size: 17px; }
+  .marca-cat { font-size: 12px; }
   .marca-cta { font-size: 12px; justify-content: center; }
 }
 
@@ -769,32 +776,38 @@ footer {
     <p class="section-sub">Cada marca que a Daxton representa passa por um processo criterioso de seleção — tecnologia comprovada, suporte técnico real e histórico de resultado no mercado catarinense.</p>
   </div>
   <div class="marcas-logos">
-    <a href="/bonfiglioli" class="marca-badge">
-      <div class="marca-media"><img src="marcas/bonfiglioli-redutor-planetario.jpg" alt="Bonfiglioli — Redutor Planetário" loading="lazy"></div>
-      <div class="marca-body">
-        <div class="marca-name">Bonfiglioli</div>
-        <div class="marca-cat">Redutores e Motorredutores Industriais</div>
-        <div class="marca-cta">Ver linha completa <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
-      </div>
-    </a>
-    <a href="/csm" class="marca-badge">
-      <div class="marca-media">
-        <img src="marcas/csm-betoneira-izi.jpg" alt="CSM — Betoneira 400L IZI Max" loading="lazy">
-      </div>
-      <div class="marca-body">
-        <div class="marca-name">CSM Equipamentos</div>
-        <div class="marca-cat">Construção Civil</div>
-        <div class="marca-cta">Ver linha completa <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
-      </div>
-    </a>
-    <a href="/real-escadas" class="marca-badge">
-      <div class="marca-media"><img src="produtos/extensivel-ex08.jpg" alt="Real Escadas — Escada Extensível de Alumínio" loading="lazy"></div>
-      <div class="marca-body">
-        <div class="marca-name">Real Escadas</div>
-        <div class="marca-cat">Escada de Alumínio B2B</div>
-        <div class="marca-cta">Ver linha completa <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
-      </div>
-    </a>
+    <div class="marca-item">
+      <div class="marca-label">Bonfiglioli</div>
+      <a href="/bonfiglioli" class="marca-badge">
+        <div class="marca-media"><img src="marcas/bonfiglioli-redutor-planetario.jpg" alt="Bonfiglioli — Redutor Planetário" loading="lazy"></div>
+        <div class="marca-body">
+          <div class="marca-cat">Redutores e Motorredutores Industriais</div>
+          <div class="marca-cta">Ver linha completa <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+        </div>
+      </a>
+    </div>
+    <div class="marca-item">
+      <div class="marca-label">CSM Equipamentos</div>
+      <a href="/csm" class="marca-badge">
+        <div class="marca-media">
+          <img src="marcas/csm-betoneira-izi.jpg" alt="CSM — Betoneira 400L IZI Max" loading="lazy">
+        </div>
+        <div class="marca-body">
+          <div class="marca-cat">Construção Civil</div>
+          <div class="marca-cta">Ver linha completa <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+        </div>
+      </a>
+    </div>
+    <div class="marca-item">
+      <div class="marca-label">Real Escadas</div>
+      <a href="/real-escadas" class="marca-badge">
+        <div class="marca-media"><img src="produtos/extensivel-ex08.jpg" alt="Real Escadas — Escada Extensível de Alumínio" loading="lazy"></div>
+        <div class="marca-body">
+          <div class="marca-cat">Escada de Alumínio B2B</div>
+          <div class="marca-cta">Ver linha completa <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+        </div>
+      </a>
+    </div>
   </div>
 </div>
 
