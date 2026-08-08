@@ -351,6 +351,25 @@ section { padding: 96px 5%; }
 /* ── TÉCNICA (bloco 6) ── */
 .tecnica { background: var(--gray-50); }
 
+/* ── FERRAMENTA TÉCNICA (Conversor / Catálogos Bonfiglioli — Glauber Sanches) ── */
+.ferramenta-tecnica { background: var(--white); padding: 64px 5%; }
+.ferramenta-inner {
+  max-width: 620px; margin: 0 auto; text-align: center;
+  background: var(--gray-50); border: 1px solid var(--gray-100); border-radius: var(--radius-xl);
+  padding: 48px 40px; box-shadow: var(--shadow-md);
+}
+.ferramenta-icon {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--amber-light); border: 1.5px solid rgba(245,166,35,0.3);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 24px;
+}
+.ferramenta-icon svg { width: 28px; height: 28px; stroke: var(--amber-dark); stroke-width: 2; fill: none; }
+.ferramenta-title { font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; color: var(--navy-deep); margin-bottom: 12px; }
+.ferramenta-text { font-size: 15px; color: var(--text-light); line-height: 1.7; max-width: 440px; margin: 0 auto 28px; }
+.ferramenta-credito { font-size: 12px; color: var(--gray-500); margin-top: 18px; }
+@media (max-width: 540px) { .ferramenta-inner { padding: 36px 24px; } }
+
 /* ── REGIOES ── */
 .regioes { background: var(--white); }
 .regioes-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 48px; flex-wrap: wrap; gap: 20px; }
@@ -764,6 +783,36 @@ footer {
         </div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     LINK PENDENTE DE APROVAÇÃO — GLAUBER SANCHES
+     Ferramenta técnica externa (conversor de código de produto e
+     catálogos Bonfiglioli) mantida por Glauber Sanches (engenharia
+     Bonfiglioli). Ainda SEM aprovação formal dele pra ficar pública
+     no site — implementada só pra teste.
+     PRA DESATIVAR: trocar o href do link abaixo (única ocorrência
+     da URL no arquivo) por "#", ou remover a section inteira
+     <section class="ferramenta-tecnica">...</section> até a
+     aprovação ser confirmada.
+     ================================================================ -->
+<section class="ferramenta-tecnica" id="ferramenta">
+  <div class="ferramenta-inner fade-up">
+    <div class="ferramenta-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="4" y1="6" x2="20" y2="6"></line><circle cx="9" cy="6" r="2"></circle>
+        <line x1="4" y1="12" x2="20" y2="12"></line><circle cx="15" cy="12" r="2"></circle>
+        <line x1="4" y1="18" x2="20" y2="18"></line><circle cx="7" cy="18" r="2"></circle>
+      </svg>
+    </div>
+    <h3 class="ferramenta-title">Seleção e Especificação</h3>
+    <p class="ferramenta-text">Gerador de código de produto, catálogos técnicos e desenhos Bonfiglioli — direto no navegador, sem precisar pedir.</p>
+    <a href="https://engsanches-eng.github.io/catalogo/" target="_blank" rel="noopener" class="btn-primary">
+      Abrir ferramenta técnica
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+    <p class="ferramenta-credito">Ferramenta técnica desenvolvida por Glauber Sanches — engenharia Bonfiglioli</p>
   </div>
 </section>
 
