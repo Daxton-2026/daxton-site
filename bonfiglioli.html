@@ -107,9 +107,26 @@ nav.scrolled {
 .footer-logo { height: 60px; margin-bottom: 16px; background: white; border-radius: 6px; padding: 5px 10px; }
 .nav-brands { display: flex; align-items: center; gap: 14px; }
 .nav-partner-logo-wrap { display: flex; align-items: center; background: white; border-radius: 6px; padding: 4px 10px; }
-.nav-partner-logo { height: 52px; display: block; }
+.nav-partner-logo { height: 62px; display: block; }
 .nav-links { display: flex; gap: 1.7rem; align-items: center; }
 .nav-links a { color: #ffffff; text-decoration: none; font-size: 13px; font-weight: 500; letter-spacing: .3px; transition: color var(--transition); }
+@media (max-width: 1360px) {
+  .nav-links { gap: 1.05rem; }
+  .nav-links a { font-size: 12px; }
+}
+@media (max-width: 900px) {
+  .nav-partner-logo { height: 52px; }
+  .nav-links { gap: 0.65rem; }
+  .nav-links a { font-size: 11px; }
+}
+@media (max-width: 800px) {
+  nav { padding: 0 16px; }
+  .nav-partner-logo { height: 44px; }
+  .nav-logo-wrap, .nav-partner-logo-wrap { padding: 3px 8px; }
+  .nav-links { gap: 0.45rem; }
+  .nav-links a { font-size: 10px; }
+  .nav-cta { padding: 7px 12px !important; }
+}
 .nav-links a:hover { color: var(--amber); }
 .nav-cta {
   background: var(--amber); color: var(--navy-deep) !important;
@@ -481,7 +498,8 @@ footer {
   .form-row { grid-template-columns: 1fr; }
   .nav-brands { gap: 10px; }
   .nav-logo-wrap, .nav-partner-logo-wrap { padding: 3px 8px; }
-  .nav-logo, .nav-partner-logo { height: 38px; }
+  .nav-logo { height: 38px; }
+  .nav-partner-logo { height: 48px; }
 }
 @media (max-width: 540px) {
   .setores-grid { grid-template-columns: 1fr; }
@@ -507,7 +525,7 @@ footer {
       <img class="nav-logo" src="daxton-logo.png" alt="Daxton Força de Vendas">
     </a>
     <div class="nav-partner-logo-wrap">
-      <img class="nav-partner-logo" src="bonfiglioli-logo.png" alt="Bonfiglioli">
+      <img class="nav-partner-logo" src="bonfiglioli-logo-nav.png" alt="Bonfiglioli">
     </div>
   </div>
   <div class="nav-links">
