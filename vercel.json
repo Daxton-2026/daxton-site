@@ -2,6 +2,7 @@
   "rewrites": [
     { "source": "/links", "destination": "/links.html" },
     { "source": "/real-escadas", "destination": "/real-escadas.html" },
-    { "source": "/csm", "destination": "/csm.html" }
+    { "source": "/csm", "destination": "/csm.html" },
+    { "source": "/bonfiglioli", "destination": "/bonfiglioli.html" }
   ]
 }

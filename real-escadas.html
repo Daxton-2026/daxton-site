@@ -583,7 +583,7 @@ footer {
       </div>
       <div class="hero-stats">
         <div>
-          <div class="hero-stat-num"><span class="counter" data-target="150">0</span><span>kg</span></div>
+          <div class="hero-stat-num"><span class="counter" data-target="150">150</span><span>kg</span></div>
           <div class="hero-stat-label">Carga real na linha doméstica</div>
         </div>
         <div>
@@ -777,7 +777,7 @@ footer {
       </div>
       <div class="dif-right fade-in">
         <div class="metric-block">
-          <div class="metric-val"><span class="counter" data-target="150">0</span><span>kg</span></div>
+          <div class="metric-val"><span class="counter" data-target="150">150</span><span>kg</span></div>
           <div class="metric-label">de carga real na linha doméstica — acima da média de mercado (120kg)</div>
         </div>
         <div class="metric-divider"></div>
@@ -954,7 +954,7 @@ footer {
       <a href="mailto:daxton@daxton.com.br" onclick="gtag_report_conversion_lead()">daxton@daxton.com.br</a>
       <a href="#contato">Solicitar tabela</a>
       <div style="margin-top:16px; font-size:12px; color:rgba(255,255,255,0.25); line-height:1.7;">
-        Joinville · SC · Brasil
+        Jaraguá do Sul · SC · Brasil
       </div>
     </div>
   </div>
@@ -1018,19 +1018,12 @@ document.querySelectorAll('.fade-up, .fade-in').forEach(el => observer.observe(e
 
 // ── Counter animation ──
 function animateCounter(el) {
+  // O valor final já vem certo no HTML estático (SEO/GEO/no-JS). Não resetamos
+  // para 0 aqui — isso evitaria um "flicker" visual pro usuário real. Só garante
+  // que o valor final está escrito, mesmo se data-target e o texto divergirem.
   if (el.dataset.animated) return;
   el.dataset.animated = '1';
-  const target = parseInt(el.dataset.target);
-  const duration = 1600;
-  const start = performance.now();
-  function step(now) {
-    const progress = Math.min((now - start) / duration, 1);
-    const ease = 1 - Math.pow(1 - progress, 3);
-    el.textContent = Math.floor(ease * target);
-    if (progress < 1) requestAnimationFrame(step);
-    else el.textContent = target;
-  }
-  requestAnimationFrame(step);
+  el.textContent = el.dataset.target;
 }
 document.querySelectorAll('.hero .counter').forEach(animateCounter);
 
