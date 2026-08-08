@@ -635,6 +635,17 @@ footer {
   .marca-name { font-size: 19px; }
   .marca-cta { align-self: center; }
 }
+@media (max-width: 600px) {
+  /* Abaixo de 600px, 3 colunas lado a lado ficam estreitas demais pra qualquer
+     texto de categoria caber numa linha — empilha os cards em coluna única,
+     card volta ao layout horizontal (imagem à esquerda, texto à direita). */
+  .marcas-logos { flex-direction: column; flex-wrap: nowrap; gap: 14px; }
+  .marca-badge { flex-direction: row; max-width: none; }
+  .marca-media { width: 92px; height: auto; min-height: 92px; padding: 14px; border-right: 1px solid var(--gray-100); border-bottom: none; }
+  .marca-body { align-items: flex-start; text-align: left; padding: 14px 16px; justify-content: center; }
+  .marca-name { font-size: 18px; }
+  .marca-cta { align-self: flex-start; }
+}
 @media (max-width: 540px) {
   .setores-grid { grid-template-columns: 1fr; }
   .processo-steps { grid-template-columns: 1fr; }
@@ -642,11 +653,11 @@ footer {
   .produtos-grid { grid-template-columns: 1fr; }
   .footer-inner { grid-template-columns: 1fr; }
   .marcas-logos { gap: 10px; }
-  .marca-media { height: 84px; padding: 10px; }
-  .marca-body { padding: 12px 10px; }
+  .marca-media { width: 80px; min-height: 80px; padding: 10px; }
+  .marca-body { padding: 12px 14px; }
   .marca-name { font-size: 16px; }
   .marca-cat { font-size: 11px; }
-  .marca-cta { font-size: 12px; justify-content: center; margin-top: 8px; }
+  .marca-cta { font-size: 12px; margin-top: 8px; }
 }
 
 .produto-img-wrap {
@@ -773,7 +784,7 @@ footer {
       <div class="marca-media"><img src="marcas/bonfiglioli-redutor-planetario.jpg" alt="Bonfiglioli — Redutor Planetário" loading="lazy"></div>
       <div class="marca-body">
         <div class="marca-name">Bonfiglioli</div>
-        <div class="marca-cat">Redutores e Motorredutores Industriais</div>
+        <div class="marca-cat">Redutores Industriais</div>
         <div class="marca-cta">Ver linha completa <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
       </div>
     </a>
