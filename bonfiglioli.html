@@ -193,13 +193,13 @@ nav.scrolled {
   .hero-img-col { order: -1; }
 }
 .hero-eyebrow {
-  display: inline-flex; align-items: center; gap: 8px;
+  display: inline-flex; align-items: flex-start; gap: 8px;
   background: rgba(245,166,35,0.12); border: 1px solid rgba(245,166,35,0.3);
   color: var(--amber); font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
   text-transform: uppercase; padding: 6px 14px; border-radius: 2px;
   margin-bottom: 28px;
 }
-.hero-eyebrow span { width: 18px; height: 1px; background: var(--amber); display: block; }
+.hero-eyebrow span { width: 18px; height: 1px; background: var(--amber); display: block; margin-top: 6px; flex-shrink: 0; }
 .hero h1 {
   font-family: 'Barlow Condensed', sans-serif;
   font-size: clamp(40px, 5.4vw, 66px);
@@ -575,7 +575,7 @@ footer {
   <div class="hero-inner">
     <div class="hero-content">
       <div class="hero-eyebrow"><span></span>Bonfiglioli · Representação Técnica em SC e Curitiba</div>
-      <h1>Acionamento especificado certo.<br>Máquina que <em>não volta</em>.</h1>
+      <h1>Acionamento especificado&nbsp;certo.<br>Máquina que <em>não volta</em>.</h1>
       <p class="hero-sub">A Daxton representa a Bonfiglioli para fabricantes de máquinas em Santa Catarina e Curitiba — redutores planetários, helicoidais, coroa e rosca sem fim e motorredutores, com engenharia de aplicação e suporte técnico aqui na região.</p>
       <div class="hero-actions">
         <a href="#contato" class="btn-primary">
