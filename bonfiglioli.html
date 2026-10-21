@@ -352,31 +352,17 @@ section { padding: 96px 5%; }
 .tecnica { background: var(--gray-50); }
 
 /* ── FERRAMENTA TÉCNICA (Conversor / Catálogos Bonfiglioli — Glauber Sanches) ── */
-.ferramenta-tecnica {
-  position: relative; padding: 104px 5%;
-  background: var(--white) url('marcas/bonfiglioli-linha-produtos.jpg') center 45% / cover no-repeat;
-}
-.ferramenta-tecnica::before {
-  content: ''; position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(90deg, rgba(255,255,255,.62) 0%, rgba(255,255,255,.18) 50%, rgba(255,255,255,.62) 100%);
-}
+.ferramenta-tecnica { background: var(--white); padding: 64px 5%; }
 .ferramenta-inner {
-  position: relative;
-  max-width: 620px; margin: 0 auto; text-align: center;
-  background: rgba(255,255,255,.93); border: 1px solid var(--gray-100); border-radius: var(--radius-xl);
-  padding: 48px 40px; box-shadow: var(--shadow-lg);
+  max-width: 600px; margin: 0 auto; text-align: center;
+  background: var(--white); border: 1px solid var(--gray-100); border-radius: var(--radius-xl);
+  padding: 28px 28px 36px; box-shadow: var(--shadow-md);
 }
-.ferramenta-icon {
-  width: 64px; height: 64px; border-radius: 50%;
-  background: var(--amber-light); border: 1.5px solid rgba(245,166,35,0.3);
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 24px;
-}
-.ferramenta-icon svg { width: 28px; height: 28px; stroke: var(--amber-dark); stroke-width: 2; fill: none; }
-.ferramenta-title { font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; color: var(--navy-deep); margin-bottom: 12px; }
-.ferramenta-text { font-size: 15px; color: var(--text-light); line-height: 1.7; max-width: 440px; margin: 0 auto 28px; }
+.ferramenta-img { display: block; border-radius: var(--radius-lg, 12px); overflow: hidden; margin-bottom: 24px; }
+.ferramenta-img img { display: block; width: 100%; height: auto; transition: transform .4s ease; }
+.ferramenta-img:hover img { transform: scale(1.03); }
 .ferramenta-credito { font-size: 12px; color: var(--gray-500); margin-top: 18px; }
-@media (max-width: 540px) { .ferramenta-inner { padding: 36px 24px; } }
+@media (max-width: 540px) { .ferramenta-inner { padding: 20px 16px 28px; } }
 
 /* ── REGIOES ── */
 .regioes { background: var(--white); }
@@ -800,14 +786,9 @@ footer {
 
 <section class="ferramenta-tecnica" id="ferramenta">
   <div class="ferramenta-inner fade-up">
-    <div class="ferramenta-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="3"></circle>
-        <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"></path>
-      </svg>
-    </div>
-    <h3 class="ferramenta-title">Configuradores de redutor</h3>
-    <p class="ferramenta-text">Escolha a sua máquina, informe os dados e veja quais redutores Bonfiglioli atendem: pontes rolantes, guinchos ou uso geral.</p>
+    <a href="/configuradores" class="ferramenta-img" aria-label="Configuradores de redutor Bonfiglioli">
+      <img src="marcas/bonfiglioli-linha-produtos.jpg" width="595" height="373" alt="Linha de redutores e motorredutores Bonfiglioli" loading="lazy">
+    </a>
     <a href="/configuradores" class="btn-primary">
       Dimensionar meu redutor
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
