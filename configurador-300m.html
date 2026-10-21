@@ -2507,7 +2507,7 @@ $('cp').addEventListener('click',function(){
     navigator.clipboard.writeText(t).then(function(){done(true)},function(){pick();done(false)}); return; } }catch(e){}
   pick(); done(false);
 });
-buildA4(); syncN1(); setEnt(); setModo('ger');
+buildA4(); syncN1(); setEnt(); setModo(/[?&]modo=elev/.test(location.search)?'elev':'ger');
 })();
 
 </script>

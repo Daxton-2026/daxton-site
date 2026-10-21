@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Configuradores de redutor · Bonfiglioli — Daxton</title>
+<meta name="description" content="Escolha a máquina, informe os dados e veja quais redutores planetários Bonfiglioli atendem: pontes rolantes, guinchos e uso geral.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0D2B6B; --navy-deep:#081A45; --navy-ink:#050F2B; --amber:#F5A623; --amber-dark:#D4891A; --amber-soft:#FDF3DC;
+  --paper:#F2F5FA; --white:#fff; --line:#DDE3EF; --text:#1A2240; --text-soft:#4A5370;
+  --draw:#9DB7E8; --draw-dim:rgba(157,183,232,.38);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;color:var(--text);background:var(--paper);overflow-x:hidden;line-height:1.6}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--amber);outline-offset:3px;border-radius:4px}
+
+/* barra de topo */
+nav{background:var(--navy);display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 5%;height:88px;border-bottom:1px solid rgba(245,166,35,.18)}
+.brands{display:flex;align-items:center;gap:14px}
+.logo-box{display:flex;align-items:center;background:#fff;border-radius:6px;padding:4px 10px}
+.logo-box img{display:block}
+.logo-daxton{height:44px}.logo-bdb{height:56px}
+.back{color:#fff;text-decoration:none;font-size:14px;font-weight:500;opacity:.9}
+.back:hover{color:var(--amber);opacity:1}
+
+/* topo da pagina: papel milimetrado azul */
+.hero{position:relative;background:var(--navy-deep);color:#fff;padding:72px 5% 120px;overflow:hidden;
+  background-image:linear-gradient(rgba(157,183,232,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(157,183,232,.09) 1px,transparent 1px);
+  background-size:32px 32px}
+.hero::after{content:"";position:absolute;inset:auto 0 0 0;height:90px;background:linear-gradient(to bottom,transparent,rgba(8,26,69,.0))}
+.wrap{max-width:1100px;margin:0 auto;position:relative}
+.hero h1{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:clamp(44px,7vw,84px);line-height:.98;letter-spacing:-.005em;max-width:15ch}
+.hero p{margin-top:22px;font-size:18px;line-height:1.65;color:rgba(255,255,255,.84);max-width:52ch}
+.hero .bg-art{position:absolute;right:-60px;top:50%;transform:translateY(-52%);width:min(520px,62vw);opacity:.22;pointer-events:none}
+
+/* cartoes */
+.choose{margin-top:-64px;padding:0 5% 24px;position:relative}
+.top{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+.tile{position:relative;background:var(--white);border-radius:18px;overflow:hidden;box-shadow:0 14px 44px rgba(8,26,69,.13);display:flex;flex-direction:column;transition:box-shadow .25s ease,transform .25s ease}
+.tile:hover,.tile:focus-within{box-shadow:0 22px 60px rgba(8,26,69,.2);transform:translateY(-3px)}
+.art{background:var(--navy-deep);position:relative;
+  background-image:linear-gradient(rgba(157,183,232,.1) 1px,transparent 1px),linear-gradient(90deg,rgba(157,183,232,.1) 1px,transparent 1px);background-size:24px 24px}
+.art svg{display:block;width:100%;height:auto}
+.body{padding:26px 28px 28px;display:flex;flex-direction:column;flex:1}
+.body h2{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:31px;line-height:1.08;color:var(--navy-deep)}
+.body .lead{margin-top:10px;color:var(--text-soft);font-size:15.5px;line-height:1.65;max-width:56ch}
+.have{margin-top:18px}
+.have b{display:block;font-size:13.5px;font-weight:600;color:var(--navy-deep);margin-bottom:8px}
+.have ul{list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+.have li{background:var(--paper);border:1px solid var(--line);color:var(--text-soft);border-radius:999px;font-size:13px;padding:3px 11px}
+.spacer{flex:1;min-height:22px}
+.btn{align-self:flex-start;background:var(--amber);color:var(--navy-ink);font-weight:700;font-size:15px;text-decoration:none;padding:13px 22px;border-radius:8px;transition:background .2s ease,transform .1s ease}
+.btn:hover{background:var(--amber-dark)}
+.btn::after{content:"";position:absolute;inset:0}  /* o cartao inteiro e clicavel */
+
+/* faixa "outra maquina" */
+.wide{margin-top:24px;flex-direction:row}
+.wide .art{flex:0 0 40%}
+.wide .body{padding:30px 32px}
+.wide h2{font-size:34px}
+
+/* ajuda */
+.help{max-width:1100px;margin:48px auto 0;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;padding:0 0 8px}
+.help p{font-size:16.5px;color:var(--text);max-width:58ch}
+.help p small{display:block;margin-top:6px;font-size:13.5px;color:var(--text-soft);line-height:1.6}
+.help a.wa{display:inline-flex;align-items:center;gap:10px;background:var(--navy);color:#fff;text-decoration:none;font-weight:600;font-size:15px;padding:13px 22px;border-radius:8px;transition:background .2s ease}
+.help a.wa:hover{background:var(--navy-mid,#1A3D8A)}
+.help a.wa svg{width:20px;height:20px;fill:#25D366}
+footer{margin-top:56px;background:var(--navy-deep);color:rgba(255,255,255,.72);text-align:center;font-size:13px;padding:22px 5%}
+
+
+.s{stroke:#071436;stroke-width:1.2;stroke-linejoin:round}
+.wrap-dash{}
+.wrap{fill:none;stroke:rgba(7,20,54,.55);stroke-width:1.3}
+.tile:hover .wrap,.tile:focus-within .wrap{stroke-dasharray:5 3;animation:dash .8s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-16}}
+.art.light{background-color:#E9EFFA;background-image:linear-gradient(rgba(13,43,107,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(13,43,107,.07) 1px,transparent 1px);background-size:24px 24px;display:block;min-height:260px;overflow:hidden}
+.art.light img{display:block;width:100%;height:100%;min-height:260px;object-fit:cover;mix-blend-mode:multiply;transition:transform .6s ease}
+.tile:hover .art.light img,.tile:focus-within .art.light img{transform:scale(1.05)}
+.tag{position:absolute;background:#fff;color:var(--navy-deep);font-size:12.5px;font-weight:600;padding:3px 10px 3px 20px;border-radius:999px;box-shadow:0 2px 8px rgba(8,26,69,.16)}
+.tag::before{content:"";position:absolute;left:7px;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;background:var(--amber)}
+/* desenhos: so se movem quando a pessoa passa o mouse ou foca o cartao */
+.l{fill:none;stroke:var(--draw);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.d{fill:none;stroke:var(--draw-dim);stroke-width:1.5;stroke-linecap:round}
+.a{fill:none;stroke:var(--amber);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.af{fill:rgba(245,166,35,.22);stroke:var(--amber);stroke-width:2.5;stroke-linejoin:round}
+.sf{fill:rgba(157,183,232,.12);stroke:var(--draw);stroke-width:2.5;stroke-linejoin:round}
+.tx{font:600 11px 'Inter',sans-serif;fill:var(--draw);letter-spacing:.02em}
+.trolley{transform-box:fill-box}
+.cable{transform-box:fill-box;transform-origin:50% 0;transition:transform 1.1s ease}
+.lift{transition:transform 1.1s ease}
+.tile:hover .lift,.tile:focus-within .lift{transform:translateY(var(--up,-26px))}
+.tile:hover .cable,.tile:focus-within .cable{transform:scaleY(var(--sc,.6))}
+.tile:hover .trolley,.tile:focus-within .trolley{animation:slide 3.2s ease-in-out infinite alternate}
+@keyframes slide{from{transform:translateX(-70px)}to{transform:translateX(70px)}}
+.spin{transform-box:fill-box;transform-origin:center}
+.tile:hover .spin,.tile:focus-within .spin{animation:spin 4s linear infinite}
+.tile:hover .spin-r,.tile:focus-within .spin-r{animation:spin 4s linear infinite reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){
+  .tile,.btn,.cable,.lift{transition:none}
+  .trolley,.spin,.spin-r,.wrap{animation:none!important}
+}
+@media (max-width:860px){
+  .top{grid-template-columns:1fr}
+  .wide{flex-direction:column}.wide .art{flex-basis:auto;padding:18px 0}
+  .wide .body{padding:26px 28px 28px}
+  .hero{padding:48px 5% 104px}.hero .bg-art{opacity:.12;right:-120px}
+  nav{height:auto;padding:12px 5%;flex-wrap:wrap}.logo-daxton{height:38px}.logo-bdb{height:46px}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<linearGradient id="gm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C3D4F2"/><stop offset=".55" stop-color="#7F9BD1"/><stop offset="1" stop-color="#43609F"/></linearGradient>
+<linearGradient id="gh" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3C5897"/><stop offset=".45" stop-color="#A5BDEA"/><stop offset="1" stop-color="#3C5897"/></linearGradient>
+<linearGradient id="gd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3B548F"/><stop offset="1" stop-color="#1A2B5A"/></linearGradient>
+<linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFDC94"/><stop offset=".5" stop-color="#F5A623"/><stop offset="1" stop-color="#B26B10"/></linearGradient>
+</defs></svg>
+
+<nav>
+  <div class="brands">
+    <a class="logo-box" href="/"><img class="logo-daxton" src="daxton-logo.png" alt="Daxton Força de Vendas"></a>
+    <div class="logo-box"><img class="logo-bdb" src="bonfiglioli-logo-nav.png" alt="Bonfiglioli"></div>
+  </div>
+  <a class="back" href="/bonfiglioli">← Voltar à página Bonfiglioli</a>
+</nav>
+
+<header class="hero">
+  <svg class="bg-art" viewBox="0 0 300 300" aria-hidden="true"><g fill="none" stroke="#9DB7E8" stroke-linejoin="round" stroke-width="1.4"><circle cx="150" cy="150" r="146" stroke-width="2.5"/><circle cx="150" cy="150" r="136"/><path d="M273.9 146.6 L265.0 148.3 L265.0 151.7 L273.9 153.4 L273.5 159.3 L264.5 160.2 L264.2 163.5 L272.8 166.2 L271.9 172.0 L262.9 171.9 L262.2 175.1 L270.5 178.7 L269.0 184.4 L260.0 183.4 L259.0 186.5 L266.9 190.9 L264.9 196.4 L256.0 194.5 L254.7 197.6 L262.1 202.8 L259.5 208.0 L250.9 205.2 L249.3 208.1 L256.1 214.0 L252.9 219.0 L244.7 215.3 L242.8 218.0 L248.9 224.6 L245.3 229.2 L237.5 224.7 L235.3 227.2 L240.8 234.3 L236.7 238.6 L229.3 233.3 L226.9 235.5 L231.6 243.2 L227.1 247.0 L220.3 241.0 L217.7 243.0 L221.6 251.1 L216.7 254.4 L210.6 247.7 L207.8 249.4 L210.8 258.0 L205.6 260.7 L200.2 253.4 L197.2 254.8 L199.4 263.6 L193.9 265.8 L189.3 258.1 L186.2 259.1 L187.4 268.1 L181.8 269.7 L178.0 261.5 L174.8 262.3 L175.1 271.3 L169.3 272.4 L166.4 263.8 L163.1 264.2 L162.5 273.3 L156.6 273.7 L154.6 264.9 L151.3 265.0 L149.7 273.9 L143.9 273.7 L142.8 264.8 L139.5 264.5 L137.0 273.2 L131.2 272.5 L131.0 263.4 L127.8 262.8 L124.4 271.2 L118.7 269.9 L119.5 260.9 L116.3 259.9 L112.1 268.0 L106.5 266.0 L108.2 257.1 L105.1 255.9 L100.1 263.4 L94.8 260.9 L97.4 252.3 L94.5 250.7 L88.8 257.7 L83.7 254.7 L87.2 246.3 L84.4 244.5 L78.0 250.8 L73.3 247.3 L77.6 239.4 L75.1 237.2 L68.0 242.9 L63.7 238.9 L68.8 231.4 L66.5 229.1 L58.9 234.0 L55.0 229.6 L60.9 222.7 L58.8 220.1 L50.7 224.2 L47.3 219.4 L53.9 213.1 L52.1 210.3 L43.6 213.6 L40.8 208.5 L47.9 202.9 L46.4 199.9 L37.7 202.3 L35.3 196.9 L43.0 192.1 L41.8 189.0 L32.9 190.5 L31.1 184.9 L39.2 180.9 L38.4 177.7 L29.4 178.2 L28.2 172.5 L36.6 169.3 L36.1 166.1 L27.1 165.7 L26.5 159.8 L35.2 157.6 L35.1 154.3 L26.1 152.9 L26.1 147.1 L35.1 145.7 L35.2 142.4 L26.5 140.2 L27.1 134.3 L36.1 133.9 L36.6 130.7 L28.2 127.5 L29.4 121.8 L38.4 122.3 L39.2 119.1 L31.1 115.1 L32.9 109.5 L41.8 111.0 L43.0 107.9 L35.3 103.1 L37.7 97.7 L46.4 100.1 L47.9 97.1 L40.8 91.5 L43.6 86.4 L52.1 89.7 L53.9 86.9 L47.3 80.6 L50.7 75.8 L58.8 79.9 L60.9 77.3 L55.0 70.4 L58.9 66.0 L66.5 70.9 L68.8 68.6 L63.7 61.1 L68.0 57.1 L75.1 62.8 L77.6 60.6 L73.3 52.7 L78.0 49.2 L84.4 55.5 L87.2 53.7 L83.7 45.3 L88.8 42.3 L94.5 49.3 L97.4 47.7 L94.8 39.1 L100.1 36.6 L105.1 44.1 L108.2 42.9 L106.5 34.0 L112.1 32.0 L116.3 40.1 L119.5 39.1 L118.7 30.1 L124.4 28.8 L127.8 37.2 L131.0 36.6 L131.2 27.5 L137.0 26.8 L139.5 35.5 L142.8 35.2 L143.9 26.3 L149.7 26.1 L151.3 35.0 L154.6 35.1 L156.6 26.3 L162.5 26.7 L163.1 35.8 L166.4 36.2 L169.3 27.6 L175.1 28.7 L174.8 37.7 L178.0 38.5 L181.8 30.3 L187.4 31.9 L186.2 40.9 L189.3 41.9 L193.9 34.2 L199.4 36.4 L197.2 45.2 L200.2 46.6 L205.6 39.3 L210.8 42.0 L207.8 50.6 L210.6 52.3 L216.7 45.6 L221.6 48.9 L217.7 57.0 L220.3 59.0 L227.1 53.0 L231.6 56.8 L226.9 64.5 L229.3 66.7 L236.7 61.4 L240.8 65.7 L235.3 72.8 L237.5 75.3 L245.3 70.8 L248.9 75.4 L242.8 82.0 L244.7 84.7 L252.9 81.0 L256.1 86.0 L249.3 91.9 L250.9 94.8 L259.5 92.0 L262.1 97.2 L254.7 102.4 L256.0 105.5 L264.9 103.6 L266.9 109.1 L259.0 113.5 L260.0 116.6 L269.0 115.6 L270.5 121.3 L262.2 124.9 L262.9 128.1 L271.9 128.0 L272.8 133.8 L264.2 136.5 L264.5 139.8 L273.5 140.7Z"/><path d="M174.2 147.2 L183.1 148.1 L183.1 151.9 L174.2 152.8 L173.3 157.3 L181.1 161.7 L179.5 165.3 L171.0 162.4 L168.3 166.2 L173.6 173.3 L170.7 175.9 L164.2 169.9 L160.1 172.2 L162.1 180.9 L158.4 182.1 L154.9 173.9 L150.2 174.4 L148.5 183.2 L144.6 182.8 L144.7 173.8 L140.3 172.4 L135.1 179.7 L131.7 177.7 L135.5 169.6 L132.0 166.5 L124.3 171.1 L122.0 167.9 L128.8 162.0 L126.9 157.7 L118.0 158.8 L117.2 155.0 L125.7 152.3 L125.7 147.7 L117.2 145.0 L118.0 141.2 L126.9 142.3 L128.8 138.0 L122.0 132.1 L124.3 128.9 L132.0 133.5 L135.5 130.4 L131.7 122.3 L135.1 120.3 L140.3 127.6 L144.7 126.2 L144.6 117.2 L148.5 116.8 L150.2 125.6 L154.9 126.1 L158.4 117.9 L162.1 119.1 L160.1 127.8 L164.2 130.1 L170.7 124.1 L173.6 126.7 L168.3 133.8 L171.0 137.6 L179.5 134.7 L181.1 138.3 L173.3 142.7Z" stroke="#F5A623" stroke-width="1.8"/><circle cx="150" cy="150" r="8"/><path d="M189.9 221.2 L198.8 222.2 L198.8 226.0 L189.9 227.0 L189.2 232.0 L197.5 235.5 L196.5 239.1 L187.6 237.7 L185.6 242.3 L192.6 247.8 L190.7 251.0 L182.6 247.3 L179.4 251.2 L184.6 258.5 L181.9 261.0 L175.1 255.3 L171.0 258.2 L174.1 266.5 L170.8 268.3 L165.7 260.9 L161.0 262.6 L161.7 271.5 L158.1 272.2 L155.2 263.8 L150.2 264.1 L148.5 272.9 L144.8 272.6 L144.3 263.7 L139.4 262.7 L135.4 270.7 L131.9 269.4 L133.9 260.7 L129.4 258.4 L123.4 265.0 L120.4 262.9 L124.6 255.0 L120.9 251.6 L113.4 256.3 L111.0 253.4 L117.2 247.0 L114.6 242.7 L106.0 245.2 L104.5 241.8 L112.2 237.3 L110.9 232.5 L101.9 232.6 L101.4 228.9 L110.1 226.6 L110.1 221.6 L101.4 219.3 L101.9 215.6 L110.9 215.7 L112.2 210.9 L104.5 206.4 L106.0 203.0 L114.6 205.5 L117.2 201.2 L111.0 194.8 L113.4 191.9 L120.9 196.6 L124.6 193.2 L120.4 185.3 L123.4 183.2 L129.4 189.8 L133.9 187.5 L131.9 178.8 L135.4 177.5 L139.4 185.5 L144.3 184.5 L144.8 175.6 L148.5 175.3 L150.2 184.1 L155.2 184.4 L158.1 176.0 L161.7 176.7 L161.0 185.6 L165.7 187.3 L170.8 179.9 L174.1 181.7 L171.0 190.0 L175.1 192.9 L181.9 187.2 L184.6 189.7 L179.4 197.0 L182.6 200.9 L190.7 197.2 L192.6 200.4 L185.6 205.9 L187.6 210.5 L196.5 209.1 L197.5 212.7 L189.2 216.2Z"/><circle cx="150.0" cy="224.1" r="9"/><path d="M125.5 118.0 L134.0 120.8 L133.2 124.5 L124.3 123.8 L122.7 128.5 L130.1 133.5 L128.4 136.8 L120.0 133.8 L117.1 137.9 L122.9 144.7 L120.4 147.4 L113.1 142.2 L109.2 145.4 L113.0 153.5 L109.8 155.5 L104.2 148.5 L99.6 150.5 L101.0 159.3 L97.4 160.4 L93.9 152.1 L89.0 152.8 L87.9 161.7 L84.2 161.7 L83.1 152.9 L78.1 152.2 L74.7 160.5 L71.1 159.5 L72.4 150.6 L67.8 148.7 L62.3 155.7 L59.1 153.8 L62.7 145.6 L58.8 142.5 L51.6 147.8 L49.1 145.1 L54.8 138.2 L51.9 134.1 L43.5 137.2 L41.8 133.9 L49.1 128.9 L47.4 124.1 L38.5 124.9 L37.7 121.3 L46.2 118.4 L45.8 113.4 L37.0 111.7 L37.3 108.0 L46.2 107.5 L47.2 102.6 L39.2 98.6 L40.4 95.1 L49.1 97.0 L51.4 92.5 L44.8 86.6 L46.9 83.5 L54.8 87.7 L58.2 84.0 L53.4 76.5 L56.3 74.1 L62.8 80.3 L67.1 77.6 L64.5 69.1 L67.9 67.6 L72.5 75.3 L77.3 73.9 L77.1 64.9 L80.8 64.4 L83.1 73.0 L88.1 73.0 L90.4 64.4 L94.1 64.9 L94.0 73.8 L98.8 75.1 L103.3 67.4 L106.8 68.9 L104.3 77.4 L108.6 80.0 L115.0 73.8 L117.9 76.1 L113.1 83.7 L116.6 87.4 L124.4 83.1 L126.6 86.2 L120.0 92.2 L122.3 96.6 L131.1 94.6 L132.3 98.2 L124.4 102.2 L125.4 107.1 L134.3 107.5 L134.6 111.2 L125.8 113.0Z"/><circle cx="85.8" cy="112.9" r="9"/><path d="M252.1 125.8 L259.8 130.2 L258.4 133.7 L249.8 131.2 L247.2 135.5 L253.5 141.9 L251.1 144.8 L243.5 140.1 L239.9 143.6 L244.2 151.4 L241.2 153.6 L235.1 147.0 L230.7 149.4 L232.7 158.1 L229.2 159.4 L225.1 151.4 L220.2 152.5 L219.8 161.4 L216.1 161.7 L214.3 152.9 L209.3 152.7 L206.5 161.2 L202.9 160.4 L203.5 151.5 L198.8 149.9 L193.8 157.3 L190.5 155.6 L193.5 147.2 L189.4 144.4 L182.6 150.2 L179.9 147.7 L185.1 140.4 L181.8 136.5 L173.7 140.3 L171.8 137.1 L178.7 131.5 L176.7 126.9 L167.9 128.4 L166.8 124.8 L175.0 121.3 L174.3 116.3 L165.4 115.3 L165.4 111.6 L174.3 110.4 L174.9 105.4 L166.6 102.1 L167.6 98.5 L176.4 99.7 L178.4 95.1 L171.3 89.6 L173.2 86.4 L181.4 90.0 L184.5 86.1 L179.2 78.9 L181.9 76.4 L188.8 82.0 L192.9 79.1 L189.7 70.7 L193.0 69.0 L198.1 76.3 L202.8 74.6 L202.0 65.7 L205.6 64.9 L208.6 73.3 L213.6 73.0 L215.2 64.2 L218.9 64.4 L219.4 73.3 L224.4 74.3 L228.3 66.2 L231.8 67.5 L230.0 76.2 L234.4 78.5 L240.4 71.8 L243.4 73.9 L239.3 81.8 L243.0 85.2 L250.5 80.4 L252.9 83.2 L246.8 89.7 L249.4 94.0 L257.9 91.4 L259.5 94.8 L251.8 99.4 L253.2 104.2 L262.1 104.0 L262.7 107.7 L254.1 110.0 L254.1 115.1 L262.8 117.3 L262.3 121.0 L253.4 120.9Z"/><circle cx="214.2" cy="112.9" r="9"/></g></svg>
+  <div class="wrap">
+    <h1>O que você vai dimensionar?</h1>
+    <p>Escolha a máquina e informe os dados que você já tem. Em poucos minutos você vê quais redutores planetários Bonfiglioli atendem, com as verificações do catálogo conferidas.</p>
+  </div>
+</header>
+
+<main class="choose">
+  <div class="wrap">
+    <div class="top">
+
+      <!-- PONTES ROLANTES -->
+      <article class="tile">
+        <div class="art">
+          <svg viewBox="0 -10 400 260" style="--up:-40px;--sc:.6" role="img" aria-label="Desenho de uma ponte rolante com viga, carro, motor e redutor, cabo, gancho e carga">
+<line class="d" x1="12" y1="232" x2="388" y2="232"/>
+<!-- colunas e vigas de rolamento -->
+<rect class="s" x="36" y="64" width="14" height="168" fill="url(#gh)"/><rect class="s" x="350" y="64" width="14" height="168" fill="url(#gh)"/>
+<rect class="s" x="29" y="228" width="28" height="4" fill="url(#gd)"/><rect class="s" x="343" y="228" width="28" height="4" fill="url(#gd)"/>
+<rect class="s" x="20" y="56" width="46" height="10" fill="url(#gm)"/><rect class="s" x="334" y="56" width="46" height="10" fill="url(#gm)"/>
+<!-- cabeceiras com rodas -->
+<rect class="s" x="22" y="40" width="40" height="16" rx="2" fill="url(#gm)"/><rect class="s" x="338" y="40" width="40" height="16" rx="2" fill="url(#gm)"/>
+<circle class="s" cx="31" cy="54" r="4.5" fill="url(#gd)"/><circle class="s" cx="53" cy="54" r="4.5" fill="url(#gd)"/>
+<circle class="s" cx="347" cy="54" r="4.5" fill="url(#gd)"/><circle class="s" cx="369" cy="54" r="4.5" fill="url(#gd)"/>
+<!-- viga principal -->
+<rect class="s" x="40" y="34" width="320" height="20" fill="url(#gm)"/>
+<path class="d" d="M62 34v20M84 34v20M106 34v20M128 34v20M150 34v20M172 34v20M194 34v20M216 34v20M238 34v20M260 34v20M282 34v20M304 34v20M326 34v20"/>
+<line class="l" x1="40" y1="34" x2="360" y2="34" style="stroke-width:2"/>
+<!-- carro, motor, redutor Bonfiglioli e tambor -->
+<g class="trolley">
+  <rect class="s" x="156" y="23" width="82" height="11" rx="2" fill="url(#gm)"/>
+  <circle class="s" cx="167" cy="35" r="4.5" fill="url(#gd)"/><circle class="s" cx="227" cy="35" r="4.5" fill="url(#gd)"/>
+  <rect class="s" x="158" y="7" width="24" height="16" rx="3" fill="url(#gm)"/><path class="d" d="M164 9v12M168 9v12M172 9v12M176 9v12"/>
+  <rect class="s" x="182" y="9" width="18" height="12" rx="3" fill="url(#ga)"/>
+  <rect class="s" x="200" y="6" width="34" height="17" rx="2" fill="url(#gd)"/><path class="d" d="M205 6v17M210 6v17M215 6v17M220 6v17M225 6v17M230 6v17"/>
+  <rect class="cable" x="214" y="22" width="2" height="100" style="fill:#C3D4F2;stroke:none"/>
+  <g class="lift">
+    <rect class="s" x="203" y="122" width="24" height="15" rx="3" fill="url(#gm)"/><circle class="s" cx="215" cy="129" r="4.5" fill="url(#gd)"/>
+    <path class="a" d="M215 137v9a7 7 0 1 1-7 7" style="stroke-width:3"/>
+    <path class="l" d="M215 152L172 190M215 152L258 190" style="stroke-width:1.8"/>
+    <rect class="s" x="170" y="190" width="90" height="30" rx="3" fill="url(#gm)"/>
+    <path class="d" d="M170 198h90M170 212h90"/>
+    <text class="tx" x="215" y="209" text-anchor="middle" style="fill:#0E1F4E;font-weight:700">12 t</text>
+  </g>
+</g>
+<!-- cota do vao -->
+<path class="d" d="M36 238v10M364 238v10M36 243h144M220 243h144"/><text class="tx" x="200" y="246" text-anchor="middle">vão</text>
+</svg>
+        </div>
+        <div class="body">
+          <h2>Ponte rolante, talha ou pórtico</h2>
+          <p class="lead">Elevação com cabo e tambor. A ferramenta classifica o mecanismo pela NBR 8400 e calcula o redutor a partir da carga.</p>
+          <div class="have"><b>Tenha à mão</b>
+            <ul><li>carga</li><li>velocidade de elevação</li><li>diâmetro do tambor e do cabo</li><li>classe de utilização</li></ul>
+          </div>
+          <div class="spacer"></div>
+          <a class="btn" href="/configurador?modo=elevacao">Dimensionar elevação</a>
+        </div>
+      </article>
+
+      <!-- GUINCHOS -->
+      <article class="tile">
+        <div class="art">
+          <svg viewBox="0 -8 400 258" style="--up:-34px;--sc:.52" role="img" aria-label="Desenho de um guincho com motor, redutor planetário, tambor, cabo, gancho e carga">
+<line class="d" x1="12" y1="232" x2="388" y2="232"/>
+<!-- estrutura -->
+<rect class="s" x="44" y="130" width="12" height="102" fill="url(#gh)"/><rect class="s" x="264" y="130" width="12" height="102" fill="url(#gh)"/>
+<path class="d" d="M56 132L264 230M264 132L56 230"/>
+<rect class="s" x="30" y="118" width="260" height="12" rx="2" fill="url(#gm)"/>
+<circle class="s" cx="42" cy="124" r="2.5" fill="url(#gd)"/><circle class="s" cx="278" cy="124" r="2.5" fill="url(#gd)"/>
+<!-- motor -->
+<rect class="s" x="32" y="66" width="56" height="40" rx="7" fill="url(#gm)"/>
+<path class="d" d="M42 70v32M48 70v32M54 70v32M60 70v32M66 70v32M72 70v32"/>
+<rect class="s" x="50" y="58" width="20" height="9" rx="2" fill="url(#gd)"/>
+<rect class="s" x="88" y="76" width="10" height="20" fill="url(#gd)"/>
+<!-- redutor planetario Bonfiglioli -->
+<rect class="s" x="98" y="58" width="8" height="56" rx="1" fill="url(#ga)"/>
+<rect class="s" x="106" y="62" width="46" height="48" rx="8" fill="url(#ga)"/>
+<path class="d" d="M118 62v48M140 62v48" style="stroke:rgba(70,40,0,.45)"/>
+<text class="tx" x="129" y="90" text-anchor="middle" style="fill:#4A2A00;font-weight:700;font-size:11px">300</text>
+<!-- tambor -->
+<rect class="s" x="152" y="46" width="8" height="76" rx="2" fill="url(#gm)"/><rect class="s" x="248" y="46" width="8" height="76" rx="2" fill="url(#gm)"/>
+<rect class="s" x="160" y="68" width="88" height="32" fill="url(#gd)"/>
+<rect class="s" x="163" y="56" width="82" height="12" fill="#6F8BC4"/><rect class="s" x="163" y="100" width="82" height="12" fill="#6F8BC4"/>
+<path class="wrap" d="M169 56v12M177 56v12M185 56v12M193 56v12M201 56v12M209 56v12M217 56v12M225 56v12M233 56v12M241 56v12M169 100v12M177 100v12M185 100v12M193 100v12M201 100v12M209 100v12M217 100v12M225 100v12M233 100v12M241 100v12"/>
+<line class="d" x1="152" y1="84" x2="290" y2="84" style="stroke-dasharray:6 4"/>
+<!-- mancal -->
+<rect class="s" x="256" y="72" width="30" height="24" rx="3" fill="url(#gm)"/><circle class="s" cx="271" cy="84" r="5" fill="url(#gd)"/>
+<!-- cabo, gancho e carga -->
+<rect class="cable" x="233" y="108" width="2" height="74" style="fill:#C3D4F2;stroke:none"/>
+<g class="lift">
+  <rect class="s" x="222" y="182" width="24" height="15" rx="3" fill="url(#gm)"/><circle class="s" cx="234" cy="189" r="4.5" fill="url(#gd)"/>
+  <path class="a" d="M234 197v8a6 6 0 1 1-6 6" style="stroke-width:3"/>
+  <rect class="s" x="196" y="206" width="76" height="24" rx="3" fill="url(#gm)"/><path class="d" d="M196 214h76"/>
+  <text class="tx" x="234" y="226" text-anchor="middle" style="fill:#0E1F4E;font-weight:700">3 t</text>
+</g>
+<!-- legenda -->
+<text class="tx" x="46" y="46" style="fill:#C3D4F2">motor</text><text class="tx" x="104" y="50" style="fill:var(--amber);font-weight:700">redutor</text><text class="tx" x="186" y="38" style="fill:#C3D4F2">tambor</text>
+</svg>
+        </div>
+        <div class="body">
+          <h2>Guincho, molinete ou carretel de barreiras</h2>
+          <p class="lead">Elétrico ou hidráulico. Mostra as camadas de cabo e entrega a folha de dados pronta para cotar, que você copia ou imprime em PDF.</p>
+          <div class="have"><b>Tenha à mão</b>
+            <ul><li>tração</li><li>tambor e cabo (ou amarra, ou barreira)</li><li>velocidade</li><li>elétrico ou hidráulico</li></ul>
+          </div>
+          <div class="spacer"></div>
+          <a class="btn" href="/configurador-guinchos">Dimensionar guincho</a>
+        </div>
+      </article>
+    </div>
+
+    <!-- USO GERAL -->
+    <article class="tile wide">
+      <div class="art light">
+        <img src="marcas/bonfiglioli-redutor-planetario.jpg" alt="Redutor planetário Bonfiglioli com motor elétrico acoplado">
+        <span class="tag" style="left:74%;top:14%">motor</span>
+        <span class="tag" style="left:28%;top:20%">redutor planetário</span>
+        <span class="tag" style="left:4%;top:80%">eixo de saída</span>
+      </div>
+      <div class="body">
+        <h2>Outras aplicações</h2>
+        <p class="lead">Transportadores, trituradores e qualquer máquina que precise de redutor. Você parte da potência do motor, da rotação de entrada e da redução que a máquina pede.</p>
+        <div class="have"><b>Tenha à mão</b>
+          <ul><li>potência do motor</li><li>rotação de entrada</li><li>redução ou rotação de saída</li></ul>
+        </div>
+        <div class="spacer"></div>
+        <a class="btn" href="/configurador">Dimensionar pela potência</a>
+      </div>
+    </article>
+
+    <div class="help">
+      <p>Os três seguem o catálogo da série 300 da Bonfiglioli e rodam no seu navegador, sem cadastro. O resultado é uma pré-seleção: o tamanho definitivo é confirmado pela engenharia Bonfiglioli.
+        <small>Sua máquina não se encaixa em nenhum? Conte o caso para o Carlos.</small></p>
+      <a class="wa" href="https://wa.me/5547999640526?text=Ol%C3%A1%2C%20usei%20os%20configuradores%20no%20site%20e%20gostaria%20de%20falar%20sobre%20uma%20aplica%C3%A7%C3%A3o." target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .6l-.4.6c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.4.1.6-.1l.8-1c.2-.2.4-.2.6-.1l1.9.9c.3.1.5.2.5.4.1.1.1.6-.1 1z"/></svg>
+        Falar com o Carlos no WhatsApp</a>
+    </div>
+  </div>
+</main>
+
+<footer>Daxton · Representante Bonfiglioli · Santa Catarina e Região Metropolitana de Curitiba</footer>
+</body>
+</html>

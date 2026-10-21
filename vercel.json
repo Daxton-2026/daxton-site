@@ -4,6 +4,8 @@
     { "source": "/real-escadas", "destination": "/real-escadas.html" },
     { "source": "/csm", "destination": "/csm.html" },
     { "source": "/bonfiglioli", "destination": "/bonfiglioli.html" },
-    { "source": "/configurador", "destination": "/configurador-300m.html" }
+    { "source": "/configurador", "destination": "/configurador-300m.html" },
+    { "source": "/configuradores", "destination": "/configuradores.html" },
+    { "source": "/configurador-guinchos", "destination": "/configurador-guinchos.html" }
   ]
 }
