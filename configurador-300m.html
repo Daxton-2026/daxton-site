@@ -40,10 +40,14 @@ img{max-width:100%}
 
 /* ---------- voltar para a pagina de configuradores ---------- */
 .backbar{background:var(--surface2);border-bottom:1px solid var(--line)}
-.backbar a{display:inline-flex;align-items:center;gap:8px;margin:9px 0;padding:6px 14px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);
-  font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);text-decoration:none}
-.backbar a:hover{border-color:var(--accent);background:var(--accent-soft)}
-.backbar a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.backbar a{display:inline-flex;align-items:center;gap:10px;margin:10px 0;padding:9px 18px 9px 14px;border-radius:var(--radius);background:#F5A623;color:#081A45;
+  font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;text-decoration:none;
+  box-shadow:0 2px 6px rgba(8,26,69,.22);transition:background .2s ease,transform .1s ease}
+.backbar a svg{display:block;transition:transform .2s ease}
+.backbar a:hover{background:#D4891A}
+.backbar a:hover svg{transform:translateX(-4px)}
+.backbar a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.backbar a,.backbar a svg{transition:none}}
 @media print{.backbar{display:none!important}}
 </style>
 <style>
@@ -368,7 +372,7 @@ footer b{color:var(--ink2);font-weight:600}
 </div>
 
 
-<div class="backbar noprint"><div class="wrap"><a href="/configuradores">&larr; Todos os configuradores</a></div></div>
+<div class="backbar noprint"><div class="wrap"><a href="/configuradores"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M20 12H5M11 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Todos os configuradores</a></div></div>
 
 <header class="top">
   <div class="wrap">
