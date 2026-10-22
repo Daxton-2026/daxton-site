@@ -1,8 +1,7 @@
 {
-  "redirects": [
-    { "source": "/app", "destination": "/app/", "permanent": false }
-  ],
   "rewrites": [
+    { "source": "/app", "destination": "/app/index.html" },
+    { "source": "/app/", "destination": "/app/index.html" },
     { "source": "/links", "destination": "/links.html" },
     { "source": "/real-escadas", "destination": "/real-escadas.html" },
     { "source": "/csm", "destination": "/csm.html" },
