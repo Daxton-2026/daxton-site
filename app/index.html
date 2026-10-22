@@ -511,8 +511,9 @@ body.app #appwiz{max-width:1080px}
 .zapbtn{display:block;text-align:center;background:#25D366;color:#073B1A;font:700 16px Inter,sans-serif;border-radius:12px;padding:15px;margin:0 0 10px;text-decoration:none}
 .oth{font:700 20px "Barlow Condensed",Inter,sans-serif;text-transform:uppercase;margin:18px 0 8px;color:var(--ink)}
 @media (min-width:760px){.rhero{grid-template-columns:1.2fr 1fr;align-items:center}}
+.pcard{background:#fff;border:1px solid var(--line);border-radius:12px;margin:0 0 12px;overflow:hidden}.pcard img{display:block;width:100%;height:150px;object-fit:contain}
 .dgc{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:6px 6px 4px;margin:0 0 12px}
-.dgc small{display:block;text-align:center;color:var(--muted);font-size:11px;margin:2px 0 2px}
+.dgc small{display:block;text-align:center;color:var(--muted);font-size:11px;margin:2px 0 2px}details.adv .dgc{border:0;margin:0}
 .dg{width:100%;height:auto;display:block}
 .dg .part{fill:var(--surface2);stroke:var(--ink2);stroke-width:1.4}
 .dg .cab{fill:#c9d1dd;stroke:var(--ink2);stroke-width:.8}
@@ -2948,7 +2949,9 @@ function renderDados(i){
     [].forEach.call(sg.querySelectorAll('button'),function(b){ b.addEventListener('click',function(){ drv=b.dataset.d; $('m-'+drv).click(); render(); }); });
     W.appendChild(sg);
   }
-  var dgm=diagramFor(p.keys); if(dgm){ var dd=document.createElement('div'); dd.innerHTML=dgm; W.appendChild(dd.firstChild); }
+  var slug={G:'guincho',M:'molinete',C:'carretel'}[fam], dgm=diagramFor(p.keys);
+  var ph=document.createElement('div'); ph.innerHTML='<div class="pcard"><img src="/app/fotos/'+slug+'.jpg" alt="'+esc(NAMES[fam])+'" onerror="this.onerror=null;this.src=\'/marcas/bonfiglioli-redutor-planetario.jpg\'"></div>'; W.appendChild(ph.firstChild);
+  if(dgm){ var dt=document.createElement('details'); dt.className='adv'; dt.innerHTML='<summary>Ver onde medir</summary>'+dgm; W.appendChild(dt); }
   p.keys.forEach(function(k){ W.appendChild(field(k,gEl(k))); });
   if(i===0){ var idEl=gEl('ident'); if(idEl) W.appendChild(field('ident',idEl)); }
   W.addEventListener('focusin',function(e){ var id=e.target.id||'', k=id.indexOf('w_x_0_')===0?id.slice(6):''; [].forEach.call(W.querySelectorAll('.dim'),function(g){ g.classList.toggle('hl',g.getAttribute('data-k')===k); }); });
