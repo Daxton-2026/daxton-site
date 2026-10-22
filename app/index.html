@@ -511,6 +511,21 @@ body.app #appwiz{max-width:1080px}
 .zapbtn{display:block;text-align:center;background:#25D366;color:#073B1A;font:700 16px Inter,sans-serif;border-radius:12px;padding:15px;margin:0 0 10px;text-decoration:none}
 .oth{font:700 20px "Barlow Condensed",Inter,sans-serif;text-transform:uppercase;margin:18px 0 8px;color:var(--ink)}
 @media (min-width:760px){.rhero{grid-template-columns:1.2fr 1fr;align-items:center}}
+.dgc{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:6px 6px 4px;margin:0 0 12px}
+.dgc small{display:block;text-align:center;color:var(--muted);font-size:11px;margin:2px 0 2px}
+.dg{width:100%;height:auto;display:block}
+.dg .part{fill:var(--surface2);stroke:var(--ink2);stroke-width:1.4}
+.dg .cab{fill:#c9d1dd;stroke:var(--ink2);stroke-width:.8}
+.dg .cb{fill:none;stroke:var(--ink2);stroke-width:2}
+.dg .lk{fill:none;stroke:var(--ink2);stroke-width:2.4}.dg .lk2{fill:none;stroke:var(--ink2);stroke-width:2.4;transform:rotate(90deg);transform-box:fill-box;transform-origin:center}
+.dg .ar{fill:none;stroke:var(--muted);stroke-width:1.4}
+.dg .bt{fill:var(--ink2);font:600 10px Inter,sans-serif}
+.dg .ex{stroke:#b7c0cd;stroke-width:.8;stroke-dasharray:3 2;fill:none}
+.dg .dim{stroke:#7d8aa3;fill:none;stroke-width:1.2;cursor:pointer}
+.dg .dim text{stroke:none;fill:var(--ink2);font:500 11px Inter,sans-serif}
+.dg .dim.hl{stroke:#F5A623;stroke-width:2.4}
+.dg .dim.hl text{fill:#B86E00;font-weight:700}
+.dg .dim.hl text{paint-order:stroke;stroke:var(--surface);stroke-width:3px}
 @media print{#appbar,#appnav,#appwiz{display:none!important}body.app.print-ficha main>#ficha{display:block!important}body.app{padding-bottom:0}}
 </style>
 </head>
@@ -2805,6 +2820,68 @@ function zapText(){
   if(tr){ var c=tr.children; t+='. Redutor sugerido: '+c[0].textContent+', i = '+c[1].textContent+', fS '+c[7].textContent; }
   return t+'. Quero uma cotação.';
 }
+/* ---- desenhos com cotas ---- */
+function dimV(k,x,y1,y2,lab,lx,ly,anchor,ext){ return '<g class="dim" data-k="'+k+'">'+(ext||'')+'<path d="M'+x+' '+y1+'V'+y2+'M'+(x-6)+' '+y1+'H'+(x+6)+'M'+(x-6)+' '+y2+'H'+(x+6)+'"/><text x="'+lx+'" y="'+ly+'" text-anchor="'+(anchor||'start')+'">'+lab+'</text></g>'; }
+function dimH(k,y,x1,x2,lab,ly,ext){ return '<g class="dim" data-k="'+k+'">'+(ext||'')+'<path d="M'+x1+' '+y+'H'+x2+'M'+x1+' '+(y-6)+'V'+(y+6)+'M'+x2+' '+(y-6)+'V'+(y+6)+'"/><text x="'+((x1+x2)/2)+'" y="'+ly+'" text-anchor="middle">'+lab+'</text></g>'; }
+function lbl(k,x,y,t,anchor,path){ return '<g class="dim" data-k="'+k+'">'+(path?'<path d="'+path+'"/>':'')+'<text x="'+x+'" y="'+y+'" text-anchor="'+(anchor||'start')+'">'+t+'</text></g>'; }
+function box(x,y,w,h,t){ return '<rect class="part" x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="6"/><text class="bt" x="'+(x+w/2)+'" y="'+(y+h/2+4)+'" text-anchor="middle">'+t+'</text>'; }
+function arrow(x1,x2,y){ return '<path class="ar" d="M'+x1+' '+y+'H'+x2+'M'+(x2-5)+' '+(y-4)+'L'+x2+' '+y+'L'+(x2-5)+' '+(y+4)+'"/>'; }
+function svgWrap(inner,label){ return '<div class="dgc"><svg class="dg" viewBox="0 0 340 160" role="img" aria-label="'+label+'">'+inner+'</svg><small>Toque num campo para ver a medida no desenho</small></div>'; }
+function drumSvg(isReel){
+  var cab=''; for(var i=0;i<12;i++){ cab+='<circle class="cab" cx="'+(108+12*i)+'" cy="44.5" r="5.5"/><circle class="cab" cx="'+(108+12*i)+'" cy="103.5" r="5.5"/>'; }
+  var x='<rect class="part" x="88" y="20" width="10" height="108" rx="2"/><rect class="part" x="250" y="20" width="10" height="108" rx="2"/><rect class="part" x="98" y="50" width="152" height="48"/>'+cab;
+  x+=dimV('Dfl',70,20,128,'Ø flange',64,78,'end','<path class="ex" d="M70 20H88M70 128H88"/>');
+  x+=dimV('Dn',285,50,98,'Ø núcleo',292,78,'start','<path class="ex" d="M260 50H285M260 98H285"/>');
+  x+=lbl('dc',124,12,isReel?'Espessura da barreira':'Ø do cabo','start','M120 38V14');
+  if(isReel) x+=dimH('voltas',143,98,250,'Voltas por camada',156,'<path class="ex" d="M98 128V143M250 128V143"/>');
+  else x+=dimH('Lt',143,98,250,'Comprimento útil',156,'<path class="ex" d="M98 128V143M250 128V143"/>');
+  return svgWrap(x,isReel?'Carretel com cotas':'Tambor com cotas');
+}
+function tackleSvg(){
+  var x='<rect class="part" x="70" y="6" width="150" height="9"/>'+
+   '<path class="cb" d="M138 15V96M138 96A12 12 0 0 0 162 96M162 96L186 34M186 34A14 14 0 0 1 214 34M214 34L240 70"/>'+
+   '<circle class="part" cx="200" cy="34" r="14"/><circle class="part" cx="150" cy="96" r="12"/>'+
+   '<path class="cb" d="M150 108V122"/><rect class="part" x="130" y="122" width="40" height="24" rx="3"/><text class="bt" x="150" y="138" text-anchor="middle">carga</text>'+
+   '<rect class="part" x="230" y="70" width="64" height="44" rx="4"/><text class="bt" x="262" y="96" text-anchor="middle">tambor</text>';
+  x+=lbl('F',8,138,'Carga içada','start','M78 134H128');
+  x+=lbl('nm',8,66,'Cabos no moitão','start','M8 70H136');
+  x+=lbl('nr',232,36,'Roldanas','start','M214 32L228 33');
+  x+=lbl('nt',262,132,'Cabos saindo do tambor','middle','M262 114V120');
+  return svgWrap(x,'Sistema de moitão com cotas');
+}
+function chainSvg(hyd){
+  var x;
+  if(!hyd){
+    x=box(8,56,70,44,'Motor')+arrow(80,94,78)+box(96,56,70,44,'Redução ext.')+arrow(168,182,78)+box(184,56,70,44,'Bonfiglioli')+arrow(256,270,78)+box(272,56,60,44,'Tambor');
+    x+=lbl('na',8,30,'× quantidade de acionamentos','start','M8 38H254M8 38V46M254 38V46');
+    x+=lbl('nmot',8,116,'Rotação do motor','start','')+lbl('Pcv',8,132,'Potência instalada','start','')+lbl('iext',96,148,'Redução externa','start','');
+    x+=lbl('v',332,116,'Velocidade','end','')+lbl('F',332,132,'Tração','end','');
+  } else {
+    x=box(10,56,92,44,'Motor hidr.')+arrow(104,128,78)+box(130,56,92,44,'Bonfiglioli')+arrow(224,248,78)+box(250,56,80,44,'Tambor');
+    x+=lbl('p',10,116,'Pressão de trabalho','start','')+lbl('n1',10,132,'Rotação do motor','start','');
+    x+=lbl('vc',330,116,'Velocidade do cabo','end','')+lbl('F',330,132,'Tração','end','');
+  }
+  return svgWrap(x,'Cadeia de acionamento');
+}
+function barbSvg(){
+  var t=''; for(var i=0;i<12;i++){ var a=i*Math.PI/6; t+='<circle class="cab" cx="'+(110+50*Math.cos(a)).toFixed(1)+'" cy="'+(86+50*Math.sin(a)).toFixed(1)+'" r="6"/>'; }
+  var x='<circle class="part" cx="110" cy="86" r="50"/>'+t+'<circle class="part" cx="110" cy="86" r="14"/>';
+  for(var j=0;j<5;j++) x+='<ellipse class="'+(j%2?'lk2':'lk')+'" cx="'+(80+j*18)+'" cy="22" rx="12" ry="6"/>';
+  x+=lbl('Dpm',172,90,'Ø primitivo','start','M60 86H160M60 80V92M160 80V92');
+  x+=lbl('F',200,32,'Tração na amarra','start','M176 22H196');
+  x+=lbl('v',200,126,'Velocidade da amarra','start','M166 126H196');
+  return svgWrap(x,'Barbotin com cotas');
+}
+function diagramFor(keys){
+  var has=function(k){return keys.indexOf(k)>=0};
+  if(has('Dn')) return drumSvg(fam==='C');
+  if(has('nm')) return tackleSvg();
+  if(fam==='M'&&has('Dpm')) return barbSvg();
+  if(has('nmot')||(has('F')&&has('v'))) return chainSvg(false);
+  if(has('n1')||has('p')) return chainSvg(true);
+  return '';
+}
+
 function esc(t){return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')}
 function gEl(k){return $('x_0_'+k)}
 function editable(el){return el&&(el.tagName==='INPUT'||el.tagName==='SELECT')}
@@ -2871,8 +2948,11 @@ function renderDados(i){
     [].forEach.call(sg.querySelectorAll('button'),function(b){ b.addEventListener('click',function(){ drv=b.dataset.d; $('m-'+drv).click(); render(); }); });
     W.appendChild(sg);
   }
+  var dgm=diagramFor(p.keys); if(dgm){ var dd=document.createElement('div'); dd.innerHTML=dgm; W.appendChild(dd.firstChild); }
   p.keys.forEach(function(k){ W.appendChild(field(k,gEl(k))); });
   if(i===0){ var idEl=gEl('ident'); if(idEl) W.appendChild(field('ident',idEl)); }
+  W.addEventListener('focusin',function(e){ var id=e.target.id||'', k=id.indexOf('w_x_0_')===0?id.slice(6):''; [].forEach.call(W.querySelectorAll('.dim'),function(g){ g.classList.toggle('hl',g.getAttribute('data-k')===k); }); });
+  [].forEach.call(W.querySelectorAll('.dim'),function(g){ g.addEventListener('click',function(){ var f=$('w_x_0_'+g.getAttribute('data-k')); if(f) f.focus(); }); });
   if(p.adv&&p.adv.length){
     var d=document.createElement('details'); d.className='adv'; d.innerHTML='<summary>Opções avançadas</summary>';
     p.adv.forEach(function(k){ var e=gEl(k); if(e&&k!=='ident') d.appendChild(field(k,e)); }); W.appendChild(d);
