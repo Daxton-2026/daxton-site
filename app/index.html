@@ -475,6 +475,42 @@ details.adv summary{padding:14px 0;font-weight:600;font-size:14px;color:var(--in
 #appnav .nx{flex:1;background:#F5A623;color:#081A45}
 #appnav[hidden]{display:none}
 .lnk{display:block;width:100%;margin:0 0 12px;min-height:46px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;font:600 14px Inter,system-ui,sans-serif}
+
+body.app #appwiz{max-width:1080px}
+.hero h2{font-size:34px!important;line-height:1.05}
+.hero .sub{font-size:15px;max-width:560px}
+.tipos{display:grid;grid-template-columns:1fr;gap:12px;margin:0 0 14px}
+.tipo2{position:relative;display:block;width:100%;text-align:left;border:0;border-radius:16px;min-height:150px;padding:0;overflow:hidden;cursor:pointer;color:#fff;
+  background:#0B1F52 var(--foto) center/cover no-repeat;font:inherit}
+.tipo2 .ov{position:absolute;inset:0;background:rgba(8,26,69,.62);transition:background .2s}
+.tipo2 svg{position:absolute;right:14px;top:12px;width:92px;height:92px;stroke:#F5A623;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;opacity:.55}
+.tipo2 .tx{position:relative;display:block;padding:92px 18px 16px}
+.tipo2 b{display:block;font:700 26px "Barlow Condensed",Inter,sans-serif;text-transform:uppercase;letter-spacing:.01em}
+.tipo2 em{display:block;font-style:normal;font-size:13px;opacity:.85;margin-top:2px}
+.tipo2 u{display:inline-block;margin-top:10px;text-decoration:none;color:#F5A623;font-weight:700;font-size:14px}
+@media (hover:hover){.tipo2:hover .ov{background:rgba(8,26,69,.42)}}
+.tipo2:active .ov{background:rgba(8,26,69,.42)}
+.zap{display:block;text-align:center;color:var(--ink2);font-size:14px;padding:12px;text-decoration:underline}
+@media (min-width:760px){.tipos{grid-template-columns:repeat(3,1fr)}.tipo2{min-height:260px}.tipo2 .tx{padding-top:170px}.tipo2 svg{width:120px;height:120px}}
+.cols{display:flex;flex-direction:column;gap:12px}
+.lv{background:#081A45;color:#fff;border-radius:14px;padding:12px 14px;order:-1;position:sticky;top:calc(var(--abh,70px) + 8px);z-index:20}
+.lv-h{font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.7}
+.lv-n{font:700 30px "Barlow Condensed",Inter,sans-serif;color:#F5A623;line-height:1.1;margin:2px 0}
+.lv-n.big{font-size:40px}
+.lv-s{font-size:12px;opacity:.85}
+.lv-b{height:8px;border-radius:4px;background:rgba(255,255,255,.2);margin:8px 0;overflow:hidden}
+.lv-b i{display:block;height:100%;border-radius:4px;transition:width .3s}
+.lv-b i.ok{background:#5DCAA5}.lv-b i.w{background:#EF9F27}.lv-b i.n{background:#E24B4A}
+.lv-img{display:none;width:100%;border-radius:10px;margin-top:10px;background:#fff}
+@media (min-width:900px){.cols{display:grid;grid-template-columns:1fr 360px;gap:28px;align-items:start}.lv{order:2;top:calc(var(--abh,70px) + 20px);padding:18px}.lv-img{display:block}.lv-n{font-size:40px}}
+.bd{font-size:12px;font-weight:700;border-radius:6px;padding:2px 8px}.rhero .bd.ok{background:#E1F5EE;color:#085041}.rhero .bd.w{background:#FAEEDA;color:#633806}.rhero .bd.n{background:#FCEBEB;color:#791F1F}
+.rhero{display:grid;grid-template-columns:1fr;gap:10px;background:#081A45;color:#fff;border-radius:16px;padding:16px;margin:0 0 12px}
+.rimg{width:100%;max-height:200px;object-fit:contain;background:#fff;border-radius:12px}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.14);font-size:14px}
+.kv span{opacity:.75}
+.zapbtn{display:block;text-align:center;background:#25D366;color:#073B1A;font:700 16px Inter,sans-serif;border-radius:12px;padding:15px;margin:0 0 10px;text-decoration:none}
+.oth{font:700 20px "Barlow Condensed",Inter,sans-serif;text-transform:uppercase;margin:18px 0 8px;color:var(--ink)}
+@media (min-width:760px){.rhero{grid-template-columns:1.2fr 1fr;align-items:center}}
 @media print{#appbar,#appnav,#appwiz{display:none!important}body.app.print-ficha main>#ficha{display:block!important}body.app{padding-bottom:0}}
 </style>
 </head>
@@ -2739,10 +2775,36 @@ var PG={
 };
 var PREM=['g_carga','g_zb','g_hv','g_tol'];
 var TIPOS=[
- ['G','Guincho','Elevação com cabo e tambor','<rect x="6" y="14" width="26" height="14" rx="2"/><path d="M12 14v14M18 14v14M24 14v14M32 21h6v12"/><circle cx="38" cy="37" r="3"/>'],
- ['M','Molinete','Amarra e barbotin','<circle cx="22" cy="22" r="11"/><circle cx="22" cy="22" r="4"/><path d="M22 6v5M22 33v5M6 22h5M33 22h5M10.5 10.5l3.5 3.5M30 30l3.5 3.5M33.5 10.5L30 14M14 30l-3.5 3.5"/>'],
- ['C','Carretel de barreiras','Recolhimento de barreira','<circle cx="22" cy="22" r="14"/><circle cx="22" cy="22" r="5"/><path d="M36 22h6M4 40h36"/>']
+ ['G','Guincho','Içamento com cabo e tambor','<rect x="6" y="14" width="26" height="14" rx="2"/><path d="M12 14v14M18 14v14M24 14v14M32 21h6v12"/><circle cx="38" cy="37" r="3"/>','guincho'],
+ ['M','Molinete','Amarra e barbotin','<circle cx="22" cy="22" r="11"/><circle cx="22" cy="22" r="4"/><path d="M22 6v5M22 33v5M6 22h5M33 22h5M10.5 10.5l3.5 3.5M30 30l3.5 3.5M33.5 10.5L30 14M14 30l-3.5 3.5"/>','molinete'],
+ ['C','Carretel de barreiras','Recolhimento de barreira','<circle cx="22" cy="22" r="14"/><circle cx="22" cy="22" r="5"/><path d="M36 22h6M4 40h36"/>','carretel']
 ];
+
+var NAMES={G:'Guincho',M:'Molinete',C:'Carretel de barreiras'};
+function num(v){ var n=parseFloat(String(v).replace(/\./g,'').replace(',','.')); return isFinite(n)?n:NaN; }
+function bestRow(){
+  var rows=[].slice.call(document.querySelectorAll('#tb tr[data-k]')); if(!rows.length) return null;
+  var sel=rows.filter(function(r){return r.classList.contains('sel')})[0];
+  var ok=rows.filter(function(r){return !r.classList.contains('failrow')})[0];
+  return sel||ok||rows[0];
+}
+function stOf(tr){ return tr.classList.contains('failrow')?'n':(tr.classList.contains('warnrow')?'w':'ok'); }
+function liveHTML(big){
+  var tr=bestRow();
+  if(!tr) return '<div class="lv-h">Resultado ao vivo</div><div class="lv-n">—</div><div class="lv-s">Preencha os dados para ver o redutor sugerido.</div>';
+  var c=tr.children, st=stOf(tr), fs=num(c[7].textContent), pct=isFinite(fs)?Math.max(8,Math.min(100,(fs-0.8)/1.4*100)):10;
+  return '<div class="lv-h">Sugestão agora</div><div class="lv-n">'+c[0].textContent+'</div><div class="lv-s">i = '+c[1].textContent+' · n₂ = '+c[2].textContent+' rpm</div>'+
+    '<div class="lv-b"><i class="'+st+'" style="width:'+pct+'%"></i></div><div class="lv-s">Fator de segurança '+c[7].textContent+' · '+(st==='ok'?'atende':st==='w'?'atende com ressalva':'não atende')+'</div>'+
+    (big?'<img class="lv-img" src="/marcas/bonfiglioli-redutor-planetario.jpg" alt="Redutor planetário Bonfiglioli">':'');
+}
+function paintLive(){ var a=document.querySelector('.lv'); if(a) a.innerHTML=liveHTML(true); }
+function zapText(){
+  var tr=bestRow(), v=gEl('v')||gEl('vc'), f=gEl('F');
+  var t='Olá! Dimensionei no configurador da Daxton: '+NAMES[fam]+' '+(drv==='E'?'elétrico':'hidráulico')+
+    (f&&f.value?', tração '+f.value+' kgf':'')+(v&&v.value?', velocidade '+v.value+(drv==='E'?' m/min':' m/min'):'');
+  if(tr){ var c=tr.children; t+='. Redutor sugerido: '+c[0].textContent+', i = '+c[1].textContent+', fS '+c[7].textContent; }
+  return t+'. Quero uma cotação.';
+}
 function esc(t){return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')}
 function gEl(k){return $('x_0_'+k)}
 function editable(el){return el&&(el.tagName==='INPUT'||el.tagName==='SELECT')}
@@ -2791,51 +2853,61 @@ function render(){
 }
 function setNav(show,nx,bk){ nav.hidden=!show; $('appnx').textContent=nx||'Continuar'; $('appbk').textContent=bk||'Voltar'; }
 function renderTipo(){
-  $('apptitle').textContent='Dimensionar redutor'; $('appsub').textContent='Redutor planetário Bonfiglioli · série 300';
-  wiz.innerHTML='<h2>O que você vai acionar?</h2><p class="sub">Toque para começar. Você pode trocar o acionamento na próxima tela.</p>'+
-    TIPOS.map(function(t){return '<button type="button" class="tipo" data-f="'+t[0]+'"><svg viewBox="0 0 44 44" aria-hidden="true">'+t[3]+'</svg><div><b>'+t[1]+'</b><span>'+t[2]+'</span></div></button>'}).join('');
+  $('apptitle').textContent='Dimensionar redutor'; $('appsub').textContent='Bonfiglioli série 300 · por Daxton';
+  wiz.innerHTML='<div class="hero"><h2>Qual é a sua máquina?</h2><p class="sub">Responda em 2 minutos e veja o redutor planetário indicado, com folha de dados pronta para cotação.</p></div><div class="tipos">'+
+    TIPOS.map(function(t){return '<button type="button" class="tipo2" data-f="'+t[0]+'" style="--foto:url(/app/fotos/'+t[4]+'.jpg)"><svg viewBox="0 0 44 44" aria-hidden="true">'+t[3]+'</svg><span class="ov"></span><span class="tx"><b>'+t[1]+'</b><em>'+t[2]+'</em><u>Começar →</u></span></button>'}).join('')+'</div>'+
+    '<a class="zap" href="https://wa.me/5547999640526?text='+encodeURIComponent('Olá! Quero ajuda para dimensionar um redutor.')+'" target="_blank" rel="noopener">Prefere conversar? Fale com a Daxton no WhatsApp</a>';
   setNav(false);
-  [].forEach.call(wiz.querySelectorAll('.tipo'),function(b){ b.addEventListener('click',function(){
+  [].forEach.call(wiz.querySelectorAll('.tipo2'),function(b){ b.addEventListener('click',function(){
     fam=b.dataset.f; $('f-'+fam).click(); drv=(fam==='C')?'H':'E'; if(fam!=='C'){ $('m-E').click(); } step=1; render(); }); });
 }
 function renderDados(i){
   var p=pages[i], names={G:'Guincho',M:'Molinete',C:'Carretel'};
   $('apptitle').textContent=names[fam]; $('appsub').textContent=p.t+' · etapa '+(step+1)+' de '+total();
-  wiz.innerHTML='<h2>'+esc(p.t)+'</h2>';
+  wiz.innerHTML='<div class="cols"><aside class="lv"></aside><div class="frm" id="frm"><h2>'+esc(p.t)+'</h2></div></div>'; var W=$('frm');
   if(i===0){
     var sg=document.createElement('div'); sg.className='seg';
     sg.innerHTML='<button type="button" data-d="E" aria-pressed="'+(drv==='E')+'">Elétrico</button><button type="button" data-d="H" aria-pressed="'+(drv==='H')+'">Hidráulico</button>';
     [].forEach.call(sg.querySelectorAll('button'),function(b){ b.addEventListener('click',function(){ drv=b.dataset.d; $('m-'+drv).click(); render(); }); });
-    wiz.appendChild(sg);
+    W.appendChild(sg);
   }
-  p.keys.forEach(function(k){ wiz.appendChild(field(k,gEl(k))); });
-  if(i===0){ var idEl=gEl('ident'); if(idEl) wiz.appendChild(field('ident',idEl)); }
+  p.keys.forEach(function(k){ W.appendChild(field(k,gEl(k))); });
+  if(i===0){ var idEl=gEl('ident'); if(idEl) W.appendChild(field('ident',idEl)); }
   if(p.adv&&p.adv.length){
     var d=document.createElement('details'); d.className='adv'; d.innerHTML='<summary>Opções avançadas</summary>';
-    p.adv.forEach(function(k){ var e=gEl(k); if(e&&k!=='ident') d.appendChild(field(k,e)); }); wiz.appendChild(d);
+    p.adv.forEach(function(k){ var e=gEl(k); if(e&&k!=='ident') d.appendChild(field(k,e)); }); W.appendChild(d);
   }
   if(p.prem){
     var d2=document.createElement('details'); d2.className='adv'; d2.innerHTML='<summary>Premissas de cálculo</summary>';
-    PREM.forEach(function(id){ var e=$(id); if(e) d2.appendChild(field(id,e)); }); wiz.appendChild(d2);
+    PREM.forEach(function(id){ var e=$(id); if(e) d2.appendChild(field(id,e)); }); W.appendChild(d2);
   }
-  setNav(true,(i===pages.length-1)?'Ver redutores':'Continuar','Voltar');
+  paintLive(); setNav(true,(i===pages.length-1)?'Ver redutores':'Continuar','Voltar');
 }
 function cell(id){ var e=$(id); return e?e.textContent.trim():''; }
 function renderRes(){
-  $('apptitle').textContent='Resultado'; $('appsub').textContent='Toque no redutor para escolher · etapa '+(step+1)+' de '+total();
-  var h='<h2>Redutores que atendem</h2>';
-  var bx=[['T','Torque requerido','N·m'],['Preq','Potência requerida','CV'],['ireq','Redução requerida','']].filter(function(b){ return cell('x_0_'+b[0])&&cell('x_0_'+b[0])!=='—'; });
-  if(bx.length) h+='<div class="sumbox">'+bx.map(function(b){return '<div><small>'+b[1]+'</small><b>'+esc(cell('x_0_'+b[0]))+'</b> <small style="display:inline">'+b[2]+'</small></div>'}).join('')+'</div>';
-  var rows=[].slice.call(document.querySelectorAll('#tb tr[data-k]'));
-  if(!rows.length){ var m=document.querySelector('#tb td'); h+='<div class="msg">'+(m?m.innerHTML:'Sem candidatos. Revise os dados.')+'</div>'; }
-  rows.slice(0,8).forEach(function(tr,idx){
-    var c=tr.children, st=tr.classList.contains('failrow')?'n':(tr.classList.contains('warnrow')?'w':'ok');
-    h+='<div class="cand '+(tr.classList.contains('sel')?'sel ':'')+(st==='n'?'fail':'')+'" data-i="'+idx+'" role="button" tabindex="0"><div class="t"><span>'+c[0].textContent+'</span><span class="bd '+st+'">'+(st==='ok'?'atende':st==='w'?'atende com ressalva':'não atende')+'</span></div><div class="d">i = '+c[1].textContent+' · n₂ = '+c[2].textContent+' rpm · desvio '+c[3].textContent+' · fS '+c[7].textContent+'</div></div>';
-  });
-  var cnt=$('cnt'); if(cnt&&rows.length) h+='<p class="sub" style="margin-top:8px">'+cnt.innerHTML+'</p>';
-  if(fam!=='M') h+='<button type="button" class="lnk" id="vcab">Ver camadas do cabo</button>';
+  $('apptitle').textContent='Resultado'; $('appsub').textContent='Toque em outro redutor para trocar · etapa '+(step+1)+' de '+total();
+  var tr=bestRow(), rows=[].slice.call(document.querySelectorAll('#tb tr[data-k]')), h='';
+  if(!tr){ var m=document.querySelector('#tb td'); h='<h2>Sem candidatos</h2><div class="msg">'+(m?m.innerHTML:'Revise os dados.')+'</div>'; }
+  else {
+    var c=tr.children, st=stOf(tr);
+    h+='<div class="rhero"><div class="rl"><div class="lv-h">Seu redutor</div><div class="lv-n big">'+c[0].textContent+'</div><div class="lv-s">'+NAMES[fam]+' · '+(drv==='E'?'acionamento elétrico':'acionamento hidráulico')+'</div>'+
+      '<div class="kv"><span>Redução</span><b>'+c[1].textContent+' : 1</b></div><div class="kv"><span>Rotação de saída</span><b>'+c[2].textContent+' rpm</b></div><div class="kv"><span>Fator de segurança</span><b>'+c[7].textContent+'</b></div>'+
+      (cell('x_0_T')&&cell('x_0_T')!=='—'?'<div class="kv"><span>Torque requerido</span><b>'+cell('x_0_T')+' N·m</b></div>':'')+
+      '<span class="bd '+st+'" style="display:inline-block;margin-top:8px">'+(st==='ok'?'atende':st==='w'?'atende com ressalva':'não atende')+'</span></div>'+
+      '<img class="rimg" src="/marcas/bonfiglioli-redutor-planetario.jpg" alt="Redutor planetário Bonfiglioli"></div>'+
+      '<a class="zapbtn" id="zap" target="_blank" rel="noopener" href="https://wa.me/5547999640526?text='+encodeURIComponent(zapText())+'">Pedir cotação no WhatsApp</a>'+
+      '<button type="button" class="lnk" id="pdfb">Baixar folha em PDF</button>';
+    h+='<h3 class="oth">Outras opções</h3>';
+    rows.slice(0,8).forEach(function(r,idx){
+      var cc=r.children, s2=stOf(r);
+      h+='<div class="cand '+(r===tr?'sel ':'')+(s2==='n'?'fail':'')+'" data-i="'+idx+'" role="button" tabindex="0"><div class="t"><span>'+cc[0].textContent+'</span><span class="bd '+s2+'">'+(s2==='ok'?'atende':s2==='w'?'com ressalva':'não atende')+'</span></div><div class="d">i = '+cc[1].textContent+' · n₂ = '+cc[2].textContent+' rpm · fS '+cc[7].textContent+'</div></div>';
+    });
+    var cnt=$('cnt'); if(cnt) h+='<p class="sub" style="margin-top:8px">'+cnt.innerHTML+'</p>';
+    if(fam!=='M') h+='<button type="button" class="lnk" id="vcab">Ver camadas do cabo</button>';
+  }
   wiz.innerHTML=h; showSec('');
-  [].forEach.call(wiz.querySelectorAll('.cand'),function(c){ c.addEventListener('click',function(){ rows[+c.dataset.i].click(); }); });
+  [].forEach.call(wiz.querySelectorAll('.cand'),function(cd){ cd.addEventListener('click',function(){ rows[+cd.dataset.i].click(); }); });
+  var pb=$('pdfb'); if(pb) pb.addEventListener('click',function(){ $('pp').click(); });
   var v=$('vcab'); if(v) v.addEventListener('click',function(){ var on=B.classList.toggle('show-cabo'); v.textContent=on?'Ocultar camadas do cabo':'Ver camadas do cabo'; if(on) $('cabo').scrollIntoView({behavior:'smooth'}); });
   setNav(true,'Folha de dados','Voltar');
 }
@@ -2845,9 +2917,10 @@ function renderFicha(){
 }
 $('appnx').addEventListener('click',function(){ if(step===total()-1){ step=0; render(); } else { step++; render(); } });
 $('appbk').addEventListener('click',function(){ if(step>0){ step--; render(); } });
-new MutationObserver(function(){ if(step===pages.length+1){ var y=window.scrollY; renderRes(); window.scrollTo(0,y); } }).observe($('tb'),{childList:true,subtree:true});
+new MutationObserver(function(){ if(step>=1&&step<=pages.length) paintLive(); if(step===pages.length+1){ var y=window.scrollY; renderRes(); window.scrollTo(0,y); } }).observe($('tb'),{childList:true,subtree:true});
 document.addEventListener('keydown',function(e){ if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('cand')) e.target.click(); });
-render();
+function abh(){ document.documentElement.style.setProperty('--abh',bar.offsetHeight+'px'); } abh(); window.addEventListener('resize',abh);
+render(); abh();
 if('serviceWorker' in navigator&&location.protocol==='https:'){ navigator.serviceWorker.register('/app/sw.js',{scope:'/app/'}).catch(function(){}); }
 })();
 
