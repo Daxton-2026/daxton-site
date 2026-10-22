@@ -44,8 +44,8 @@ img{max-width:100%}
   font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;text-decoration:none;
   box-shadow:0 2px 6px rgba(8,26,69,.22);transition:background .2s ease,transform .1s ease}
 .backbar a svg{display:block;transition:transform .2s ease}
-.backbar a:hover{background:#D4891A}
-.backbar a:hover svg{transform:translateX(-4px)}
+@media (hover:hover){.backbar a:hover{background:#D4891A}}
+@media (hover:hover){.backbar a:hover svg{transform:translateX(-4px)}}
 .backbar a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){.backbar a,.backbar a svg{transition:none}}
 @media print{.backbar{display:none!important}}
@@ -110,7 +110,7 @@ nav.steps ul{display:flex;gap:0;list-style:none;margin:0;padding:0;min-width:max
 nav.steps a{display:flex;align-items:baseline;gap:7px;padding:12px 15px;text-decoration:none;
   font-size:13.5px;color:var(--ink2);border-bottom:2px solid transparent;white-space:nowrap}
 nav.steps a span{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--accent);font-weight:700}
-nav.steps a:hover{color:var(--accent);border-bottom-color:var(--line)}
+@media (hover:hover){nav.steps a:hover{color:var(--accent);border-bottom-color:var(--line)}}
 nav.steps a:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 
 section{padding:46px 0}
@@ -246,7 +246,7 @@ footer b{color:var(--ink2);font-weight:600}
 .tip b{color:var(--accent2)}
 .hint{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--muted);font-weight:400}
 #tbl tbody tr{cursor:pointer}
-#tbl tbody tr:hover td{background:var(--surface2)}
+@media (hover:hover){#tbl tbody tr:hover td{background:var(--surface2)}}
 #tbl tbody tr.sel td{background:var(--accent-soft)}
 #tbl tbody tr.warnrow td:first-child{box-shadow:inset 3px 0 0 var(--warn)}
 .ck{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:11.5px;font-weight:700;
@@ -263,7 +263,7 @@ footer b{color:var(--ink2);font-weight:600}
 .sheet-h button{font-family:"Barlow Condensed",sans-serif;font-size:14px;letter-spacing:.08em;text-transform:uppercase;
   font-weight:600;padding:7px 16px;border:1px solid rgba(255,255,255,.55);background:transparent;color:#fff;
   border-radius:3px;cursor:pointer}
-.sheet-h button:hover{background:rgba(255,255,255,.15)}
+@media (hover:hover){.sheet-h button:hover{background:rgba(255,255,255,.15)}}
 .sheet-h button:focus-visible{outline:2px solid #fff;outline-offset:2px}
 .sheet pre{margin:0;padding:18px;font-family:"JetBrains Mono",monospace;font-size:12.5px;line-height:1.75;
   color:var(--ink);background:var(--inset);overflow-x:auto;white-space:pre;font-variant-numeric:tabular-nums}
@@ -281,7 +281,7 @@ footer b{color:var(--ink2);font-weight:600}
 .btn{font-family:"Barlow Condensed",sans-serif;font-size:14px;letter-spacing:.06em;text-transform:uppercase;
   font-weight:600;padding:9px 14px;border:1px solid var(--line);background:var(--surface2);color:var(--ink2);
   border-radius:3px;cursor:pointer;width:100%}
-.btn:hover{border-color:var(--accent);color:var(--accent)}
+@media (hover:hover){.btn:hover{border-color:var(--accent);color:var(--accent)}}
 .btn:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 </style>
 <style>
