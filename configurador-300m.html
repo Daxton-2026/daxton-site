@@ -452,14 +452,7 @@ footer b{color:var(--ink2);font-weight:600}
             <span class="tip" id="tipent">—</span></div>
         </div>
         <div id="g-elev" hidden>
-          <div class="fld" style="grid-column:1/-1"><div class="note warn" style="margin:0"><i></i><div><h4>Pré-dimensionamento de elevação</h4><p>Em elevação de carga a seleção final é da Bonfiglioli (cap. 14 do catálogo). Escolha a <b>classe de utilização T</b> e o <b>espectro de carga</b> do projeto: sem elas a ferramenta não calcula.</p></div></div></div>
-          <div class="fld"><label for="pelev">Potência do motofreio</label><div style="display:flex;gap:8px"><input id="pelev" type="number" step="0.1" value="30" style="flex:1;min-width:0"><select id="punit" style="width:84px"><option value="kw" selected>kW</option><option value="cv">cv</option></select></div>
-            <span class="tip">Confira a unidade: <b>7,5 cv = 5,5 kW</b>. Planilhas de projeto costumam trazer cv.</span></div>
-          <div class="fld"><label for="tcl">Classe de utilização <em>T</em> — horas totais</label>
-            <select id="tcl"><option value="">— escolha —</option><option value="0">T0 — 200 h</option><option value="1">T1 — 400 h</option><option value="2">T2 — 800 h</option><option value="3">T3 — 1.600 h</option><option value="4">T4 — 3.200 h</option><option value="5">T5 — 6.300 h</option><option value="6">T6 — 12.500 h</option><option value="7">T7 — 25.000 h</option><option value="8">T8 — 50.000 h</option></select></div>
-          <div class="fld"><label for="espec">Espectro de carga</label>
-            <select id="espec"><option value="">— escolha —</option><option value="0.125">L1 — leve</option><option value="0.25">L2 — moderado</option><option value="0.5">L3 — pesado</option><option value="1">L4 — muito pesado</option></select>
-            <span class="tip" id="mgrp">Grupo do mecanismo: —</span></div>
+          <div class="fld"><label for="pelev">Potência do motofreio — kW</label><input id="pelev" type="number" step="0.1" value="30"></div>
           <div class="fld"><label for="q">Carga total <em>Q</em> — t</label><input id="q" type="number" step="0.1" value="20">
             <span class="tip"><b>É o que o tambor levanta</b>, não só a carga útil: soma a carga a elevar mais moitão, gancho, travessa, garra e o que mais estiver pendurado.</span></div>
           <div class="fld"><label for="dt">Ø primitivo do tambor <em>D</em> — mm</label><input id="dt" type="number" step="0.1" value="500"></div>
@@ -481,15 +474,14 @@ footer b{color:var(--ink2);font-weight:600}
             <option value="8">8 polos</option>
             <option value="0">Informar n₁ manualmente</option>
           </select></div>
-        <div class="fld"><label for="n1">Rotação de entrada <em>n₁</em> — rpm</label><input id="n1" type="number" step="10" value="1750"><span class="tip">Com inversor, informe a rotação em que o motor trabalha <b>com carga</b> (ex.: 1600 rpm), não a nominal.</span></div>
-        <div class="fld" id="fld-n1op" hidden><label for="n1op">Rotação máxima do motor sem carga (inversor) — rpm <em>opcional</em></label><input id="n1op" type="number" step="10" value=""><span class="tip">Se o motor sobe de rotação sem carga (ex.: 2400 rpm), a ferramenta confere o limite do redutor nessa rotação.</span></div>
+        <div class="fld"><label for="n1">Rotação de entrada <em>n₁</em> — rpm</label><input id="n1" type="number" step="10" value="1750"></div>
         <div class="fld"><label for="n1lib">n₁ liberada pela fábrica em regime contínuo — rpm</label><input id="n1lib" type="number" step="10" value="1750">
           <span class="tip">A Bonfiglioli liberou <b>1750 rpm</b> em regime contínuo, acima da rotação contínua tabelada nos rating charts. Acima deste valor volta a valer o limite de serviço intermitente do catálogo.</span></div>
         <div class="fld"><label for="carga">Tipo de carga — tabela A4</label>
           <select id="carga"><option value="0">Uniforme</option><option value="1" selected>Choque moderado</option><option value="2">Choque pesado</option></select></div>
         <div class="fld"><label for="zb">Partidas por hora <em>Z</em></label>
           <select id="zb"><option value="0">Z &lt; 10</option><option value="1">10 &lt; Z &lt; 30</option><option value="2" selected>30 &lt; Z &lt; 100</option></select></div>
-        <div class="fld" id="fld-hv"><label for="hv">Vida útil <em>h</em> — horas</label><input id="hv" type="number" step="100" value="1600"></div>
+        <div class="fld"><label for="hv">Vida útil <em>h</em> — horas</label><input id="hv" type="number" step="100" value="1600"></div>
         <div class="fld"><label for="tfr">Torque de pico na entrada — % do nominal do motor</label><input id="tfr" type="number" step="5" value="150"></div>
       </div>
 
@@ -560,8 +552,6 @@ footer b{color:var(--ink2);font-weight:600}
     <tbody id="tb"></tbody>
   </table></div>
   <p class="cap" id="cnt">—</p>
-  <div class="note warn" id="marg" hidden><i></i><div><h4>Margem apertada</h4><p id="margtxt">—</p></div></div>
-  <div class="note crit" id="pminw" hidden><i></i><div><h4>Potência do motor abaixo da mínima</h4><p id="pmintxt">—</p></div></div>
 </section>
 
   <div class="note"><i></i><div>
@@ -2196,13 +2186,6 @@ var RPM={60:{2:3500,4:1750,6:1160,8:870},50:{2:2900,4:1450,6:960,8:720}};
 function fmt(v,d){ if(v===null||v===undefined||!isFinite(v)||isNaN(v))return '—';
   return v.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d}); }
 function V(id){ return parseFloat($(id).value); }
-var KM={'0.125':'L1','0.25':'L2','0.5':'L3','1':'L4'};
-function mgrupo(){
-  var t=$('tcl').value, k=parseFloat($('espec').value);
-  if(t===''||!isFinite(k)) return null;
-  var tf=TCL[parseInt(t,10)]*k;
-  return Math.max(1,Math.min(8,Math.round(Math.log(tf/100)/Math.LN2)+1));
-}
 
 function fsLookup(h,l,z){
   var c=-1; for(var k=0;k<A4H.length;k++){ if(h<=A4H[k]){c=k;break;} }
@@ -2228,9 +2211,7 @@ function syncN1(){
 }
 function requisito(){
   var n1=V('n1'), n1lib=V('n1lib'), h=V('hv'), tfr=V('tfr')/100;
-  var n1op=V('n1op'), ne=Math.max(n1,isFinite(n1op)?n1op:0);
-  if(modo==='elev'){ h=($('tcl').value!==''&&isFinite(parseFloat($('espec').value)))?TCL[parseInt($('tcl').value,10)]:NaN; }
-  var Pm=(modo==='ger')?V('pger'):V('pelev')*($('punit').value==='cv'?0.7355:1);
+  var Pm=(modo==='ger')?V('pger'):V('pelev');
   var famv=$('fam').value, fam=(famv===''?null:parseInt(famv,10));
   var tol=V('tol')/100, leit=parseInt($('leit').value,10);
   var fs=fsLookup(h,parseInt($('carga').value,10),parseInt($('zb').value,10));
@@ -2248,7 +2229,7 @@ function requisito(){
     Mr2base=9550*Pm*0.91/n2req;   // referência a 3 estágios; por candidato usa o eta dele
     pot=true;
   }
-  return {n1:n1,ne:ne,n1op:n1op,n1lib:n1lib,Pm:Pm,h:h,tfr:tfr,fam:fam,tol:tol,leit:leit,fs:fs,
+  return {n1:n1,n1lib:n1lib,Pm:Pm,h:h,tfr:tfr,fam:fam,tol:tol,leit:leit,fs:fs,
           n2req:n2req,Mr2base:Mr2base,etac:etac,r:r,Ptam:Ptam,pot:pot};
 }
 
@@ -2271,9 +2252,9 @@ function buscar(q){
     var ck={T:Mc<=Mn,P:(p1>0?p1>=q.Pm:true),M:m2max>=Mp};
     var fail=0; for(var k in ck) if(!ck[k]) fail++;
     var lim = Math.max(nn1, q.n1lib||0);            // contínua tabelada ou a liberada pela fábrica
-    var libN = q.ne>nn1 && q.ne<=lim;               // acima da tabelada mas dentro da liberação
-    var warnN = q.ne>lim && q.ne<=n1max;            // acima da liberação: alerta
-    var warnX = q.ne>n1max;                         // acima da máxima intermitente: reprova
+    var libN = q.n1>nn1 && q.n1<=lim;               // acima da tabelada mas dentro da liberação
+    var warnN = q.n1>lim && q.n1<=n1max;            // acima da liberação: alerta
+    var warnX = q.n1>n1max;                         // acima da máxima intermitente: reprova
     if(warnX){ ck.M=ck.M; fail++; }
     out.push({si:si,size:SIZES[si],fam:fm?'R':'L',st:st,i:i,n2:n2,dev:dev,eta:eta,
       col:COLS[c],colIdx:c,Mn:Mn,MnLit:mn[c],MnInt:interp(mn,F),Mr:Mr,Mc:Mc,F:F,
@@ -2316,8 +2297,7 @@ function render(){
       (q.h>25000?' <b>Atenção:</b> acima de 25.000 h confira a coluna, e acima de 50.000 h a tabela termina.':'');
     $('fsnote').className='note';
   } else {
-    if(modo==='elev'&&!isFinite(q.h)) $('fstxt').innerHTML='<b>Escolha a classe de utilização T e o espectro de carga.</b> Em elevação a vida não é palpite: vem do grupo do mecanismo do projeto (NBR 8400 / ISO 4301-1). Sem ela a ferramenta não calcula.';
-    else $('fstxt').innerHTML='<b>A tabela A4 termina em 50.000 horas.</b> Com h = '+fmt(q.h,0)+
+    $('fstxt').innerHTML='<b>A tabela A4 termina em 50.000 horas.</b> Com h = '+fmt(q.h,0)+
       ' h não há célula aplicável — reduza a vida útil declarada ou leve o caso ao Serviço Técnico Bonfiglioli.';
     $('fsnote').className='note crit';
   }
@@ -2336,17 +2316,9 @@ function render(){
 
   list=buscar(q);
   var ok=list.filter(function(x){return x.fail===0;});
-  var mg=mgrupo(); $('mgrp').innerHTML=mg?('Grupo do mecanismo: <b>M'+mg+'</b> (estimado por T × espectro — confira na tabela 7 da NBR 8400-1)'):'Grupo do mecanismo: —';
-  $('fld-hv').hidden=(modo==='elev'); $('fld-n1op').hidden=(modo!=='elev');
-  var mw=$('marg'); mw.hidden=true; var pw=$('pminw'); pw.hidden=true;
-  if(modo==='elev'&&ok.length&&isFinite(q.Pm)&&ok[0].Pmin>q.Pm*1.0001){ pw.hidden=false; $('pmintxt').innerHTML='A potência informada (<b>'+fmt(q.Pm,2)+' kW</b>) é menor que a mínima necessária para a carga e a velocidade (<b>'+fmt(ok[0].Pmin,2)+' kW</b>, com rendimento de '+fmt(ok[0].eta,2)+' do redutor e '+fmt(q.etac,3)+' do cabeamento). Confira a unidade (cv ou kW) e o rendimento real do redutor; se o motor for este mesmo, verifique a velocidade em plena carga.'; }
-  if(modo==='elev'&&ok.length&&q.fs.v){ var mm=ok[0].Mn/ok[0].Mc-1;
-    if(mm<0.10){ mw.hidden=false; $('margtxt').innerHTML='O menor redutor que passa (<b>'+ok[0].size+' '+ok[0].fam+ok[0].st+' i='+fmt(ok[0].i,0)+'</b>) tem só <b>'+fmt(mm*100,1)+'%</b> de folga sobre o torque de cálculo. Uma mudança pequena de premissa — classe T, número de polias, rotação — pode trocar o tamanho. Em elevação, confirme com a engenharia Bonfiglioli.'; } }
   var tb=$('tb');
   if(!list.length){
-    var msg = (modo==='elev'&&!isFinite(q.h))
-      ? '<b style="color:var(--crit)">Escolha a classe de utilização T e o espectro de carga</b> para calcular. Em elevação eles definem a vida e o fator de serviço.'
-      : !q.fs.v
+    var msg = !q.fs.v
       ? '<b style="color:var(--crit)">Sem fator de serviço.</b> A tabela A4 termina em 50.000 horas — reduza a vida útil declarada ou leve o caso ao Serviço Técnico.'
       : (q.n2req>0 && isFinite(q.n2req)
          ? 'Nenhuma combinação dentro do desvio de rotação de ±'+fmt(q.tol*100,0)+
@@ -2427,8 +2399,7 @@ function ficha(){
   L.push(pad('Torque exigido        Mr2',fmt(x.Mr,0)+' Nm'));
   L.push(pad("Fator de serviço      fS'",fmt(q.fs.v,2)));
   L.push(pad('Torque de cálculo     Mc2',fmt(x.Mc,0)+' Nm'));
-  if(modo==='elev'){ L.push(pad('Classe de utilização',  'T'+$('tcl').value+' ('+fmt(q.h,0)+' h), espectro '+KM[$('espec').value]+', grupo M'+mgrupo())); }
-  else L.push(pad('Vida útil             h',  fmt(q.h,0)+' h'));
+  L.push(pad('Vida útil             h',  fmt(q.h,0)+' h'));
   L.push(pad('Fator de vida         Fh2',fmt(x.F,0)+'  -> coluna n2h '+fmt(x.col,0)));
   L.push(pad('Torque de pico        Mp2',fmt(x.Mp,0)+' Nm'));
   L.push(pad('Potência do motor',        fmt(q.Pm,2)+' kW'+(modo==='elev'?'  (mínimo '+fmt(x.Pmin,2)+' kW)':'')));
@@ -2443,8 +2414,8 @@ function ficha(){
   L.push(pad('P1 máx admitida',          (x.p1>0?fmt(x.p1,1)+' kW':'nao tabelada')+'   '+(x.ck.P?'atende':'NAO ATENDE')));
   L.push(pad('n1 contínua tabelada',     fmt(x.nn1,0)+' rpm   '+
     (x.warnX?'NAO ATENDE — acima da maxima intermitente'
-     :x.warnN?'ATENCAO: acionamento a '+fmt(q.ne,0)+' rpm, acima do liberado'
-     :x.libN?'acionamento a '+fmt(q.ne,0)+' rpm — dentro da liberacao de fabrica de '+fmt(q.n1lib,0)+' rpm'
+     :x.warnN?'ATENCAO: acionamento a '+fmt(q.n1,0)+' rpm, acima do liberado'
+     :x.libN?'acionamento a '+fmt(q.n1,0)+' rpm — dentro da liberacao de fabrica de '+fmt(q.n1lib,0)+' rpm'
      :'atende')));
   L.push(pad('n1 máx intermitente',      fmt(x.n1max,0)+' rpm'));
   L.push(pad('M2max',                    fmt(x.m2max,0)+' Nm   '+(x.ck.M?'atende':'NAO ATENDE')));
@@ -2455,8 +2426,6 @@ function ficha(){
     L.push('- rendimento do cabeamento '+fmt(q.etac,3)+' ('+$('pol').value+' polia(s) a 0,98)');
     L.push('- cavalamento '+$('ram').value+' ramais / '+$('pta').value+' ponta(s) no tambor');
     L.push('- torque pela carga real, nao pela potencia do motor');
-    if(isFinite(q.n1op)&&q.n1op>0) L.push('- rotacao maxima do motor sem carga (inversor): '+fmt(q.n1op,0)+' rpm');
-    if($('punit').value==='cv') L.push('- potencia informada em cv ('+fmt(V('pelev'),2)+' cv = '+fmt(q.Pm,2)+' kW)');
   } else {
     L.push('- torque derivado da potencia do motor (metodo do catalogo)');
     L.push('- acionamento: '+$('freq').value+' Hz, '+($('polos').value!=='0'?$('polos').value+' polos':'n1 informado manualmente'));
@@ -2539,8 +2508,8 @@ function setModo(m){
   $('csub').textContent=(m==='ger')
     ? 'Os valores iniciais são um exemplo de triturador de 75 kW. Altere qualquer campo.'
     : 'Os valores iniciais são um exemplo de carro guincho de 20 t. Altere qualquer campo.';
-  if(m==='elev'){ $('app').value='Elevação principal — carro guincho'; $('carga').value='1'; $('zb').value='2'; $('hv').value=1600; $('tfr').value=150; $('tol').value=10; $('tcl').value=''; $('espec').value=''; }
-  else { $('app').value='Triturador'; $('carga').value='1'; $('zb').value='1'; $('hv').value=10000; $('tfr').value=200; $('tol').value=15; }
+  if(m==='elev'){ $('app').value='Elevação principal — carro guincho'; $('carga').value='1'; $('zb').value='2'; $('hv').value=1600; $('tfr').value=150; }
+  else { $('app').value='Triturador'; $('carga').value='1'; $('zb').value='1'; $('hv').value=10000; $('tfr').value=200; }
   render();
 }
 iIds.forEach(function(k){ var e=$(k); if(e){ e.addEventListener('input',interpCalc); } });
@@ -2556,7 +2525,7 @@ $('n1').addEventListener('input',function(){
 });
 $('freq').addEventListener('change',function(){syncN1();render()});
 $('polos').addEventListener('change',function(){syncN1();render()});
-['app','q','dt','vel','ram','pta','pol','pelev','punit','tcl','espec','n1op','pger','val','n1','n1lib','carga','zb','hv','tfr','fam','tol','ver','pflg','pos','opc','leit']
+['app','q','dt','vel','ram','pta','pol','pelev','pger','val','n1','n1lib','carga','zb','hv','tfr','fam','tol','ver','pflg','pos','opc','leit']
  .forEach(function(k){ var e=$(k); e.addEventListener('input',render); e.addEventListener('change',render); });
 
 $('cp').addEventListener('click',function(){
