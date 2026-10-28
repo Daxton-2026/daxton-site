@@ -455,8 +455,8 @@ footer b{color:var(--ink2);font-weight:600}
           <div class="fld" style="grid-column:1/-1"><div class="note warn" style="margin:0"><i></i><div><h4>Pré-dimensionamento de elevação</h4><p>Em elevação de carga a seleção final é da Bonfiglioli (cap. 14 do catálogo). Escolha a <b>classe de utilização T</b> e o <b>espectro de carga</b> do projeto: sem elas a ferramenta não calcula.</p></div></div></div>
           <div class="fld"><label for="pelev">Potência do motofreio</label><div style="display:flex;gap:8px"><input id="pelev" type="number" step="0.1" value="30" style="flex:1;min-width:0"><select id="punit" style="width:84px"><option value="kw" selected>kW</option><option value="cv">cv</option></select></div>
             <span class="tip">Confira a unidade: <b>7,5 cv = 5,5 kW</b>. Planilhas de projeto costumam trazer cv.</span></div>
-          <div class="fld"><label for="base">Base do torque exigido</label><select id="base"><option value="max" selected>O maior entre carga e potência do motor</option><option value="motor">Pela potência do motor (como a BDB)</option><option value="carga">Só pela carga</option></select>
-            <span class="tip">O motor instalado entrega mais torque que a carga pede. Pela carga o redutor cobre a aplicação, pela potência cobre o que o motor pode empurrar. O padrão usa o <b>maior</b> dos dois.</span></div>
+          <div class="fld"><label for="base">Base do torque exigido</label><select id="base"><option value="max" selected>O maior: torque requerido ou torque de saída</option><option value="motor">Torque de saída (potência do motor)</option><option value="carga">Torque requerido (carga)</option></select>
+            <span class="tip"><b>Torque requerido</b> é o que a carga pede no eixo de saída. <b>Torque de saída</b> é o que o motor instalado entrega no mesmo eixo. A folha de dados da Bonfiglioli usa os mesmos nomes. O padrão seleciona pelo <b>maior</b> dos dois.</span></div>
           <div class="fld"><label for="tcl">Classe de utilização <em>T</em> — horas totais</label>
             <select id="tcl"><option value="">— escolha —</option><option value="0">T0 — 200 h</option><option value="1">T1 — 400 h</option><option value="2">T2 — 800 h</option><option value="3">T3 — 1.600 h</option><option value="4">T4 — 3.200 h</option><option value="5">T5 — 6.300 h</option><option value="6">T6 — 12.500 h</option><option value="7">T7 — 25.000 h</option><option value="8">T8 — 50.000 h</option></select></div>
           <div class="fld"><label for="espec">Espectro de carga</label>
@@ -2303,7 +2303,12 @@ function render(){
   }
   b.push(['Rotação de saída n₂', fmt(q.n2req,2)+' rpm']);
   b.push(['Relação necessária i', fmt(q.n1/q.n2req,1)]);
-  b.push(['Torque exigido M<sub>r2</sub>'+(q.pot?' <span class="hint">3 est.</span>':(' <span class="hint">carga '+fmt(q.Mr2carga,0)+' · motor '+fmt(q.Mr2mot,0)+'</span>')), fmt(q.Mr2base,0)+' Nm']);
+  if(q.pot){ b.push(['Torque exigido M<sub>r2</sub> <span class="hint">3 est.</span>', fmt(q.Mr2base,0)+' Nm']); }
+  else {
+    b.push(['Torque requerido <span class="hint">pela carga</span>', fmt(q.Mr2carga,0)+' Nm']);
+    b.push(['Torque de saída <span class="hint">pelo motor</span>', fmt(q.Mr2mot,0)+' Nm']);
+    b.push(['Torque de seleção M<sub>r2</sub> <span class="hint">'+({max:'o maior',motor:'motor',carga:'carga'}[q.base])+'</span>', fmt(q.Mr2base,0)+' Nm']);
+  }
   b.push(['Fator de serviço f<sub>S</sub>\'', q.fs.v?fmt(q.fs.v,2):'—']);
   b.push(['Torque de cálculo M<sub>c2</sub>'+(q.pot?' <span class="hint">3 est.</span>':''), q.fs.v?fmt(q.Mr2base*q.fs.v,0)+' Nm':'—']);
   b.push(['Fator de vida F<sub>h2</sub>', fmt(q.n2req*q.h,0)]);
@@ -2429,7 +2434,7 @@ function ficha(){
   L.push(pad('Rotação de entrada    n1', fmt(q.n1,0)+' rpm'));
   L.push(pad('Rotação de saída      n2', fmt(x.n2,2)+' rpm  (requisito '+fmt(q.n2req,2)+', desvio '+(x.dev>=0?'+':'')+fmt(x.dev*100,1)+'%)'));
   L.push(pad('Relação               i',  fmt(x.i,x.i%1?1:0)));
-  L.push(pad('Torque exigido        Mr2',fmt(x.Mr,0)+' Nm'));
+  L.push(pad('Torque de selecao     Mr2',fmt(x.Mr,0)+' Nm'));
   L.push(pad("Fator de serviço      fS'",fmt(q.fs.v,2)));
   L.push(pad('Torque de cálculo     Mc2',fmt(x.Mc,0)+' Nm'));
   if(modo==='elev'){ L.push(pad('Classe de utilização',  'T'+$('tcl').value+' ('+fmt(q.h,0)+' h), espectro '+KM[$('espec').value]+', grupo M'+mgrupo())); }
@@ -2459,7 +2464,8 @@ function ficha(){
   if(modo==='elev'){
     L.push('- rendimento do cabeamento '+fmt(q.etac,3)+' ('+$('pol').value+' polia(s) a 0,98)');
     L.push('- cavalamento '+$('ram').value+' ramais / '+$('pta').value+' ponta(s) no tambor');
-    L.push('- base do torque: '+({max:'o maior entre a carga ('+fmt(q.Mr2carga,0)+' Nm) e a potencia do motor ('+fmt(q.Mr2mot,0)+' Nm, eta 0,91)',motor:'potencia do motor',carga:'carga real'}[$('base').value]));
+    L.push('- torque requerido (carga): '+fmt(q.Mr2carga,0)+' Nm | torque de saida (motor, eta 0,91): '+fmt(q.Mr2mot,0)+' Nm');
+    L.push('- torque de selecao: '+({max:'o maior dos dois',motor:'torque de saida (motor)',carga:'torque requerido (carga)'}[$('base').value]));
     if(isFinite(q.n1op)&&q.n1op>0) L.push('- rotacao maxima do motor sem carga (inversor): '+fmt(q.n1op,0)+' rpm');
     if($('qunit').value==='kg') L.push('- carga informada em kg ('+fmt(V('q'),1)+' kg = '+fmt(V('q')/1000,3)+' t)');
     if($('punit').value==='cv') L.push('- potencia informada em cv ('+fmt(V('pelev'),2)+' cv = '+fmt(q.Pm,2)+' kW)');
