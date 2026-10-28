@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Configuradores de redutor · Bonfiglioli — Daxton</title>
-<meta name="description" content="Escolha a máquina, informe os dados e veja quais redutores planetários Bonfiglioli atendem: pontes rolantes, guinchos e uso geral.">
+<meta name="description" content="Escolha a máquina, informe os dados e veja quais redutores planetários Bonfiglioli atendem: pontes rolantes, talhas e pórticos.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,6 +43,8 @@ nav{background:var(--navy);display:flex;align-items:center;justify-content:space
 /* cartoes */
 .choose{margin-top:-64px;padding:0 5% 24px;position:relative}
 .top{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+/* so o configurador de elevacao esta no ar: um cartao centralizado (voltar a 2 colunas ao reativar os outros) */
+.top{grid-template-columns:minmax(0,640px);justify-content:center}
 .tile{position:relative;background:var(--white);border-radius:18px;overflow:hidden;box-shadow:0 14px 44px rgba(8,26,69,.13);display:flex;flex-direction:column;transition:box-shadow .25s ease,transform .25s ease}
 @media (hover:hover){.tile:hover,.tile:focus-within{box-shadow:0 22px 60px rgba(8,26,69,.2);transform:translateY(-3px)}}
 .art{background:var(--navy-deep);position:relative;
@@ -194,8 +196,8 @@ footer{margin-top:56px;background:var(--navy-deep);color:rgba(255,255,255,.72);t
         </div>
       </article>
 
-      <!-- GUINCHOS -->
-      <article class="tile">
+      <!-- GUINCHOS: OFFLINE por enquanto (retomar: remover hidden e style) -->
+      <article class="tile" hidden style="display:none">
         <div class="art">
           <svg viewBox="0 -8 400 258" style="--up:-34px;--sc:.52" role="img" aria-label="Desenho de um guincho com motor, redutor planetário, tambor, cabo, gancho e carga">
 <line class="d" x1="12" y1="232" x2="388" y2="232"/>
@@ -246,8 +248,8 @@ footer{margin-top:56px;background:var(--navy-deep);color:rgba(255,255,255,.72);t
       </article>
     </div>
 
-    <!-- USO GERAL -->
-    <article class="tile wide">
+    <!-- USO GERAL: OFFLINE por enquanto (retomar: remover hidden e style) -->
+    <article class="tile wide" hidden style="display:none">
       <div class="art light">
         <img src="marcas/bonfiglioli-redutor-planetario.jpg" alt="Redutor planetário Bonfiglioli com motor elétrico acoplado">
         <span class="tag" style="left:74%;top:14%">motor</span>
@@ -266,8 +268,8 @@ footer{margin-top:56px;background:var(--navy-deep);color:rgba(255,255,255,.72);t
     </article>
 
     <div class="help">
-      <p>Os três seguem o catálogo da série 300 da Bonfiglioli e rodam no seu navegador, sem cadastro. O resultado é uma pré-seleção: o tamanho definitivo é confirmado pela engenharia Bonfiglioli.
-        <small>Sua máquina não se encaixa em nenhum? Conte o caso para o Carlos.</small></p>
+      <p>O configurador segue o catálogo da série 300 da Bonfiglioli e roda no seu navegador, sem cadastro. O resultado é uma pré-seleção: o tamanho definitivo é confirmado pela engenharia Bonfiglioli.
+        <small>Sua aplicação não é de elevação? Conte o caso para o Carlos.</small></p>
       <a class="wa" href="https://wa.me/5547999640526?text=Ol%C3%A1%2C%20usei%20os%20configuradores%20no%20site%20e%20gostaria%20de%20falar%20sobre%20uma%20aplica%C3%A7%C3%A3o." target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .6l-.4.6c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.4.1.6-.1l.8-1c.2-.2.4-.2.6-.1l1.9.9c.3.1.5.2.5.4.1.1.1.6-.1 1z"/></svg>
         Falar com o Carlos no WhatsApp</a>

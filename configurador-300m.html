@@ -426,10 +426,10 @@ footer b{color:var(--ink2);font-weight:600}
   <div class="sec-h">
     <div class="eyebrow">Passo 1</div>
     <h2>Dados de entrada</h2>
-    <p>O modo <b>Geral</b> é o do catálogo: potência do motor, rotação de entrada e a redução ou a rotação de saída que a máquina precisa. O modo <b>Elevação</b> converte carga, tambor e cavalamento antes de entrar no método.</p>
+    <p>Em elevação o torque vem da carga, do tambor e do cavalamento, não da placa do motor. A ferramenta converte esses dados antes de entrar no método do catálogo.</p>
   </div>
 
-  <div class="modes" role="group" aria-label="Modo de entrada">
+  <div class="modes" id="modes" role="group" aria-label="Modo de entrada">
     <button type="button" id="m-ger" aria-pressed="true">Geral — potência e redução</button>
     <button type="button" id="m-elev" aria-pressed="false">Elevação — tambor de cabo</button>
   </div>
@@ -2580,7 +2580,11 @@ $('pp').addEventListener('click',function(){
   window.addEventListener('afterprint',fim);
   window.print();
 });
-buildA4(); syncN1(); setEnt(); setModo(/[?&]modo=elev/.test(location.search)?'elev':'ger');
+buildA4(); syncN1(); setEnt(); 
+// No ar so a elevacao. Para reativar o modo geral: SO_ELEV=false (e mostrar o card no hub).
+var SO_ELEV=true;
+if(SO_ELEV){ $('modes').style.display='none'; }
+setModo((SO_ELEV||/[?&]modo=elev/.test(location.search))?'elev':'ger');
 })();
 
 </script>
