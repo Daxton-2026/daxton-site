@@ -460,7 +460,7 @@ footer b{color:var(--ink2);font-weight:600}
           <div class="fld"><label for="espec">Espectro de carga</label>
             <select id="espec"><option value="">— escolha —</option><option value="0.125">L1 — leve</option><option value="0.25">L2 — moderado</option><option value="0.5">L3 — pesado</option><option value="1">L4 — muito pesado</option></select>
             <span class="tip" id="mgrp">Grupo do mecanismo: —</span></div>
-          <div class="fld"><label for="q">Carga total <em>Q</em> — t</label><input id="q" type="number" step="0.1" value="20">
+          <div class="fld"><label for="q">Carga total <em>Q</em></label><div style="display:flex;gap:8px"><input id="q" type="number" step="0.1" value="20" style="flex:1;min-width:0"><select id="qunit" style="width:84px"><option value="t" selected>t</option><option value="kg">kg</option></select></div>
             <span class="tip"><b>É o que o tambor levanta</b>, não só a carga útil: soma a carga a elevar mais moitão, gancho, travessa, garra e o que mais estiver pendurado.</span></div>
           <div class="fld"><label for="dt">Ø primitivo do tambor <em>D</em> — mm</label><input id="dt" type="number" step="0.1" value="500"></div>
           <div class="fld"><label for="vel">Velocidade de elevação <em>v</em> — m/min</label><input id="vel" type="number" step="0.1" value="6"></div>
@@ -561,6 +561,7 @@ footer b{color:var(--ink2);font-weight:600}
   </table></div>
   <p class="cap" id="cnt">—</p>
   <div class="note warn" id="marg" hidden><i></i><div><h4>Margem apertada</h4><p id="margtxt">—</p></div></div>
+  <div class="note crit" id="qw" hidden><i></i><div><h4>Carga fora de escala</h4><p id="qwtxt">—</p></div></div>
   <div class="note crit" id="pminw" hidden><i></i><div><h4>Potência do motor abaixo da mínima</h4><p id="pmintxt">—</p></div></div>
 </section>
 
@@ -2236,7 +2237,7 @@ function requisito(){
   var fs=fsLookup(h,parseInt($('carga').value,10),parseInt($('zb').value,10));
   var n2req,Mr2base,etac=null,r=null,Ptam=null,pot;
   if(modo==='elev'){
-    var Q=V('q')*1000,D=V('dt'),v=V('vel'),ram=V('ram'),pta=V('pta'),pol=V('pol');
+    var Q=V('q')*($('qunit').value==='kg'?1:1000),D=V('dt'),v=V('vel'),ram=V('ram'),pta=V('pta'),pol=V('pol');
     r=ram/pta; etac=Math.pow(0.98,pol);
     n2req=v*r*1000/(Math.PI*D);
     Ptam=Q*9.81*v/60/1000/etac;
@@ -2249,7 +2250,7 @@ function requisito(){
     pot=true;
   }
   return {n1:n1,ne:ne,n1op:n1op,n1lib:n1lib,Pm:Pm,h:h,tfr:tfr,fam:fam,tol:tol,leit:leit,fs:fs,
-          n2req:n2req,Mr2base:Mr2base,etac:etac,r:r,Ptam:Ptam,pot:pot};
+          Q:(modo==='elev'?V('q')*($('qunit').value==='kg'?1:1000):NaN),n2req:n2req,Mr2base:Mr2base,etac:etac,r:r,Ptam:Ptam,pot:pot};
 }
 
 function buscar(q){
@@ -2338,6 +2339,7 @@ function render(){
   var ok=list.filter(function(x){return x.fail===0;});
   var mg=mgrupo(); $('mgrp').innerHTML=mg?('Grupo do mecanismo: <b>M'+mg+'</b> (estimado por T × espectro — confira na tabela 7 da NBR 8400-1)'):'Grupo do mecanismo: —';
   $('fld-hv').hidden=(modo==='elev'); $('fld-n1op').hidden=(modo!=='elev');
+  var qwb=$('qw'); qwb.hidden=true; if(modo==='elev'&&isFinite(q.Q)&&q.Q>250000){ qwb.hidden=false; $('qwtxt').innerHTML='A carga informada equivale a <b>'+fmt(q.Q/1000,1)+' t</b>. Isso é muito acima do que um redutor da série 300 levanta e costuma ser <b>kg digitado no campo de t</b>. Troque a unidade para kg (ou divida por 1.000) antes de olhar a tabela: os torques abaixo não valem.'; }
   var mw=$('marg'); mw.hidden=true; var pw=$('pminw'); pw.hidden=true;
   if(modo==='elev'&&ok.length&&isFinite(q.Pm)&&ok[0].Pmin>q.Pm*1.0001){ pw.hidden=false; $('pmintxt').innerHTML='A potência informada (<b>'+fmt(q.Pm,2)+' kW</b>) é menor que a mínima necessária para a carga e a velocidade (<b>'+fmt(ok[0].Pmin,2)+' kW</b>, com rendimento de '+fmt(ok[0].eta,2)+' do redutor e '+fmt(q.etac,3)+' do cabeamento). Confira a unidade (cv ou kW) e o rendimento real do redutor; se o motor for este mesmo, verifique a velocidade em plena carga.'; }
   if(modo==='elev'&&ok.length&&q.fs.v){ var mm=ok[0].Mn/ok[0].Mc-1;
@@ -2457,6 +2459,7 @@ function ficha(){
     L.push('- cavalamento '+$('ram').value+' ramais / '+$('pta').value+' ponta(s) no tambor');
     L.push('- torque pela carga real, nao pela potencia do motor');
     if(isFinite(q.n1op)&&q.n1op>0) L.push('- rotacao maxima do motor sem carga (inversor): '+fmt(q.n1op,0)+' rpm');
+    if($('qunit').value==='kg') L.push('- carga informada em kg ('+fmt(V('q'),1)+' kg = '+fmt(V('q')/1000,3)+' t)');
     if($('punit').value==='cv') L.push('- potencia informada em cv ('+fmt(V('pelev'),2)+' cv = '+fmt(q.Pm,2)+' kW)');
   } else {
     L.push('- torque derivado da potencia do motor (metodo do catalogo)');
@@ -2557,7 +2560,7 @@ $('n1').addEventListener('input',function(){
 });
 $('freq').addEventListener('change',function(){syncN1();render()});
 $('polos').addEventListener('change',function(){syncN1();render()});
-['app','q','dt','vel','ram','pta','pol','pelev','punit','tcl','espec','n1op','pger','val','n1','n1lib','carga','zb','hv','tfr','fam','tol','ver','pflg','pos','opc','leit']
+['app','q','dt','vel','ram','pta','pol','pelev','punit','qunit','tcl','espec','n1op','pger','val','n1','n1lib','carga','zb','hv','tfr','fam','tol','ver','pflg','pos','opc','leit']
  .forEach(function(k){ var e=$(k); e.addEventListener('input',render); e.addEventListener('change',render); });
 
 $('cp').addEventListener('click',function(){
