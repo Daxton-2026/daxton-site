@@ -426,7 +426,7 @@ footer b{color:var(--ink2);font-weight:600}
   <div class="sec-h">
     <div class="eyebrow">Passo 1</div>
     <h2>Dados de entrada</h2>
-    <p>Em elevação o torque vem da carga, do tambor e do cavalamento, não da placa do motor. A ferramenta converte esses dados antes de entrar no método do catálogo.</p>
+    <p>Em elevação o torque parte da carga, do tambor e do cavalamento e é comparado com o que o motor instalado entrega. A ferramenta converte esses dados antes de entrar no método do catálogo.</p>
   </div>
 
   <div class="modes" id="modes" role="group" aria-label="Modo de entrada">
@@ -455,6 +455,8 @@ footer b{color:var(--ink2);font-weight:600}
           <div class="fld" style="grid-column:1/-1"><div class="note warn" style="margin:0"><i></i><div><h4>Pré-dimensionamento de elevação</h4><p>Em elevação de carga a seleção final é da Bonfiglioli (cap. 14 do catálogo). Escolha a <b>classe de utilização T</b> e o <b>espectro de carga</b> do projeto: sem elas a ferramenta não calcula.</p></div></div></div>
           <div class="fld"><label for="pelev">Potência do motofreio</label><div style="display:flex;gap:8px"><input id="pelev" type="number" step="0.1" value="30" style="flex:1;min-width:0"><select id="punit" style="width:84px"><option value="kw" selected>kW</option><option value="cv">cv</option></select></div>
             <span class="tip">Confira a unidade: <b>7,5 cv = 5,5 kW</b>. Planilhas de projeto costumam trazer cv.</span></div>
+          <div class="fld"><label for="base">Base do torque exigido</label><select id="base"><option value="max" selected>O maior entre carga e potência do motor</option><option value="motor">Pela potência do motor (como a BDB)</option><option value="carga">Só pela carga</option></select>
+            <span class="tip">O motor instalado entrega mais torque que a carga pede. Pela carga o redutor cobre a aplicação, pela potência cobre o que o motor pode empurrar. O padrão usa o <b>maior</b> dos dois.</span></div>
           <div class="fld"><label for="tcl">Classe de utilização <em>T</em> — horas totais</label>
             <select id="tcl"><option value="">— escolha —</option><option value="0">T0 — 200 h</option><option value="1">T1 — 400 h</option><option value="2">T2 — 800 h</option><option value="3">T3 — 1.600 h</option><option value="4">T4 — 3.200 h</option><option value="5">T5 — 6.300 h</option><option value="6">T6 — 12.500 h</option><option value="7">T7 — 25.000 h</option><option value="8">T8 — 50.000 h</option></select></div>
           <div class="fld"><label for="espec">Espectro de carga</label>
@@ -2229,13 +2231,16 @@ function requisito(){
   var famv=$('fam').value, fam=(famv===''?null:parseInt(famv,10));
   var tol=V('tol')/100, leit=parseInt($('leit').value,10);
   var fs=fsLookup(h,parseInt($('carga').value,10),parseInt($('zb').value,10));
-  var n2req,Mr2base,etac=null,r=null,Ptam=null,pot;
+  var n2req,Mr2base,Mr2carga=null,Mr2mot=null,etac=null,r=null,Ptam=null,pot;
   if(modo==='elev'){
     var Q=V('q')*($('qunit').value==='kg'?1:1000),D=V('dt'),v=V('vel'),ram=V('ram'),pta=V('pta'),pol=V('pol');
     r=ram/pta; etac=Math.pow(0.98,pol);
     n2req=v*r*1000/(Math.PI*D);
     Ptam=Q*9.81*v/60/1000/etac;
-    Mr2base=9550*Ptam/n2req;
+    Mr2carga=9550*Ptam/n2req;
+    Mr2mot=(isFinite(Pm)&&Pm>0)?9550*Pm*0.91/n2req:NaN;
+    var bs=$('base').value;
+    Mr2base=(bs==='carga'||!isFinite(Mr2mot))?Mr2carga:(bs==='motor'?Mr2mot:Math.max(Mr2carga,Mr2mot));
     pot=false;
   } else {
     var vv=V('val');
@@ -2244,7 +2249,7 @@ function requisito(){
     pot=true;
   }
   return {n1:n1,ne:ne,n1op:n1op,n1lib:n1lib,Pm:Pm,h:h,tfr:tfr,fam:fam,tol:tol,leit:leit,fs:fs,
-          Q:(modo==='elev'?V('q')*($('qunit').value==='kg'?1:1000):NaN),n2req:n2req,Mr2base:Mr2base,etac:etac,r:r,Ptam:Ptam,pot:pot};
+          Q:(modo==='elev'?V('q')*($('qunit').value==='kg'?1:1000):NaN),n2req:n2req,Mr2base:Mr2base,Mr2carga:Mr2carga,Mr2mot:Mr2mot,base:(modo==='elev'?$('base').value:null),etac:etac,r:r,Ptam:Ptam,pot:pot};
 }
 
 function buscar(q){
@@ -2257,7 +2262,10 @@ function buscar(q){
     var n2=q.n1/i, dev=n2/q.n2req-1;
     if(Math.abs(dev)>q.tol) continue;
     var eta=ETA[st];
-    var Mr=q.pot ? 9550*q.Pm*eta/n2 : q.Mr2base;
+    var Mr;
+    if(q.pot) Mr=9550*q.Pm*eta/n2;
+    else if(q.base===null||q.base==='carga'||!isFinite(q.Pm)||!(q.Pm>0)) Mr=q.Mr2base;
+    else { var Mm=9550*q.Pm*eta/n2; Mr=(q.base==='motor')?Mm:Math.max(q.Mr2carga,Mm); }
     var Mc=Mr*q.fs.v, F=n2*q.h, c=colFor(F);
     if(c<0) continue;
     var Mn=(q.leit===1)?interp(mn,F):mn[c];
@@ -2295,13 +2303,13 @@ function render(){
   }
   b.push(['Rotação de saída n₂', fmt(q.n2req,2)+' rpm']);
   b.push(['Relação necessária i', fmt(q.n1/q.n2req,1)]);
-  b.push(['Torque exigido M<sub>r2</sub>'+(q.pot?' <span class="hint">3 est.</span>':''), fmt(q.Mr2base,0)+' Nm']);
+  b.push(['Torque exigido M<sub>r2</sub>'+(q.pot?' <span class="hint">3 est.</span>':(' <span class="hint">carga '+fmt(q.Mr2carga,0)+' · motor '+fmt(q.Mr2mot,0)+'</span>')), fmt(q.Mr2base,0)+' Nm']);
   b.push(['Fator de serviço f<sub>S</sub>\'', q.fs.v?fmt(q.fs.v,2):'—']);
   b.push(['Torque de cálculo M<sub>c2</sub>'+(q.pot?' <span class="hint">3 est.</span>':''), q.fs.v?fmt(q.Mr2base*q.fs.v,0)+' Nm':'—']);
   b.push(['Fator de vida F<sub>h2</sub>', fmt(q.n2req*q.h,0)]);
   $('reqsub').innerHTML = q.pot
     ? 'O que a aplicação exige. Em modo geral o torque sai da potência do motor — <b>M<sub>r2</sub> e M<sub>c2</sub> mostrados aqui usam &eta; = 0,91 como referência</b>; na tabela de candidatos cada linha usa o rendimento do seu próprio número de estágios.'
-    : 'O que a aplicação exige, antes de olhar qualquer tamanho. Em elevação o torque vem da carga e do tambor, não da placa do motor.';
+    : 'O que a aplicação exige, antes de olhar qualquer tamanho. Em elevação o torque parte da carga e do tambor e, por padrão, é comparado com o que o motor instalado consegue entregar: vale o maior.';
   $('reqbox').innerHTML=b.map(function(x){
     return '<div class="kpi"><span>'+x[0]+'</span><b>'+x[1]+'</b></div>'; }).join('');
 
@@ -2451,7 +2459,7 @@ function ficha(){
   if(modo==='elev'){
     L.push('- rendimento do cabeamento '+fmt(q.etac,3)+' ('+$('pol').value+' polia(s) a 0,98)');
     L.push('- cavalamento '+$('ram').value+' ramais / '+$('pta').value+' ponta(s) no tambor');
-    L.push('- torque pela carga real, nao pela potencia do motor');
+    L.push('- base do torque: '+({max:'o maior entre a carga ('+fmt(q.Mr2carga,0)+' Nm) e a potencia do motor ('+fmt(q.Mr2mot,0)+' Nm, eta 0,91)',motor:'potencia do motor',carga:'carga real'}[$('base').value]));
     if(isFinite(q.n1op)&&q.n1op>0) L.push('- rotacao maxima do motor sem carga (inversor): '+fmt(q.n1op,0)+' rpm');
     if($('qunit').value==='kg') L.push('- carga informada em kg ('+fmt(V('q'),1)+' kg = '+fmt(V('q')/1000,3)+' t)');
     if($('punit').value==='cv') L.push('- potencia informada em cv ('+fmt(V('pelev'),2)+' cv = '+fmt(q.Pm,2)+' kW)');
@@ -2554,7 +2562,7 @@ $('n1').addEventListener('input',function(){
 });
 $('freq').addEventListener('change',function(){syncN1();render()});
 $('polos').addEventListener('change',function(){syncN1();render()});
-['app','q','dt','vel','ram','pta','pol','pelev','punit','qunit','tcl','espec','n1op','pger','val','n1','n1lib','carga','zb','hv','tfr','fam','tol','ver','pflg','pos','opc','leit']
+['app','q','dt','vel','ram','pta','pol','pelev','punit','qunit','base','tcl','espec','n1op','pger','val','n1','n1lib','carga','zb','hv','tfr','fam','tol','ver','pflg','pos','opc','leit']
  .forEach(function(k){ var e=$(k); e.addEventListener('input',render); e.addEventListener('change',render); });
 
 $('cp').addEventListener('click',function(){
