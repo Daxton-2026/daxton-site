@@ -453,8 +453,8 @@ footer b{color:var(--ink2);font-weight:600}
         </div>
         <div id="g-elev" hidden>
           <div class="fld" style="grid-column:1/-1"><div class="note warn" style="margin:0"><i></i><div><h4>Pré-dimensionamento de elevação</h4><p>Em elevação de carga a seleção final é da Bonfiglioli (cap. 14 do catálogo). Escolha a <b>classe de utilização T</b> e o <b>espectro de carga</b> do projeto: sem elas a ferramenta não calcula.</p></div></div></div>
-          <div class="fld"><label for="pelev">Potência do motofreio</label><div style="display:flex;gap:8px"><input id="pelev" type="number" step="0.1" value="30" style="flex:1;min-width:0"><select id="punit" style="width:84px"><option value="kw" selected>kW</option><option value="cv">cv</option></select></div>
-            <span class="tip">Confira a unidade: <b>7,5 cv = 5,5 kW</b>. Planilhas de projeto costumam trazer cv.</span></div>
+          <div class="fld"><label for="pelev">Potência do motofreio</label><select id="pelev"><option value="">— escolha —</option><option value="0.18">0,18 kW (0,25 cv)</option><option value="0.25">0,25 kW (0,33 cv)</option><option value="0.37">0,37 kW (0,5 cv)</option><option value="0.55">0,55 kW (0,75 cv)</option><option value="0.75">0,75 kW (1 cv)</option><option value="1.1">1,1 kW (1,5 cv)</option><option value="1.5">1,5 kW (2 cv)</option><option value="2.2">2,2 kW (3 cv)</option><option value="3">3 kW (4 cv)</option><option value="3.7">3,7 kW (5 cv)</option><option value="4.5">4,5 kW (6 cv)</option><option value="5.5">5,5 kW (7,5 cv)</option><option value="7.5">7,5 kW (10 cv)</option><option value="9.2">9,2 kW (12,5 cv)</option><option value="11">11 kW (15 cv)</option><option value="15">15 kW (20 cv)</option><option value="18.5">18,5 kW (25 cv)</option><option value="22">22 kW (30 cv)</option><option value="30">30 kW (40 cv)</option><option value="37">37 kW (50 cv)</option><option value="45">45 kW (60 cv)</option><option value="55">55 kW (75 cv)</option><option value="75">75 kW (100 cv)</option><option value="90">90 kW (125 cv)</option><option value="110">110 kW (150 cv)</option><option value="132">132 kW (175 cv)</option><option value="150">150 kW (200 cv)</option><option value="185">185 kW (250 cv)</option><option value="220">220 kW (300 cv)</option><option value="260">260 kW (350 cv)</option><option value="300">300 kW (400 cv)</option><option value="330">330 kW (450 cv)</option><option value="370">370 kW (500 cv)</option></select>
+            <span class="tip">Potências padrão de motor até 500 cv. Motor fora do padrão: escolha a potência logo acima.</span></div>
           <div class="fld"><label for="base">Base do torque exigido</label><select id="base"><option value="max" selected>O maior: torque requerido ou torque de saída</option><option value="motor">Torque de saída (potência do motor)</option></select>
             <span class="tip"><b>Torque requerido</b> é o que a carga pede no eixo de saída. <b>Torque de saída</b> é o que o motor instalado entrega no mesmo eixo. A folha de dados da Bonfiglioli usa os mesmos nomes. Por segurança a seleção nunca fica abaixo do torque de saída do motor: o padrão usa o <b>maior</b> dos dois.</span></div>
           <div class="fld"><label for="tcl">Classe de utilização <em>T</em> — horas totais</label>
@@ -2227,7 +2227,7 @@ function requisito(){
   var n1=V('n1'), n1lib=V('n1lib'), h=V('hv'), tfr=V('tfr')/100;
   var n1op=V('n1op'), ne=Math.max(n1,isFinite(n1op)?n1op:0);
   if(modo==='elev'){ h=($('tcl').value!==''&&isFinite(parseFloat($('espec').value)))?TCL[parseInt($('tcl').value,10)]:NaN; }
-  var Pm=(modo==='ger')?V('pger'):V('pelev')*($('punit').value==='cv'?0.7355:1);
+  var Pm=(modo==='ger')?V('pger'):V('pelev');
   var famv=$('fam').value, fam=(famv===''?null:parseInt(famv,10));
   var tol=V('tol')/100, leit=parseInt($('leit').value,10);
   var fs=fsLookup(h,parseInt($('carga').value,10),parseInt($('zb').value,10));
@@ -2254,6 +2254,7 @@ function requisito(){
 
 function buscar(q){
   if(!q.fs.v) return [];
+  if(!q.pot&&!(q.Pm>0)) return [];
   var Mnom=9550*q.Pm/q.n1, out=[];
   for(var j=0;j<ROWS.length;j++){
     var R=ROWS[j], si=R[0], fm=R[1], st=R[2], i=R[3];
@@ -2348,13 +2349,15 @@ function render(){
   $('fld-hv').hidden=(modo==='elev'); $('fld-n1op').hidden=(modo!=='elev');
   var qwb=$('qw'); qwb.hidden=true; if(modo==='elev'&&isFinite(q.Q)&&q.Q>250000){ qwb.hidden=false; $('qwtxt').innerHTML='A carga informada equivale a <b>'+fmt(q.Q/1000,1)+' t</b>. Isso é muito acima do que um redutor da série 300 levanta e costuma ser <b>kg digitado no campo de t</b>. Troque a unidade para kg (ou divida por 1.000) antes de olhar a tabela: os torques abaixo não valem.'; }
   var mw=$('marg'); mw.hidden=true; var pw=$('pminw'); pw.hidden=true;
-  if(modo==='elev'&&ok.length&&isFinite(q.Pm)&&ok[0].Pmin>q.Pm*1.0001){ pw.hidden=false; $('pmintxt').innerHTML='A potência informada (<b>'+fmt(q.Pm,2)+' kW</b>) é menor que a mínima necessária para a carga e a velocidade (<b>'+fmt(ok[0].Pmin,2)+' kW</b>, com rendimento de '+fmt(ok[0].eta,2)+' do redutor e '+fmt(q.etac,3)+' do cabeamento). Confira a unidade (cv ou kW) e o rendimento real do redutor; se o motor for este mesmo, verifique a velocidade em plena carga.'; }
+  if(modo==='elev'&&ok.length&&isFinite(q.Pm)&&ok[0].Pmin>q.Pm*1.0001){ pw.hidden=false; $('pmintxt').innerHTML='A potência informada (<b>'+fmt(q.Pm,2)+' kW</b>) é menor que a mínima necessária para a carga e a velocidade (<b>'+fmt(ok[0].Pmin,2)+' kW</b>, com rendimento de '+fmt(ok[0].eta,2)+' do redutor e '+fmt(q.etac,3)+' do cabeamento). Confira o rendimento real do redutor; se o motor for este mesmo, verifique a velocidade em plena carga.'; }
   if(modo==='elev'&&ok.length&&q.fs.v){ var mm=ok[0].Mn/ok[0].Mc-1;
     if(mm<0.10){ mw.hidden=false; $('margtxt').innerHTML='O menor redutor que passa (<b>'+ok[0].size+' '+ok[0].fam+ok[0].st+' i='+fmt(ok[0].i,0)+'</b>) tem só <b>'+fmt(mm*100,1)+'%</b> de folga sobre o torque de cálculo. Uma mudança pequena de premissa — classe T, número de polias, rotação — pode trocar o tamanho. Em elevação, confirme com a engenharia Bonfiglioli.'; } }
   var tb=$('tb');
   if(!list.length){
     var msg = (modo==='elev'&&!isFinite(q.h))
       ? '<b style="color:var(--crit)">Escolha a classe de utilização T e o espectro de carga</b> para calcular. Em elevação eles definem a vida e o fator de serviço.'
+      : (modo==='elev'&&!(q.Pm>0))
+      ? '<b style="color:var(--crit)">Escolha a potência do motofreio</b> para calcular. A seleção nunca fica abaixo do torque de saída do motor instalado.'
       : !q.fs.v
       ? '<b style="color:var(--crit)">Sem fator de serviço.</b> A tabela A4 termina em 50.000 horas — reduza a vida útil declarada ou leve o caso ao Serviço Técnico.'
       : (q.n2req>0 && isFinite(q.n2req)
@@ -2468,7 +2471,6 @@ function ficha(){
     L.push('- torque de selecao: '+({max:'o maior dos dois',motor:'torque de saida (motor)',carga:'torque requerido (carga)'}[$('base').value]));
     if(isFinite(q.n1op)&&q.n1op>0) L.push('- rotacao maxima do motor sem carga (inversor): '+fmt(q.n1op,0)+' rpm');
     if($('qunit').value==='kg') L.push('- carga informada em kg ('+fmt(V('q'),1)+' kg = '+fmt(V('q')/1000,3)+' t)');
-    if($('punit').value==='cv') L.push('- potencia informada em cv ('+fmt(V('pelev'),2)+' cv = '+fmt(q.Pm,2)+' kW)');
   } else {
     L.push('- torque derivado da potencia do motor (metodo do catalogo)');
     L.push('- acionamento: '+$('freq').value+' Hz, '+($('polos').value!=='0'?$('polos').value+' polos':'n1 informado manualmente'));
@@ -2551,7 +2553,7 @@ function setModo(m){
   $('csub').textContent=(m==='ger')
     ? 'Os valores iniciais são um exemplo de triturador de 75 kW. Altere qualquer campo.'
     : 'Os valores iniciais são um exemplo de carro guincho de 20 t. Altere qualquer campo.';
-  if(m==='elev'){ $('app').value='Elevação principal — carro guincho'; $('carga').value='1'; $('zb').value='2'; $('hv').value=1600; $('tfr').value=150; $('tol').value=10; $('tcl').value=''; $('espec').value=''; }
+  if(m==='elev'){ $('app').value='Elevação principal — carro guincho'; $('carga').value='1'; $('zb').value='2'; $('hv').value=1600; $('tfr').value=150; $('tol').value=10; $('tcl').value=''; $('espec').value=''; $('pelev').value=''; }
   else { $('app').value='Triturador'; $('carga').value='1'; $('zb').value='1'; $('hv').value=10000; $('tfr').value=200; $('tol').value=15; }
   render();
 }
@@ -2568,7 +2570,7 @@ $('n1').addEventListener('input',function(){
 });
 $('freq').addEventListener('change',function(){syncN1();render()});
 $('polos').addEventListener('change',function(){syncN1();render()});
-['app','q','dt','vel','ram','pta','pol','pelev','punit','qunit','base','tcl','espec','n1op','pger','val','n1','n1lib','carga','zb','hv','tfr','fam','tol','ver','pflg','pos','opc','leit']
+['app','q','dt','vel','ram','pta','pol','pelev','qunit','base','tcl','espec','n1op','pger','val','n1','n1lib','carga','zb','hv','tfr','fam','tol','ver','pflg','pos','opc','leit']
  .forEach(function(k){ var e=$(k); e.addEventListener('input',render); e.addEventListener('change',render); });
 
 $('cp').addEventListener('click',function(){
