@@ -2392,14 +2392,16 @@ function requisito(){
   var famv=$('fam').value, fam=(famv===''?null:parseInt(famv,10));
   var tol=V('tol')/100, leit=parseInt($('leit').value,10);
   var fs=fsLookup(h,parseInt($('carga').value,10),parseInt($('zb').value,10));
-  var n2req,Mr2base,Mr2carga=null,Mr2mot=null,etac=null,r=null,Ptam=null,pot;
+  var n2req,Mr2base,Mr2carga=null,Mr2mot=null,Padq=NaN,etac=null,r=null,Ptam=null,pot;
   if(modo==='elev'){
     var Q=V('q')*($('qunit').value==='kg'?1:1000),D=V('dt'),v=V('vel'),ram=V('ram'),pta=V('pta'),pol=V('pol');
     r=ram/pta; etac=Math.pow(0.98,pol);
     n2req=v*r*1000/(Math.PI*D);
     Ptam=Q*9.81*v/60/1000/etac;
     Mr2carga=9550*Ptam/n2req;
-    Mr2mot=(isFinite(Pm)&&Pm>0)?9550*Pm*0.91/n2req:NaN;
+    if(!(Pm>0)) Padq=stdAbove(Ptam/0.91);   // sem potencia: mesmo criterio da tabela (comercial acima da minima)
+    var Pref=(Pm>0)?Pm:Padq;
+    Mr2mot=(isFinite(Pref)&&Pref>0)?9550*Pref*0.91/n2req:NaN;
     var bs=$('base').value;
     Mr2base=(bs==='carga'||!isFinite(Mr2mot))?Mr2carga:(bs==='motor'?Mr2mot:Math.max(Mr2carga,Mr2mot));
     pot=false;
@@ -2410,7 +2412,7 @@ function requisito(){
     pot=true;
   }
   return {n1:n1,ne:ne,n1op:n1op,n1lib:n1lib,Pm:Pm,h:h,tfr:tfr,fam:fam,tol:tol,leit:leit,fs:fs,
-          Q:(modo==='elev'?V('q')*($('qunit').value==='kg'?1:1000):NaN),n2req:n2req,Mr2base:Mr2base,Mr2carga:Mr2carga,Mr2mot:Mr2mot,base:(modo==='elev'?$('base').value:null),etac:etac,r:r,Ptam:Ptam,pot:pot};
+          Q:(modo==='elev'?V('q')*($('qunit').value==='kg'?1:1000):NaN),n2req:n2req,Mr2base:Mr2base,Mr2carga:Mr2carga,Mr2mot:Mr2mot,Padq:Padq,base:(modo==='elev'?$('base').value:null),etac:etac,r:r,Ptam:Ptam,pot:pot};
 }
 
 var STDP=Array.prototype.map.call(document.getElementById('pelev').options,function(o){return parseFloat(o.value);}).filter(function(v){return v>0;}).sort(function(a,b){return a-b;});
@@ -2427,7 +2429,7 @@ function buscar(q){
     var eta=ETA[st];
     var Mr, Pad=q.Pm, Mm=NaN, adot=false;
     // elevacao sem potencia informada: adota a proxima potencia comercial acima da minima (seguranca)
-    if(!q.pot&&!(q.Pm>0)&&q.Ptam!==null){ Pad=stdAbove(q.Ptam/eta); adot=isFinite(Pad); }
+    if(!q.pot&&!(q.Pm>0)&&q.Ptam!==null){ Pad=stdAbove(q.Ptam/eta); adot=isFinite(Pad); if(!adot) continue; }
     var Mnom=(Pad>0)?9550*Pad/q.n1:NaN;
     if(q.pot) Mr=9550*q.Pm*eta/n2;
     else if(q.base===null||q.base==='carga'||!isFinite(Pad)||!(Pad>0)) Mr=q.Mr2base;
@@ -2472,7 +2474,7 @@ function render(){
   if(q.pot){ b.push(['Torque exigido M<sub>r2</sub> <span class="hint">3 est.</span>', fmt(q.Mr2base,0)+' Nm']); }
   else {
     b.push(['Torque requerido <span class="hint">pela carga</span>', fmt(q.Mr2carga,0)+' Nm']);
-    b.push(['Torque de saída <span class="hint">pelo motor</span>', fmt(q.Mr2mot,0)+' Nm']);
+    b.push(['Torque de saída <span class="hint">'+((q.Pm>0)?'pelo motor':(isFinite(q.Padq)?'motor adotado '+fmt(q.Padq,1)+' kW':'pelo motor'))+'</span>', fmt(q.Mr2mot,0)+' Nm']);
     b.push(['Torque de seleção M<sub>r2</sub> <span class="hint">'+({max:'o maior',motor:'motor',carga:'carga'}[q.base])+'</span>', fmt(q.Mr2base,0)+' Nm']);
   }
   b.push(['Fator de serviço f<sub>S</sub>\'', q.fs.v?fmt(q.fs.v,2):'—']);
@@ -2520,6 +2522,8 @@ function render(){
   if(!list.length){
     var msg = (modo==='elev'&&!isFinite(q.h))
       ? '<b style="color:var(--crit)">Escolha a classe de utilização T</b> para calcular. Em elevação ela define a vida e o fator de serviço.'
+      : (modo==='elev'&&!(q.Pm>0)&&isFinite(q.Ptam)&&!isFinite(stdAbove(q.Ptam/ETA[4])))
+      ? '<b style="color:var(--crit)">Potência mínima acima de 370 kW (500 cv).</b> Não há potência comercial na lista para adotar: informe a potência do motor instalado.'
       : !q.fs.v
       ? '<b style="color:var(--crit)">Sem fator de serviço.</b> A tabela A4 termina em 50.000 horas — reduza a vida útil declarada ou leve o caso ao Serviço Técnico.'
       : (q.n2req>0 && isFinite(q.n2req)
