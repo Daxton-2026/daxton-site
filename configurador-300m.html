@@ -2640,11 +2640,11 @@ function mark(){
   });
 }
 
-// Carcaça IEC por potência (kW) e polos — dimensões normalizadas IEC 60072-1, motores IE3 de linha.
-// Varia entre fabricantes em algumas potências: a ficha pede confirmação na placa do motor.
+// Carcaça por potência (kW) e polos. 4 polos de 5,5 a 15 kW: catálogo WEG W22 IR3 Premium (Brasil), confirmado.
+// Demais: IEC 60072-1, ainda sem conferência no catálogo WEG BR. A ficha pede confirmação na placa do motor.
 var IECF={
   2:[[0.75,'80'],[1.1,'80'],[1.5,'90S'],[2.2,'90L'],[3,'100L'],[4,'112M'],[5.5,'132S'],[7.5,'132S'],[11,'160M'],[15,'160M'],[18.5,'160L'],[22,'180M'],[30,'200L'],[37,'200L'],[45,'225M'],[55,'250M']],
-  4:[[0.75,'80'],[1.1,'90S'],[1.5,'90L'],[2.2,'100L'],[3,'100L'],[4,'112M'],[5.5,'132S'],[7.5,'132M'],[11,'160M'],[15,'160L'],[18.5,'180M'],[22,'180L'],[30,'200L'],[37,'225S'],[45,'225M'],[55,'250M']],
+  4:[[0.75,'80'],[1.1,'90S'],[1.5,'90L'],[2.2,'100L'],[3,'100L'],[4,'112M'],[5.5,'L112M'],[7.5,'132S'],[11,'132M/L'],[15,'160M'],[18.5,'180M'],[22,'180L'],[30,'200L'],[37,'225S'],[45,'225M'],[55,'250M']],
   6:[[0.75,'90S'],[1.1,'90L'],[1.5,'100L'],[2.2,'112M'],[3,'132S'],[4,'132M'],[5.5,'132M'],[7.5,'160M'],[11,'160L'],[15,'180L'],[18.5,'200L'],[22,'200L'],[30,'225M'],[37,'250M']]
 };
 function motorFrame(P,polos){
@@ -2705,7 +2705,7 @@ function ficha(){
   L.push(pad('Torque de pico        Mp2',fmt(x.Mp,0)+' Nm'));
   L.push(pad('Potência do motor',        (q.Pm>0?fmt(q.Pm,2)+' kW':(x.adot?fmt(x.Pad,1)+' kW adotada (padrao comercial acima da minima; potencia nao informada)':'nao informada'))+(modo==='elev'?'  (mínimo '+fmt(x.Pmin,2)+' kW)':'')));
   L.push(pad('Flange de entrada IEC',     (pf?pf+(mf&&!pfm?'  (carcaça IEC '+mf.fr+', '+fmt(mf.P,mf.P%1?2:0)+' kW, '+mf.polos+' polos)':''):'A DEFINIR — vem da carcaca do motor')));
-  if(pf&&mf&&!pfm) L.push('   Carcaça pelo padrão IEC 60072; confirme na placa do motor do fabricante escolhido.');
+  if(pf&&mf&&!pfm) L.push('   Carcaça de referência (WEG W22 IR3 / IEC 60072); confirme na placa do motor escolhido.');
   L.push(pad('Posição de montagem',       (pos||'A DEFINIR')));
   if(opc) L.push(pad('Opções e acessórios', opc));
   L.push(Array(53).join('='));
