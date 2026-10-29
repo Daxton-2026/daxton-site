@@ -599,25 +599,26 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 
       <div id="g-elev">
         <div class="grp grp-key">
-          <div class="grp-h"><span class="gn">1</span><div><h3>Dados essenciais</h3><p>Sete campos definem a seleção. O resto tem valor padrão.</p></div><span class="tag-ess">Essencial</span></div>
+          <div class="grp-h"><span class="gn">1</span><div><h3>Dados essenciais</h3><p>Identifique o projeto e informe os sete campos que definem a seleção.</p></div><span class="tag-ess">Essencial</span></div>
           <div class="grp-b">
+            <div class="fld full"><label for="app">Identificação do projeto / aplicação</label><input id="app" type="text" value="Elevação principal — carro guincho" placeholder="ex.: Ponte rolante 20 t — Cliente X"></div>
             <div class="fld full"><label for="tcl">Classe de utilização <em>T</em> — horas totais</label>
               <select id="tcl"><option value="">— escolha —</option><option value="0">T0 — 200 h</option><option value="1">T1 — 400 h</option><option value="2">T2 — 800 h</option><option value="3">T3 — 1.600 h</option><option value="4">T4 — 3.200 h</option><option value="5">T5 — 6.300 h</option><option value="6">T6 — 12.500 h</option><option value="7">T7 — 25.000 h</option><option value="8">T8 — 50.000 h</option></select>
               <span class="tip">Classe de funcionamento do mecanismo (FEM / ISO 4301-1). Define as horas de vida do redutor.</span></div>
             <div class="fld"><label for="q">Carga total <em>Q</em></label><div class="inl"><input id="q" type="number" step="0.1" value="20" inputmode="decimal"><select id="qunit"><option value="t" selected>t</option><option value="kg">kg</option></select></div>
               <span class="tip"><b>É o que o tambor levanta</b>: carga útil mais moitão, gancho, travessa e o que mais estiver pendurado.</span></div>
-            <div class="fld"><label for="vel">Velocidade de elevação <em>v</em> — m/min</label><input id="vel" type="number" step="0.1" value="6" inputmode="decimal"></div>
-            <div class="fld"><label for="dt">Ø primitivo do tambor <em>D</em> — mm</label><input id="dt" type="number" step="0.1" value="500" inputmode="decimal"></div>
-            <div class="fld"><label for="ram">Ramais totais no moitão</label><input id="ram" type="number" step="1" value="4" inputmode="numeric"></div>
+            <div class="fld"><label for="vel">Velocidade <em>v</em> — m/min</label><input id="vel" type="number" step="0.1" value="6" inputmode="decimal"></div>
+            <div class="fld"><label for="dt">Ø do tambor <em>D</em> — mm</label><input id="dt" type="number" step="0.1" value="500" inputmode="decimal"></div>
+            <div class="fld"><label for="ram">Ramais no moitão</label><input id="ram" type="number" step="1" value="4" inputmode="numeric"></div>
             <div class="fld"><label for="pta">Pontas de cabo no tambor</label><input id="pta" type="number" step="1" value="2" inputmode="numeric"></div>
-            <div class="fld"><label for="pol">Nº de polias no caminho do cabo</label><input id="pol" type="number" step="1" value="2" inputmode="numeric"></div>
+            <div class="fld"><label for="pol">Nº de polias no cabo</label><input id="pol" type="number" step="1" value="2" inputmode="numeric"></div>
           </div>
         </div>
 
         <div class="grp">
           <div class="grp-h"><span class="gn">2</span><div><h3>Motor e acionamento</h3><p>Opcional. Sem a potência, a ferramenta adota a próxima potência comercial acima da mínima necessária.</p></div><span class="tag-opt">Opcional</span></div>
           <div class="grp-b">
-            <div class="fld"><label for="pelev">Potência do motofreio</label><select id="pelev"><option value="">Não informada — adota a comercial acima da mínima</option><option value="0.18">0,18 kW (0,25 cv)</option><option value="0.25">0,25 kW (0,33 cv)</option><option value="0.37">0,37 kW (0,5 cv)</option><option value="0.55">0,55 kW (0,75 cv)</option><option value="0.75">0,75 kW (1 cv)</option><option value="1.1">1,1 kW (1,5 cv)</option><option value="1.5">1,5 kW (2 cv)</option><option value="2.2">2,2 kW (3 cv)</option><option value="3">3 kW (4 cv)</option><option value="3.7">3,7 kW (5 cv)</option><option value="4.5">4,5 kW (6 cv)</option><option value="5.5">5,5 kW (7,5 cv)</option><option value="7.5">7,5 kW (10 cv)</option><option value="9.2">9,2 kW (12,5 cv)</option><option value="11">11 kW (15 cv)</option><option value="15">15 kW (20 cv)</option><option value="18.5">18,5 kW (25 cv)</option><option value="22">22 kW (30 cv)</option><option value="30">30 kW (40 cv)</option><option value="37">37 kW (50 cv)</option><option value="45">45 kW (60 cv)</option><option value="55">55 kW (75 cv)</option><option value="75">75 kW (100 cv)</option><option value="90">90 kW (125 cv)</option><option value="110">110 kW (150 cv)</option><option value="132">132 kW (175 cv)</option><option value="150">150 kW (200 cv)</option><option value="185">185 kW (250 cv)</option><option value="220">220 kW (300 cv)</option><option value="260">260 kW (350 cv)</option><option value="300">300 kW (400 cv)</option><option value="330">330 kW (450 cv)</option><option value="370">370 kW (500 cv)</option></select>
+            <div class="fld"><label for="pelev">Potência do motofreio</label><select id="pelev"><option value="">Automática (padrão comercial)</option><option value="0.18">0,18 kW (0,25 cv)</option><option value="0.25">0,25 kW (0,33 cv)</option><option value="0.37">0,37 kW (0,5 cv)</option><option value="0.55">0,55 kW (0,75 cv)</option><option value="0.75">0,75 kW (1 cv)</option><option value="1.1">1,1 kW (1,5 cv)</option><option value="1.5">1,5 kW (2 cv)</option><option value="2.2">2,2 kW (3 cv)</option><option value="3">3 kW (4 cv)</option><option value="3.7">3,7 kW (5 cv)</option><option value="4.5">4,5 kW (6 cv)</option><option value="5.5">5,5 kW (7,5 cv)</option><option value="7.5">7,5 kW (10 cv)</option><option value="9.2">9,2 kW (12,5 cv)</option><option value="11">11 kW (15 cv)</option><option value="15">15 kW (20 cv)</option><option value="18.5">18,5 kW (25 cv)</option><option value="22">22 kW (30 cv)</option><option value="30">30 kW (40 cv)</option><option value="37">37 kW (50 cv)</option><option value="45">45 kW (60 cv)</option><option value="55">55 kW (75 cv)</option><option value="75">75 kW (100 cv)</option><option value="90">90 kW (125 cv)</option><option value="110">110 kW (150 cv)</option><option value="132">132 kW (175 cv)</option><option value="150">150 kW (200 cv)</option><option value="185">185 kW (250 cv)</option><option value="220">220 kW (300 cv)</option><option value="260">260 kW (350 cv)</option><option value="300">300 kW (400 cv)</option><option value="330">330 kW (450 cv)</option><option value="370">370 kW (500 cv)</option></select>
               <span class="tip">Em branco, vale a potência comercial acima da mínima. Informando, vale a sua: a seleção nunca fica abaixo do torque de saída dela, e o aviso aparece se ela for menor que a mínima.</span></div>
             <div class="fld"><label for="polos">Polos do motor &rarr; <em>n₁</em></label><select id="polos">
             <option value="2">2 polos</option>
@@ -634,19 +635,18 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
       <details class="grp adv">
         <summary><span class="gn">3</span><div><h3>Opções avançadas e do modelo</h3><p>Rede, tolerâncias, designação e premissas do cálculo. Os padrões atendem a maioria dos casos.</p></div><svg class="chev" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
         <div class="grp-b">
-          <div class="fld full"><label for="app">Identificação da aplicação</label><input id="app" type="text" value="Elevação principal — carro guincho"></div>
-          <div class="fld"><label for="freq">Frequência da rede</label><select id="freq"><option value="60" selected>60 Hz — Brasil</option><option value="50">50 Hz</option></select></div>
+          
+          
           <div class="fld"><label for="fam">Configuração</label><select id="fam"><option value="">Coaxial e ortogonal</option><option value="0" selected>Coaxial — série L</option><option value="1">Ortogonal — série R</option></select></div>
           <div class="fld"><label for="tol">Desvio de rotação aceito — ±%</label><input id="tol" type="number" step="1" value="10" inputmode="numeric"></div>
-          <div class="fld"><label for="base">Base do torque exigido</label><select id="base"><option value="max" selected>O maior: torque requerido ou torque de saída</option><option value="motor">Torque de saída (potência do motor)</option></select>
+          <div class="fld"><label for="base">Base do torque exigido</label><select id="base"><option value="max" selected>O maior dos dois (recomendado)</option><option value="motor">Torque de saída (potência do motor)</option></select>
             <span class="tip"><b>Torque requerido</b> é o que a carga pede no eixo de saída; <b>torque de saída</b>, o que o motor entrega no mesmo eixo. O padrão usa o <b>maior</b> dos dois.</span></div>
-          <div class="fld"><label for="carga">Tipo de carga — tabela A4</label><select id="carga"><option value="0">Uniforme</option><option value="1" selected>Choque moderado</option><option value="2">Choque pesado</option></select></div>
-          <div class="fld"><label for="zb">Partidas por hora <em>Z</em></label><select id="zb"><option value="0">Z &lt; 10</option><option value="1">10 &lt; Z &lt; 30</option><option value="2" selected>30 &lt; Z &lt; 100</option></select></div>
-          <div class="fld"><label for="tfr">Torque de pico na entrada — % do nominal</label><input id="tfr" type="number" step="5" value="150" inputmode="numeric"></div>
-          <div class="fld"><label for="n1lib">n₁ liberada pela fábrica, contínuo — rpm</label><input id="n1lib" type="number" step="10" value="1750" inputmode="numeric">
-            <span class="tip">A Bonfiglioli liberou <b>1750 rpm</b> em regime contínuo, acima da tabelada nos rating charts.</span></div>
-          <div class="fld" id="fld-n1op" hidden><label for="n1op">Rotação máxima sem carga (inversor) — rpm <em>opcional</em></label><input id="n1op" type="number" step="10" value="" inputmode="numeric"><span class="tip">Se o motor sobe de rotação sem carga (ex.: 2400 rpm), a ferramenta confere o limite do redutor nessa rotação.</span></div>
-          <div class="fld"><label for="leit">Leitura do M<sub>n2</sub></label><select id="leit"><option value="0" selected>Literal — próxima coluna de n₂·h</option><option value="1">Interpolada na curva do catálogo</option></select></div>
+          
+          
+          
+          
+          
+          
           <div class="fld full"><label for="ver">Versão de saída — para a designação</label><select id="ver">
             <option value="MC">MC — eixo cilíndrico chavetado</option>
             <option value="HC" selected>HC — eixo cilíndrico chavetado reforçado</option>
@@ -674,6 +674,14 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
       </details>
 
       <div class="legacy" hidden>
+        <div class="fld"><label for="freq">Frequência da rede</label><select id="freq"><option value="60" selected>60 Hz — Brasil</option><option value="50">50 Hz</option></select></div>
+        <div class="fld"><label for="carga">Tipo de carga — tabela A4</label><select id="carga"><option value="0">Uniforme</option><option value="1" selected>Choque moderado</option><option value="2">Choque pesado</option></select></div>
+        <div class="fld"><label for="zb">Partidas por hora <em>Z</em></label><select id="zb"><option value="0">Z &lt; 10</option><option value="1">10 &lt; Z &lt; 30</option><option value="2" selected>30 &lt; Z &lt; 100</option></select></div>
+        <div class="fld"><label for="tfr">Torque de pico na entrada — % do nominal</label><input id="tfr" type="number" step="5" value="150" inputmode="numeric"></div>
+        <div class="fld"><label for="n1lib">n₁ liberada pela fábrica, contínuo — rpm</label><input id="n1lib" type="number" step="10" value="1750" inputmode="numeric">
+            <span class="tip">A Bonfiglioli liberou <b>1750 rpm</b> em regime contínuo, acima da tabelada nos rating charts.</span></div>
+        <div class="fld" id="fld-n1op" hidden><label for="n1op">Rotação máxima sem carga (inversor) — rpm <em>opcional</em></label><input id="n1op" type="number" step="10" value="" inputmode="numeric"><span class="tip">Se o motor sobe de rotação sem carga (ex.: 2400 rpm), a ferramenta confere o limite do redutor nessa rotação.</span></div>
+        <div class="fld"><label for="leit">Leitura do M<sub>n2</sub></label><select id="leit"><option value="0" selected>Literal — próxima coluna de n₂·h</option><option value="1">Interpolada na curva do catálogo</option></select></div>
         <div id="ctit"></div><div id="csub"></div>
         <div id="g-ger" hidden>
           <input id="pger" type="number" value="75"><select id="ent">
