@@ -510,6 +510,9 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
   .wrap{padding:0 16px}.grp-b{padding:16px;grid-template-columns:1fr}.sum{padding:18px}.sum-m{font-size:28px}
   .mast{padding:30px 0 28px}.plate{justify-content:flex-start;max-width:none}
 }
+/* o <i> do aviso e a barra lateral; italico dentro do texto nao herda o fundo */
+.note p i,.note h4 i,.note li i{background:none;border-radius:0;font-style:italic;color:inherit}
+.wsteps li{align-items:center}
 @media print{.wb-out,.alt{display:none!important}}
 </style>
 </head>
@@ -577,7 +580,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
     <p>No fim sai uma <b>folha de dados pronta para colar no pedido</b>, com o modelo no mesmo formato que a Bonfiglioli usa na proposta. Nada é enviado para lugar nenhum: tudo roda no seu navegador, inclusive sem internet.</p>
   </div>
   <ol class="wsteps">
-    <li><span>1</span>Preencha carga, velocidade, cavalamento e classe T</li>
+    <li><span>1</span>Preencha carga, velocidade e classe T</li>
     <li><span>2</span>Escolha um candidato na tabela</li>
     <li><span>3</span>Copie a folha e mande para cotação</li>
   </ol>
@@ -747,7 +750,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
   <div class="note"><i></i><div>
     <h4>Sobre a rotação de entrada a 60 Hz</h4>
     <p>Boa parte dos tamanhos grandes traz rotação contínua tabelada de <b>1500 rpm</b> — número escrito para 50 Hz, onde o motor de 4 polos gira ≈ 1450. No Brasil o mesmo motor gira ≈ 1750.</p>
-    <p><b>A Bonfiglioli liberou 1750 rpm em regime contínuo</b>, e é esse o valor que o campo <i>n₁ liberada pela fábrica</i> traz por padrão. Acima dele volta a valer a rotação máxima de serviço intermitente do catálogo (20% em 60 min): a linha aparece com <span class="ck w">!</span> e, acima da intermitente, reprova de fato.</p>
+    <p><b>A Bonfiglioli liberou 1750 rpm em regime contínuo</b>, e é esse o valor que a ferramenta adota. Acima dele volta a valer a rotação máxima de serviço intermitente do catálogo (20% em 60 min): a linha aparece com <span class="ck w">!</span> e, acima da intermitente, reprova de fato.</p>
     <p class="cap" style="margin-top:8px">Confirme a liberação por escrito antes de usar em proposta — o valor tabelado no catálogo continua sendo 1500.</p>
   </div></div>
 
