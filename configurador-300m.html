@@ -658,7 +658,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
           <div class="fld"><label for="zb">Partidas por hora <em>Z</em></label><select id="zb"><option value="0">Z &lt; 10</option><option value="1">10 &lt; Z &lt; 30</option><option value="2" selected>30 &lt; Z &lt; 100</option></select></div>
           <div class="fld"><label for="tfr">Torque de pico na entrada — % do nominal</label><input id="tfr" type="number" step="5" value="150" inputmode="numeric"></div>
           <div class="fld" id="fld-n1op" hidden><label for="n1op">Rotação máxima sem carga (inversor) — rpm <em>opcional</em></label><input id="n1op" type="number" step="10" value="" inputmode="numeric"><span class="tip">Se o motor sobe de rotação sem carga (ex.: 2400 rpm), a ferramenta confere o limite do redutor nessa rotação.</span></div>
-          <div class="fld full"><label for="ver">Versão de saída — para a designação</label><select id="ver">
+          <div class="fld"><label for="ver">Versão de saída — para a designação</label><select id="ver">
             <option value="MC">MC — eixo cilíndrico chavetado</option>
             <option value="HC" selected>HC — eixo cilíndrico chavetado reforçado</option>
             <option value="MZ">MZ — eixo estriado macho</option>
@@ -671,20 +671,20 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
             <option value="FDK">FDK — eixo oco com chaveta dupla</option>
             <option value="VK">VK — saída reforçada</option>
           </select></div>
-          <div class="fld"><label for="pflg">Carcaça IEC do motor &rarr; flange</label><select id="pflg">
-            <option value="">— a definir —</option>
-            <option value="P71">P71</option><option value="P80">P80</option><option value="P90">P90</option>
-            <option value="P100" selected>P100</option><option value="P112">P112</option><option value="P132">P132</option>
-            <option value="P160">P160</option><option value="P180">P180</option><option value="P200">P200</option>
-            <option value="P225">P225</option><option value="P250">P250</option>
-          </select>
-            <span class="tip"><b>Vem do motor, não do redutor.</b> Confirme na placa do motor escolhido.</span></div>
           <div class="fld"><label for="pos">Posição de montagem</label><input id="pos" type="text" value="A" maxlength="4"></div>
           <div class="fld"><label for="opc">Opções e acessórios</label><input id="opc" type="text" value="C3" placeholder="ex.: C3, G0A, W0A"></div>
         </div>
       </details>
 
       <div class="legacy" hidden>
+            <div class="fld"><label for="pflg">Carcaça IEC do motor &rarr; flange</label><select id="pflg">
+              <option value="" selected>— a definir —</option>
+              <option value="P71">P71</option><option value="P80">P80</option><option value="P90">P90</option>
+              <option value="P100">P100</option><option value="P112">P112</option><option value="P132">P132</option>
+              <option value="P160">P160</option><option value="P180">P180</option><option value="P200">P200</option>
+              <option value="P225">P225</option><option value="P250">P250</option>
+            </select>
+              <span class="tip"><b>Vem do motor, não do redutor.</b> Confirme na placa do motor escolhido.</span></div>
         <div class="fld"><label for="freq">Frequência da rede</label><select id="freq"><option value="60" selected>60 Hz — Brasil</option><option value="50">50 Hz</option></select></div>
         <div class="fld"><label for="n1lib">n₁ liberada pela fábrica, contínuo — rpm</label><input id="n1lib" type="number" step="10" value="1750" inputmode="numeric">
             <span class="tip">A Bonfiglioli liberou <b>1750 rpm</b> em regime contínuo, acima da tabelada nos rating charts.</span></div>
