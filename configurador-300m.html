@@ -429,6 +429,8 @@ section{padding:40px 0}
 .grp-b{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px 18px;padding:20px}
 .grp-b .fld{margin:0}
 .fld.full{grid-column:1/-1}
+.fld.span2{grid-row:span 2}
+.grp-b{grid-auto-flow:dense}
 .fld label{font-size:12.5px;font-weight:600;color:var(--ink2);letter-spacing:0}
 .fld label em{font-family:var(--font);font-weight:700}
 .fld input,.fld select{height:42px;padding:0 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);
@@ -639,8 +641,12 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
           
           <div class="fld"><label for="fam">Configuração</label><select id="fam"><option value="">Coaxial e ortogonal</option><option value="0" selected>Coaxial — série L</option><option value="1">Ortogonal — série R</option></select></div>
           <div class="fld"><label for="tol">Desvio de rotação aceito — ±%</label><input id="tol" type="number" step="1" value="10" inputmode="numeric"></div>
-          <div class="fld"><label for="base">Base do torque exigido</label><select id="base"><option value="max" selected>O maior dos dois (recomendado)</option><option value="motor">Torque de saída (potência do motor)</option></select>
+          <div class="fld span2"><label for="base">Base do torque exigido</label><select id="base"><option value="max" selected>O maior dos dois</option><option value="motor">Torque de saída (potência do motor)</option></select>
             <span class="tip"><b>Torque requerido</b> é o que a carga pede no eixo de saída; <b>torque de saída</b>, o que o motor entrega no mesmo eixo. O padrão usa o <b>maior</b> dos dois.</span></div>
+          
+          
+          
+          
           
           
           
