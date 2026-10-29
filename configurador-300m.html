@@ -445,8 +445,11 @@ section{padding:40px 0}
 .inl{display:flex;gap:8px}.inl input{flex:1;min-width:0}.inl select{width:84px;flex:none}
 .grp-key{border-color:color-mix(in srgb,var(--accent) 35%,var(--line));box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 7%,transparent),var(--shadow)}
 .grp-key .grp-h{background:linear-gradient(90deg,var(--accent-soft),var(--surface2))}
-.grp-key .fld input,.grp-key .fld select{border-color:color-mix(in srgb,var(--accent) 40%,var(--line));background:color-mix(in srgb,var(--accent-soft) 40%,var(--surface))}
-.grp-key .fld label::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--amber);margin-right:7px;vertical-align:middle}
+.grp-key .fld input,.grp-key .fld select{border:1.5px solid color-mix(in srgb,var(--accent) 65%,var(--line));background:color-mix(in srgb,var(--accent-soft) 85%,var(--surface))}
+.grp-key .fld input:focus-visible,.grp-key .fld select:focus-visible{border-color:var(--accent2)}
+.grp-key .fld label{color:var(--accent)}
+.grp-key .fld label::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--amber);margin:0 0 4px 0;align-self:flex-end;flex:none}
+.grp-key .grp-b{background:color-mix(in srgb,var(--accent-soft) 22%,var(--surface))}
 
 /* painel de resultado */
 .sum{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:22px;overflow:hidden;position:relative}
