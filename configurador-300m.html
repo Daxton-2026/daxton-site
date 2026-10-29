@@ -502,6 +502,8 @@ tbody tr{transition:background .12s}
 .alt-m{font-family:"JetBrains Mono",monospace;font-size:20px;font-weight:700;color:var(--accent);margin-top:6px;overflow-wrap:anywhere}
 .alt-m.none{font-family:var(--font);font-size:14px;color:var(--crit);font-weight:600}
 .alt-s{font-size:12px;color:var(--muted)}
+.alt-s .fg.low{color:var(--crit);font-weight:700}
+.alt-s .fg.mid{color:var(--warn);font-weight:700}
 .alt-d{margin-top:8px;font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2)}
 .alt-c.on .alt-d{color:var(--accent)}
 
@@ -738,8 +740,8 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
   <div class="note warn" id="nopm" hidden><i></i><div><h4>Dimensionado só pela carga</h4><p id="nopmtxt">—</p></div></div>
 
   <div class="alt" id="altbox" hidden>
-    <div class="alt-h"><h3>Alternativas por classe de utilização</h3>
-      <p>O mesmo projeto com a classe T acima e abaixo da sua. Subir a classe aumenta o fator de serviço exigido e pode subir o tamanho. A ferramenta não tem preço: peça a cotação de cada alternativa.</p></div>
+    <div class="alt-h"><h3>Alternativas por classe de funcionamento (M)</h3>
+      <p>O mesmo projeto com a classe acima e abaixo da sua. Subir a classe aumenta o fator de serviço exigido e pode subir o tamanho. O grupo M é calculado com <b>espectro de carga leve (L1)</b>, o mais conservador para dimensionar: com espectro mais pesado, a mesma máquina corresponde a uma classe T menor e a um redutor menor. A ferramenta não tem preço: peça a cotação de cada alternativa.</p></div>
     <div class="alt-grid" id="altgrid"></div>
   </div>
 </section>
@@ -2609,6 +2611,7 @@ function renderSum(){
     (x.adot?'<div class="sum-pm"><span>Motor adotado (padrão comercial)</span><b>'+fmt(x.Pad,1)+' kW</b></div>':'')+
     '<a class="sum-btn" href="#ficha">Ver folha de dados <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>'+foot;
 }
+function mGrupoL1(h){ return Math.max(1,Math.min(8,Math.round(Math.log(h*0.125/100)/Math.LN2)+1)); }
 function renderAlt(q){
   var box=$('altbox'); if(!box) return;
   var t0=isFinite(q.h)?TCL.indexOf(q.h):-1;
@@ -2623,8 +2626,9 @@ function renderAlt(q){
   $('altgrid').innerHTML=cards.map(function(c){
     var on=(c.t===t0), x=c.x, d='';
     if(x&&base&&!on){ var dd=x.si-base.si; d=(dd===0)?'mesmo tamanho':((dd>0?'+':'−')+Math.abs(dd)+(Math.abs(dd)===1?' tamanho':' tamanhos')); }
-    return '<div class="alt-c'+(on?' on':'')+'"><div class="alt-t">T'+c.t+' <small>'+fmt(TCL[c.t],0)+' h</small></div>'+
-      (x?'<div class="alt-m">'+x.size+' '+x.fam+x.st+' '+ratioTxt(x)+'</div><div class="alt-s">f<sub>S</sub> '+fmt(x.fS,2)+' · folga '+fmt((x.Mn/x.Mc-1)*100,0)+'%</div>':
+    var fg=x?(x.Mn/x.Mc-1)*100:0, fgc=(fg<5?' low':(fg<10?' mid':''));
+    return '<div class="alt-c'+(on?' on':'')+'"><div class="alt-t">M'+mGrupoL1(TCL[c.t])+' <small>T'+c.t+' · '+fmt(TCL[c.t],0)+' h</small></div>'+
+      (x?'<div class="alt-m">'+x.size+' '+x.fam+x.st+' '+ratioTxt(x)+'</div><div class="alt-s">f<sub>S</sub> '+fmt(x.fS,2)+' · <span class="fg'+fgc+'">folga '+fmt(fg,0)+'%</span></div>':
          '<div class="alt-m none">'+(c.f.v?'Sem candidato':'Fora da tabela A4')+'</div><div class="alt-s">&nbsp;</div>')+
       '<div class="alt-d">'+(on?'Sua escolha':d)+'</div></div>';
   }).join('');
