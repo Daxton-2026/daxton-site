@@ -586,7 +586,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
   <div class="sec-h">
     <div class="eyebrow">Passo 1</div>
     <h2>Dados de entrada</h2>
-    <p>O torque parte da carga, do tambor e do cavalamento. Se você informar o motor, a ferramenta compara com o torque que ele entrega e nunca seleciona abaixo disso.</p>
+    <p>O torque parte da carga, do tambor e do cavalamento. A ferramenta calcula a potência mínima pela carga, adota a próxima potência comercial acima dela e nunca seleciona abaixo do torque de saída desse motor.</p>
   </div>
 
   <div class="modes" id="modes" role="group" aria-label="Modo de entrada" hidden>
@@ -615,10 +615,10 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
         </div>
 
         <div class="grp">
-          <div class="grp-h"><span class="gn">2</span><div><h3>Motor e acionamento</h3><p>Opcional. Sem a potência, a seleção é pela carga e a ferramenta informa a potência mínima.</p></div><span class="tag-opt">Opcional</span></div>
+          <div class="grp-h"><span class="gn">2</span><div><h3>Motor e acionamento</h3><p>Opcional. Sem a potência, a ferramenta adota a próxima potência comercial acima da mínima necessária.</p></div><span class="tag-opt">Opcional</span></div>
           <div class="grp-b">
-            <div class="fld"><label for="pelev">Potência do motofreio</label><select id="pelev"><option value="">Não informada — seleciona pela carga</option><option value="0.18">0,18 kW (0,25 cv)</option><option value="0.25">0,25 kW (0,33 cv)</option><option value="0.37">0,37 kW (0,5 cv)</option><option value="0.55">0,55 kW (0,75 cv)</option><option value="0.75">0,75 kW (1 cv)</option><option value="1.1">1,1 kW (1,5 cv)</option><option value="1.5">1,5 kW (2 cv)</option><option value="2.2">2,2 kW (3 cv)</option><option value="3">3 kW (4 cv)</option><option value="3.7">3,7 kW (5 cv)</option><option value="4.5">4,5 kW (6 cv)</option><option value="5.5">5,5 kW (7,5 cv)</option><option value="7.5">7,5 kW (10 cv)</option><option value="9.2">9,2 kW (12,5 cv)</option><option value="11">11 kW (15 cv)</option><option value="15">15 kW (20 cv)</option><option value="18.5">18,5 kW (25 cv)</option><option value="22">22 kW (30 cv)</option><option value="30">30 kW (40 cv)</option><option value="37">37 kW (50 cv)</option><option value="45">45 kW (60 cv)</option><option value="55">55 kW (75 cv)</option><option value="75">75 kW (100 cv)</option><option value="90">90 kW (125 cv)</option><option value="110">110 kW (150 cv)</option><option value="132">132 kW (175 cv)</option><option value="150">150 kW (200 cv)</option><option value="185">185 kW (250 cv)</option><option value="220">220 kW (300 cv)</option><option value="260">260 kW (350 cv)</option><option value="300">300 kW (400 cv)</option><option value="330">330 kW (450 cv)</option><option value="370">370 kW (500 cv)</option></select>
-              <span class="tip">Informando, a seleção nunca fica abaixo do torque de saída do motor. Motor fora do padrão: escolha a potência logo acima.</span></div>
+            <div class="fld"><label for="pelev">Potência do motofreio</label><select id="pelev"><option value="">Não informada — adota a comercial acima da mínima</option><option value="0.18">0,18 kW (0,25 cv)</option><option value="0.25">0,25 kW (0,33 cv)</option><option value="0.37">0,37 kW (0,5 cv)</option><option value="0.55">0,55 kW (0,75 cv)</option><option value="0.75">0,75 kW (1 cv)</option><option value="1.1">1,1 kW (1,5 cv)</option><option value="1.5">1,5 kW (2 cv)</option><option value="2.2">2,2 kW (3 cv)</option><option value="3">3 kW (4 cv)</option><option value="3.7">3,7 kW (5 cv)</option><option value="4.5">4,5 kW (6 cv)</option><option value="5.5">5,5 kW (7,5 cv)</option><option value="7.5">7,5 kW (10 cv)</option><option value="9.2">9,2 kW (12,5 cv)</option><option value="11">11 kW (15 cv)</option><option value="15">15 kW (20 cv)</option><option value="18.5">18,5 kW (25 cv)</option><option value="22">22 kW (30 cv)</option><option value="30">30 kW (40 cv)</option><option value="37">37 kW (50 cv)</option><option value="45">45 kW (60 cv)</option><option value="55">55 kW (75 cv)</option><option value="75">75 kW (100 cv)</option><option value="90">90 kW (125 cv)</option><option value="110">110 kW (150 cv)</option><option value="132">132 kW (175 cv)</option><option value="150">150 kW (200 cv)</option><option value="185">185 kW (250 cv)</option><option value="220">220 kW (300 cv)</option><option value="260">260 kW (350 cv)</option><option value="300">300 kW (400 cv)</option><option value="330">330 kW (450 cv)</option><option value="370">370 kW (500 cv)</option></select>
+              <span class="tip">Em branco, vale a potência comercial acima da mínima. Informando, vale a sua: a seleção nunca fica abaixo do torque de saída dela, e o aviso aparece se ela for menor que a mínima.</span></div>
             <div class="fld"><label for="polos">Polos do motor &rarr; <em>n₁</em></label><select id="polos">
             <option value="2">2 polos</option>
             <option value="4" selected>4 polos</option>
@@ -2413,9 +2413,11 @@ function requisito(){
           Q:(modo==='elev'?V('q')*($('qunit').value==='kg'?1:1000):NaN),n2req:n2req,Mr2base:Mr2base,Mr2carga:Mr2carga,Mr2mot:Mr2mot,base:(modo==='elev'?$('base').value:null),etac:etac,r:r,Ptam:Ptam,pot:pot};
 }
 
+var STDP=Array.prototype.map.call(document.getElementById('pelev').options,function(o){return parseFloat(o.value);}).filter(function(v){return v>0;}).sort(function(a,b){return a-b;});
+function stdAbove(pmin){ for(var k=0;k<STDP.length;k++){ if(STDP[k]>=pmin-1e-9) return STDP[k]; } return NaN; }
 function buscar(q){
   if(!q.fs.v) return [];
-  var Mnom=(q.Pm>0)?9550*q.Pm/q.n1:NaN, out=[];
+  var out=[];
   for(var j=0;j<ROWS.length;j++){
     var R=ROWS[j], si=R[0], fm=R[1], st=R[2], i=R[3];
     if(q.fam!==null && fm!==q.fam) continue;
@@ -2423,16 +2425,19 @@ function buscar(q){
     var n2=q.n1/i, dev=n2/q.n2req-1;
     if(Math.abs(dev)>q.tol) continue;
     var eta=ETA[st];
-    var Mr;
+    var Mr, Pad=q.Pm, Mm=NaN, adot=false;
+    // elevacao sem potencia informada: adota a proxima potencia comercial acima da minima (seguranca)
+    if(!q.pot&&!(q.Pm>0)&&q.Ptam!==null){ Pad=stdAbove(q.Ptam/eta); adot=isFinite(Pad); }
+    var Mnom=(Pad>0)?9550*Pad/q.n1:NaN;
     if(q.pot) Mr=9550*q.Pm*eta/n2;
-    else if(q.base===null||q.base==='carga'||!isFinite(q.Pm)||!(q.Pm>0)) Mr=q.Mr2base;
-    else { var Mm=9550*q.Pm*eta/n2; Mr=(q.base==='motor')?Mm:Math.max(q.Mr2carga,Mm); }
+    else if(q.base===null||q.base==='carga'||!isFinite(Pad)||!(Pad>0)) Mr=q.Mr2base;
+    else { Mm=9550*Pad*eta/n2; Mr=(q.base==='motor')?Mm:Math.max(q.Mr2carga,Mm); }
     var Mc=Mr*q.fs.v, F=n2*q.h, c=colFor(F);
     if(c<0) continue;
     var Mn=(q.leit===1)?interp(mn,F):mn[c];
     var Mp=isFinite(Mnom)?Mnom*q.tfr*i*eta:Mr*q.tfr;   // sem motor informado: pico = torque requerido x pico%
     var Pmin=(q.Ptam!==null)?q.Ptam/eta:(Mr*n2/9550);
-    var ck={T:Mc<=Mn,P:((p1>0&&q.Pm>0)?p1>=q.Pm:true),M:m2max>=Mp};
+    var ck={T:Mc<=Mn,P:((p1>0&&Pad>0)?p1>=Pad:true),M:m2max>=Mp};
     var fail=0; for(var k in ck) if(!ck[k]) fail++;
     var lim = Math.max(nn1, q.n1lib||0);            // contínua tabelada ou a liberada pela fábrica
     var libN = q.ne>nn1 && q.ne<=lim;               // acima da tabelada mas dentro da liberação
@@ -2441,7 +2446,7 @@ function buscar(q){
     if(warnX){ ck.M=ck.M; fail++; }
     out.push({si:si,size:SIZES[si],fam:fm?'R':'L',st:st,i:i,n2:n2,dev:dev,eta:eta,
       col:COLS[c],colIdx:c,Mn:Mn,MnLit:mn[c],MnInt:interp(mn,F),Mr:Mr,Mc:Mc,F:F,
-      fS:Mn/Mr,p1:p1,nn1:nn1,n1max:n1max,m2max:m2max,Mp:Mp,Pmin:Pmin,ck:ck,fail:fail,
+      fS:Mn/Mr,Pad:Pad,Mm:Mm,adot:adot,p1:p1,nn1:nn1,n1max:n1max,m2max:m2max,Mp:Mp,Pmin:Pmin,ck:ck,fail:fail,
       warnN:warnN,warnX:warnX,libN:libN});
   }
   out.sort(function(a,b){ return a.fail-b.fail || a.si-b.si || a.st-b.st || Math.abs(a.dev)-Math.abs(b.dev); });
@@ -2551,7 +2556,7 @@ function render(){
     + (lb? ' <b>'+lb+'</b> usam a liberação de fábrica de '+fmt(q.n1lib,0)+' rpm (marcadas <span class="ck y">✓ lib</span>).' : '')
     + (wn? ' <b style="color:var(--warn)">'+wn+' com n₁ acima do liberado</b> — ver nota.' : '');
   var np=$('nopm'); np.hidden=true;
-  if(modo==='elev'&&ok.length&&!(q.Pm>0)){ np.hidden=false; $('nopmtxt').innerHTML='A potência do motor não foi informada, então o redutor foi escolhido <b>só pelo torque da carga</b>. A potência mínima do motor para esta carga e velocidade é <b>'+fmt(ok[0].Pmin,2)+' kW</b>. Se o motor instalado for maior, o torque de saída dele pode pedir um tamanho acima: informe a potência no bloco 2 para conferir.'; }
+  if(modo==='elev'&&ok.length&&!(q.Pm>0)&&ok[0].adot){ np.hidden=false; $('nopmtxt').innerHTML='A potência do motor não foi informada. Por segurança, o configurador adotou a <b>próxima potência comercial acima da mínima</b>: mínima de <b>'+fmt(ok[0].Pmin,2)+' kW</b>, adotada de <b>'+fmt(ok[0].Pad,1)+' kW</b>, e selecionou o redutor pelo torque de saída dela. Se o cliente for usar um motor menor, a escolha é dele: informe a potência no bloco 2 e o configurador seleciona por ela e avisa que ficou abaixo da mínima.'; }
   renderAlt(q);
   sel=list[0]; mark(); ficha();
 }
@@ -2580,6 +2585,7 @@ function renderSum(){
     '</div>'+
     '<div class="sum-ck">'+chip(x.ck.T,'Torque')+chip(x.ck.P,'P₁')+nchip+chip(x.ck.M,'M₂máx')+'</div>'+
     '<div class="sum-pm"><span>Potência mínima do motor</span><b>'+fmt(x.Pmin,2)+' kW</b></div>'+
+    (x.adot?'<div class="sum-pm"><span>Motor adotado (padrão comercial)</span><b>'+fmt(x.Pad,1)+' kW</b></div>':'')+
     '<a class="sum-btn" href="#ficha">Ver folha de dados <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>'+foot;
 }
 function renderAlt(q){
@@ -2653,7 +2659,7 @@ function ficha(){
   else L.push(pad('Vida útil             h',  fmt(q.h,0)+' h'));
   L.push(pad('Fator de vida         Fh2',fmt(x.F,0)+'  -> coluna n2h '+fmt(x.col,0)));
   L.push(pad('Torque de pico        Mp2',fmt(x.Mp,0)+' Nm'));
-  L.push(pad('Potência do motor',        (q.Pm>0?fmt(q.Pm,2)+' kW':'nao informada (dimensionado so pela carga)')+(modo==='elev'?'  (mínimo '+fmt(x.Pmin,2)+' kW)':'')));
+  L.push(pad('Potência do motor',        (q.Pm>0?fmt(q.Pm,2)+' kW':(x.adot?fmt(x.Pad,1)+' kW adotada (padrao comercial acima da minima; potencia nao informada)':'nao informada'))+(modo==='elev'?'  (mínimo '+fmt(x.Pmin,2)+' kW)':'')));
   L.push(pad('Flange de entrada IEC',     (pf||'A DEFINIR — vem da carcaca do motor')));
   L.push(pad('Posição de montagem',       (pos||'A DEFINIR')));
   if(opc) L.push(pad('Opções e acessórios', opc));
@@ -2676,7 +2682,7 @@ function ficha(){
   if(modo==='elev'){
     L.push('- rendimento do cabeamento '+fmt(q.etac,3)+' ('+$('pol').value+' polia(s) a 0,98)');
     L.push('- cavalamento '+$('ram').value+' ramais / '+$('pta').value+' ponta(s) no tambor');
-    L.push('- torque requerido (carga): '+fmt(q.Mr2carga,0)+' Nm | torque de saida (motor, eta 0,91): '+fmt(q.Mr2mot,0)+' Nm');
+    L.push('- torque requerido (carga): '+fmt(q.Mr2carga,0)+' Nm | torque de saida (motor, eta 0,91): '+fmt(q.Pm>0?q.Mr2mot:x.Mm,0)+' Nm');
     L.push('- torque de selecao: '+({max:'o maior dos dois',motor:'torque de saida (motor)',carga:'torque requerido (carga)'}[$('base').value]));
     if(isFinite(q.n1op)&&q.n1op>0) L.push('- rotacao maxima do motor sem carga (inversor): '+fmt(q.n1op,0)+' rpm');
     if($('qunit').value==='kg') L.push('- carga informada em kg ('+fmt(V('q'),1)+' kg = '+fmt(V('q')/1000,3)+' t)');
