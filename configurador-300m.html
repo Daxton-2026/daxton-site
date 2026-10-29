@@ -2652,7 +2652,7 @@ function motorFrame(P,polos){
   var t=IECF[polos]; if(!t||!(P>0)) return null;
   for(var k=0;k<t.length;k++){
     if(t[k][0]>=P-1e-9){
-      var fr=t[k][1], num=fr.replace(/[A-Z]/g,'');
+      var fr=t[k][1], num=fr.replace(/[^0-9]/g,'');
       return {fr:fr, p:'P'+num, P:t[k][0], polos:polos};
     }
   }
