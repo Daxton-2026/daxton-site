@@ -5,10 +5,7 @@
     { "source": "/csm", "destination": "/csm.html" },
     { "source": "/bonfiglioli", "destination": "/bonfiglioli.html" },
     { "source": "/configurador", "destination": "/configurador-300m.html" },
-    { "source": "/configuradores", "destination": "/configuradores.html" }
-  ],
-  "redirects": [
-    { "source": "/configurador-guinchos", "destination": "/configuradores", "permanent": false },
-    { "source": "/configurador-guinchos.html", "destination": "/configuradores", "permanent": false }
+    { "source": "/configuradores", "destination": "/configuradores.html" },
+    { "source": "/configurador-guinchos", "destination": "/configurador-guinchos.html" }
   ]
 }

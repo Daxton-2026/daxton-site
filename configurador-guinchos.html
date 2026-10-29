@@ -495,7 +495,7 @@ h3.sub{font-size:21px;font-weight:600;margin:26px 0 8px;text-transform:uppercase
     <button type="button" id="m-H" aria-pressed="false">Acionamento hidráulico</button>
   </div>
 
-  <details class="prem">
+  <details class="prem" open>
     <summary>Premissas de cálculo — valem para todos os casos (carga, vida, pico 150%, tolerância, designação)</summary>
     <div class="calc"><div class="calc-body">
       <div class="calc-in">
@@ -507,8 +507,12 @@ h3.sub{font-size:21px;font-weight:600;margin:26px 0 8px;text-transform:uppercase
           <select id="g_carga"><option value="0">Uniforme</option><option value="1" selected>Choque moderado</option><option value="2">Choque pesado</option></select></div>
         <div class="fld"><label for="g_zb">Partidas por hora <em>Z</em></label>
           <select id="g_zb"><option value="0">Z &lt; 10</option><option value="1">10 &lt; Z &lt; 30</option><option value="2" selected>30 &lt; Z &lt; 100</option></select></div>
-        <div class="fld"><label for="g_hv">Vida útil <em>h</em> — horas</label><input id="g_hv" type="number" step="100" value="1600">
-          <span class="tip">Elevação: defina a classe de utilização (NBR 8400). Acima de 50.000 h a tabela A4 termina.</span></div>
+        <div class="fld"><label for="g_tcl">Classe de utilização <em>T</em> — horas totais</label>
+          <select id="g_tcl"><option value="">— escolha —</option><option value="0">T0 — 200 h</option><option value="1">T1 — 400 h</option><option value="2">T2 — 800 h</option><option value="3">T3 — 1.600 h</option><option value="4">T4 — 3.200 h</option><option value="5">T5 — 6.300 h</option><option value="6">T6 — 12.500 h</option><option value="7">T7 — 25.000 h</option><option value="8">T8 — 50.000 h</option></select>
+          <span class="tip">A vida vem da classe do projeto, não de um palpite. Sem ela a ferramenta não calcula.</span></div>
+        <div class="fld"><label for="g_espec">Espectro de carga</label>
+          <select id="g_espec"><option value="">— escolha —</option><option value="0.125">L1 — leve</option><option value="0.25">L2 — moderado</option><option value="0.5">L3 — pesado</option><option value="1">L4 — muito pesado</option></select>
+          <span class="tip" id="g_mgrp">Grupo do mecanismo: —</span></div>
       </div>
       <div class="calc-in">
         <div class="fld"><label for="g_tfr">Torque de pico — % do nominal</label><input id="g_tfr" type="number" step="5" value="150">
@@ -1950,6 +1954,7 @@ var A4=[
  [[1.00,1.25,1.45,1.60,2.00],[1.10,1.40,1.60,1.80,2.20],[1.20,1.50,1.70,2.00,2.40]],
  [[1.20,1.50,1.70,2.00,2.40],[1.30,1.60,1.80,2.10,2.60],[1.40,1.75,2.00,2.30,2.80]]];
 var A4H=[5000,10000,15000,25000,50000];
+var TCL=[200,400,800,1600,3200,6300,12500,25000,50000];
 var G9=9.81, CVW=0.7355;
 
 function num(x){
@@ -1988,7 +1993,10 @@ function search(q){
     var mn=R.slice(4,10), p1=R[10], nn1=R[11], n1max=R[12], m2max=R[13];
     var n2=q.n1/i, dev=n2/q.n2req-1;
     if(Math.abs(dev)>q.tol) continue;
-    var eta=ETA[st], Mc=q.Mr*q.fs.v, F=n2*q.h, c=colFor(F);
+    var eta=ETA[st];
+    var Mmot=(q.Mnom>0)?q.Mnom*i*eta:NaN;             /* torque de saida: o que o motor instalado entrega no eixo de saida */
+    var MrS=isFinite(Mmot)?Math.max(q.Mr,Mmot):q.Mr;   /* torque de selecao: o maior entre requerido (carga) e de saida (motor) */
+    var Mc=MrS*q.fs.v, F=n2*q.h, c=colFor(F);
     if(c<0) continue;
     var Mn=(q.leit===1)?interp(mn,F):mn[c];
     var Mp=(q.Mnom>0)?q.Mnom*q.tfr*i*eta:q.Mr*q.tfr;
@@ -2001,7 +2009,7 @@ function search(q){
     var warnX=q.n1>n1max;
     if(warnX) fail++;
     out.push({si:si,size:SIZES[si],fam:fm?'R':'L',famN:fm,st:st,i:i,n2:n2,dev:dev,eta:eta,
-      col:COLS[c],Mn:Mn,MnLit:mn[c],MnInt:interp(mn,F),Mr:q.Mr,Mc:Mc,F:F,fS:Mn/q.Mr,
+      col:COLS[c],Mn:Mn,MnLit:mn[c],MnInt:interp(mn,F),Mr:MrS,MrCarga:q.Mr,Mmot:Mmot,Mc:Mc,F:F,fS:Mn/MrS,
       p1:p1,Pm:Pm,nn1:nn1,n1max:n1max,m2max:m2max,Mp:Mp,ck:ck,fail:fail,
       warnN:warnN,warnX:warnX,libN:libN,
       key:SIZES[si]+'|'+fm+'|'+st+'|'+i});
@@ -2086,7 +2094,8 @@ function calcE(c,G){
     r.i=i; r.eta=Math.pow(G.etaEst,st); r.Tn=num(c.mTn); r.Tmax=num(c.mTm);
     r.n2=nmot/i;
     var Mnom=9550*r.Pkw/nmot; r.Mp=Mnom*G.tfr*i*r.eta;
-    r.ck={T:(r.fs.v?r.Tn>=r.T*r.fs.v:null),M:(ok(r.Tmax)?r.Tmax>=r.Mp:null)};
+    r.Tmot=Mnom*i*r.eta; r.Tsel=isFinite(r.Tmot)?Math.max(r.T,r.Tmot):r.T;
+    r.ck={T:(r.fs.v?r.Tn>=r.Tsel*r.fs.v:null),M:(ok(r.Tmax)?r.Tmax>=r.Mp:null)};
     r.fail=(r.ck.T===false?1:0)+(r.ck.M===false?1:0);
   } else {
     var q={n1:nmot,n2req:r.n2req,Mr:r.T,fs:r.fs,h:G.hv,tfr:G.tfr,tol:G.tol,leit:G.leit,
@@ -2099,7 +2108,8 @@ function calcE(c,G){
     }
   }
   if(ok(r.i)){
-    r.fsE=r.Tn/r.T;
+    if(!r.man){ r.Tmot=(ok(nmot)&&ok(r.Pkw))?9550*r.Pkw/nmot*r.i*r.eta:NaN; r.Tsel=isFinite(r.Tmot)?Math.max(r.T,r.Tmot):r.T; }
+    r.fsE=r.Tn/(r.Tsel||r.T);
     r.ncorr=r.n2/ie;
     r.vc1=r.ncorr*Math.PI*r.Dp/1000;
     r.vel=r.vc1/(nm/nt);
@@ -2184,10 +2194,15 @@ function chip(st,txt){
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
 
 /* ---------- premissas globais ---------- */
+var TCL=[200,400,800,1600,3200,6300,12500,25000,50000];
 var G={fam:function(c){ return c.fam==='0'?0:(c.fam==='1'?1:null); }};
 function readG(){
   G.carga=parseInt($('g_carga').value,10); G.zb=parseInt($('g_zb').value,10);
-  G.hv=E.num($('g_hv').value); G.tfr=E.num($('g_tfr').value)/100; G.tol=E.num($('g_tol').value)/100;
+  var tc=$('g_tcl').value, ks=parseFloat($('g_espec').value);
+  G.hv=(tc!==''&&isFinite(ks))?TCL[parseInt(tc,10)]:NaN; G.tcl=tc; G.ks=ks;
+  G.mg=isFinite(G.hv)?Math.max(1,Math.min(8,Math.round(Math.log(G.hv*ks/100)/Math.LN2)+1)):null;
+  $('g_mgrp').innerHTML=G.mg?('Grupo do mecanismo: <b>M'+G.mg+'</b> (estimado por T × espectro)'):'Grupo do mecanismo: —';
+  G.tfr=E.num($('g_tfr').value)/100; G.tol=E.num($('g_tol').value)/100;
   G.leit=parseInt($('g_leit').value,10); G.n1lib=E.num($('g_n1lib').value);
   G.etaRold=E.num($('g_etar').value); G.etaEst=0.97;
   G.ver=$('g_ver').value; G.pflg=$('g_pflg').value; G.pos=($('g_pos').value||'').trim();
@@ -2238,11 +2253,14 @@ function redRows(){ return [
 function verifRows(){ return [
   {k:'cand',l:'Redutor selecionado',t:'c',cls:'big wrapc',f:function(r){
      if(r.man) return 'informado';
+     if(!isFinite(G.hv)) return '<span style="color:var(--crit)">escolha a classe T e o espectro</span>';
      if(!r.cand) return '<span style="color:var(--crit)">nenhum atende</span>';
      return esc(r.cand.size+' '+r.cand.fam+' '+r.cand.st+' · i '+fr(r.cand.i)); }},
   {k:'ired',l:'Redução real',t:'c',f:function(r){return fr(r.i)}},
-  {k:'fsA4',l:'f′S exigido (tabela A4)',t:'c',f:function(r){return r.fs.v?fmt(r.fs.v,2):'sem A4'}},
-  {k:'fsE',l:'Fator de serviço obtido (Tn ÷ T)',t:'c',cls:'big',f:function(r){return fmt(r.fsE,2)}},
+  {k:'Tmot',l:'Torque de saída (motor)',u:'N·m',t:'c',f:function(r){return isFinite(r.Tmot)?fmt(r.Tmot,0):'—'}},
+  {k:'Tsel',l:'Torque de seleção',u:'N·m',t:'c',f:function(r){return fmt(isFinite(r.Tsel)?r.Tsel:r.T,0)}},
+  {k:'fsA4',l:'f′S exigido (tabela A4)',t:'c',f:function(r){return r.fs.v?fmt(r.fs.v,2):(isFinite(G.hv)?'sem A4':'escolha T e espectro')}},
+  {k:'fsE',l:'Fator de serviço obtido (Tn ÷ torque de seleção)',t:'c',cls:'big',f:function(r){return fmt(r.fsE,2)}},
   {k:'ck',l:'Verificações',t:'c',cls:'wrapc',f:function(r){
      if(r.man) return chip(r.ck.T,'T')+' '+chip(r.ck.M,'M₂');
      var x=r.cand; if(!x) return chip(false,'sem candidato');
@@ -2256,9 +2274,12 @@ function brakeRows(){ return [
 ]; }
 function sitRow(){ return {k:'sit',l:'Situação do caso',t:'c',cls:'big',f:function(r,c){
   if(G.variant==='manrider') return chip(false,'fora do escopo — man-rider');
+  if(!isFinite(G.hv)) return chip(false,'escolha a classe T e o espectro');
+  if(isFinite(r.F)&&r.F>100000) return chip(false,'confira a unidade: tração em kgf ('+fmt(r.F,0)+' kgf é muito alto)');
   if(!(r.i>0)) return chip(false,'sem redutor');
   if(!r.ok) return chip(false,'não atende');
   if(r.cand&&(r.cand.warnN)) return chip('w','atende, com alerta');
+  if(isFinite(r.fsE)&&r.fs.v&&r.fsE/r.fs.v-1<0.10) return chip('w','atende · margem apertada ('+fmt((r.fsE/r.fs.v-1)*100,1)+'%)');
   var mancal=(c&&c.apoio==='mancal');
   if(!mancal&&!r.man&&isFinite(r.Fr)&&r.Fr>0) return chip('w','atende · conferir carga radial');
   if(!mancal&&r.man&&isFinite(r.Fr)&&r.Fr>0&&!(r.Cr>0)) return chip('w',r.mode==='H'?'atende · informar capacidade radial':'atende · conferir carga radial');
@@ -2286,7 +2307,7 @@ function rowsFor(f,d){
       {k:'nmot',l:'Rotação do motor',u:'rpm',t:'n'},
       {k:'Pcv',l:'Potência instalada',u:'CV',t:'n'},
       {k:'apoio',l:f==='M'?'Apoio do barbotin':'Apoio do tambor',t:'s',o:APOIO,tip:'Mancalizado: a carga radial não passa pelo redutor (marcada com * abaixo).'},
-      {k:'T',l:'Torque requerido por acionamento',u:'N·m',t:'c',cls:'big',f:function(r){return fmt(r.T,0)}},
+      {k:'T',l:'Torque requerido (carga) por acionamento',u:'N·m',t:'c',cls:'big',f:function(r){return fmt(r.T,0)}},
       {k:'Fr',l:'Carga radial no '+(f==='M'?'barbotin':(f==='C'?'carretel':'cabo')),u:'N',t:'c',f:function(r,c){return fmt(r.Fr,0)+(c&&c.apoio==='mancal'?' *':'')}},
       {k:'ireq',l:'Redução requerida (_ : 1)',t:'c',f:function(r){return fmt(r.ireq,1)}});
     R=R.concat(redRows(),
@@ -2506,7 +2527,7 @@ function renderFicha(){
   L.push(pad(f==='M'?'Ø primitivo do barbotin':'Ø primitivo na camada de referência', fmt(r.Dp,1)+' mm'));
   if(f==='C'&&r.cab.ok) L.push(pad('Barreira armazenada (capacidade)', fmt(r.cab.total,0)+' m em '+r.cab.layers+' camadas'));
   L.push(pad('Rotação do '+(f==='M'?'barbotin':(f==='C'?'carretel':'tambor')), fmt(r.ntam,3)+' rpm'));
-  L.push(pad('Torque requerido por '+(E_?'acionamento':'redutor'), fmt(r.T,0)+' N.m'));
+  L.push(pad('Torque requerido (carga) por '+(E_?'acionamento':'redutor'), fmt(r.T,0)+' N.m'));
   if(c.apoio==='mancal') L.push(pad('Apoio', 'mancais próprios (mancalizado)'));
   L.push(pad(c.apoio==='mancal'?'Carga radial (nos mancais)':'Carga radial no eixo de saída', isFinite(r.Fr)?fmt(r.Fr,0)+' N':'a informar'));
   if(isFinite(r.fsBand)) L.push(pad('Freio de cinta — retenção', fmt(r.fsBand,2)+'   (pico exigido '+fmt(G.tfr,2)+')'));
@@ -2529,8 +2550,10 @@ function renderFicha(){
   L.push(r.man?'REDUTOR INFORMADO (verificação pelo critério Bonfiglioli)':'VERIFICADO CONTRA A LINHA DO CATÁLOGO 300M');
   L.push(pad('Redução i', ratio));
   L.push(pad('Torque nominal Tn'+(r.man?' (informado)':' (Mn2 tabelado)'), fmt(r.Tn,0)+' N.m'));
+  if(E_&&isFinite(r.Tmot)) L.push(pad('Torque de saída (motor, eixo de saída)', fmt(r.Tmot,0)+' N.m'));
+  L.push(pad('Torque de seleção', fmt(isFinite(r.Tsel)?r.Tsel:r.T,0)+' N.m'+(E_&&isFinite(r.Tmot)?'   (o maior: requerido ou de saída)':'')));
   L.push(pad("Fator de serviço f'S exigido (A4)", fmt(r.fs.v,2)));
-  L.push(pad('Fator de serviço obtido (Tn ÷ T)', fmt(r.fsE,2)));
+  L.push(pad('Fator de serviço obtido (Tn ÷ torque de seleção)', fmt(r.fsE,2)));
   L.push(pad('Torque de pico exigido', fmt(r.Mp,0)+' N.m'));
   if(r.man){
     L.push(pad('Torque máximo informado', isFinite(r.Tmax)?fmt(r.Tmax,0)+' N.m   '+(r.ck.M?'atende':'NAO ATENDE'):'nao informado'));
@@ -2546,7 +2569,7 @@ function renderFicha(){
   }
   L.push(line);
   L.push('PREMISSAS');
-  L.push('- fS\' pela tabela A4: '+['uniforme','choque moderado','choque pesado'][G.carga]+', '+['Z<10','10<Z<30','30<Z<100'][G.zb]+', vida '+fmt(G.hv,0)+' h');
+  L.push('- fS\' pela tabela A4: '+['uniforme','choque moderado','choque pesado'][G.carga]+', '+['Z<10','10<Z<30','30<Z<100'][G.zb]+', classe T'+G.tcl+' ('+fmt(G.hv,0)+' h), espectro '+({'0.125':'L1','0.25':'L2','0.5':'L3','1':'L4'}[String(G.ks)]||'')+', grupo M'+G.mg);
   L.push('- torque de pico: '+fmt(G.tfr*100,0)+'% (capacidade declarada do equipamento)');
   if(f==='M') L.push('- tração nominal transmitida no Ø primitivo do barbotin (sem camadas)');
   else L.push('- tração nominal vale na camada '+(c.kref||1)+'; torque constante nas demais');
@@ -2615,7 +2638,7 @@ $('grid').addEventListener('click',function(ev){
   var b=ev.target.closest('th.cs button'); if(!b) return;
   M().act=parseInt(b.getAttribute('data-ci'),10); refresh();
 });
-['g_carga','g_zb','g_hv','g_tfr','g_tol','g_leit','g_n1lib','g_etar','g_ver','g_pflg','g_pos','g_opc','g_app','g_var'].forEach(function(k){
+['g_carga','g_zb','g_tcl','g_espec','g_tfr','g_tol','g_leit','g_n1lib','g_etar','g_ver','g_pflg','g_pos','g_opc','g_app','g_var'].forEach(function(k){
   var e=$(k); e.addEventListener('input',refresh); e.addEventListener('change',refresh); });
 
 function paintModes(){
