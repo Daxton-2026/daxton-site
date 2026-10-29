@@ -2447,7 +2447,8 @@ function renderCand(){
     tb.innerHTML='<tr><td colspan="12" style="color:var(--muted)">Este caso usa <b>redutor informado</b> — sem busca no catálogo. Troque a linha “Redutor” do caso para <b>Série 300 — busca</b> para ver os candidatos.</td></tr>';
     $('cnt').textContent='Verificações do redutor informado: torque nominal informado ≥ T × f′S (tabela A4) e torque máximo informado ≥ torque de pico.'; return; }
   if(!r.list.length){
-    var why=!r.fs.v?'A tabela A4 termina em 50.000 h — reduza a vida útil.'
+    var why=!isFinite(G.hv)?'Escolha a classe de utilização T e o espectro de carga em Premissas de cálculo (Passo 1): sem elas a ferramenta não calcula.'
+      :!r.fs.v?'Sem fator de serviço na tabela A4 para esta vida. Leve o caso ao Serviço Técnico.'
       :(!isFinite(r.T)||!isFinite(r.n2req)?'Dados de entrada incompletos.'
        :'Nenhuma combinação dentro do desvio de ±'+fmt(G.tol*100,0)+'%. A redução necessária é '+fmt(r.mode==='E'?r.ireq:(E.num(c.n1)/r.n2req),1)+' — amplie o desvio, troque n₁ ou divida o torque em mais redutores.');
     tb.innerHTML='<tr><td colspan="12" style="color:var(--crit)"><b>'+why+'</b></td></tr>'; $('cnt').textContent='—'; return; }
