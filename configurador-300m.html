@@ -633,7 +633,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
       </div>
 
       <details class="grp adv">
-        <summary><span class="gn">3</span><div><h3>Opções avançadas e do modelo</h3><p>Rede, tolerâncias, designação e premissas do cálculo. Os padrões atendem a maioria dos casos.</p></div><svg class="chev" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+        <summary><span class="gn">3</span><div><h3>Opções avançadas e do modelo</h3><p>Tipo de carga, partidas, pico, inversor, tolerância e designação. Os padrões atendem a maioria dos casos.</p></div><svg class="chev" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
         <div class="grp-b">
           
           
@@ -647,6 +647,11 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
           
           
           
+          <div class="fld"><label for="carga">Tipo de carga — tabela A4</label><select id="carga"><option value="0">Uniforme</option><option value="1" selected>Choque moderado</option><option value="2">Choque pesado</option></select>
+            <span class="tip"><b>Choque pesado:</b> caçamba (grab), eletroímã, carga que trava ou é arrancada do chão.</span></div>
+          <div class="fld"><label for="zb">Partidas por hora <em>Z</em></label><select id="zb"><option value="0">Z &lt; 10</option><option value="1">10 &lt; Z &lt; 30</option><option value="2" selected>30 &lt; Z &lt; 100</option></select></div>
+          <div class="fld"><label for="tfr">Torque de pico na entrada — % do nominal</label><input id="tfr" type="number" step="5" value="150" inputmode="numeric"></div>
+          <div class="fld" id="fld-n1op" hidden><label for="n1op">Rotação máxima sem carga (inversor) — rpm <em>opcional</em></label><input id="n1op" type="number" step="10" value="" inputmode="numeric"><span class="tip">Se o motor sobe de rotação sem carga (ex.: 2400 rpm), a ferramenta confere o limite do redutor nessa rotação.</span></div>
           <div class="fld full"><label for="ver">Versão de saída — para a designação</label><select id="ver">
             <option value="MC">MC — eixo cilíndrico chavetado</option>
             <option value="HC" selected>HC — eixo cilíndrico chavetado reforçado</option>
@@ -675,12 +680,8 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 
       <div class="legacy" hidden>
         <div class="fld"><label for="freq">Frequência da rede</label><select id="freq"><option value="60" selected>60 Hz — Brasil</option><option value="50">50 Hz</option></select></div>
-        <div class="fld"><label for="carga">Tipo de carga — tabela A4</label><select id="carga"><option value="0">Uniforme</option><option value="1" selected>Choque moderado</option><option value="2">Choque pesado</option></select></div>
-        <div class="fld"><label for="zb">Partidas por hora <em>Z</em></label><select id="zb"><option value="0">Z &lt; 10</option><option value="1">10 &lt; Z &lt; 30</option><option value="2" selected>30 &lt; Z &lt; 100</option></select></div>
-        <div class="fld"><label for="tfr">Torque de pico na entrada — % do nominal</label><input id="tfr" type="number" step="5" value="150" inputmode="numeric"></div>
         <div class="fld"><label for="n1lib">n₁ liberada pela fábrica, contínuo — rpm</label><input id="n1lib" type="number" step="10" value="1750" inputmode="numeric">
             <span class="tip">A Bonfiglioli liberou <b>1750 rpm</b> em regime contínuo, acima da tabelada nos rating charts.</span></div>
-        <div class="fld" id="fld-n1op" hidden><label for="n1op">Rotação máxima sem carga (inversor) — rpm <em>opcional</em></label><input id="n1op" type="number" step="10" value="" inputmode="numeric"><span class="tip">Se o motor sobe de rotação sem carga (ex.: 2400 rpm), a ferramenta confere o limite do redutor nessa rotação.</span></div>
         <div class="fld"><label for="leit">Leitura do M<sub>n2</sub></label><select id="leit"><option value="0" selected>Literal — próxima coluna de n₂·h</option><option value="1">Interpolada na curva do catálogo</option></select></div>
         <div id="ctit"></div><div id="csub"></div>
         <div id="g-ger" hidden>
