@@ -375,10 +375,7 @@ section { padding: 96px 5%; }
 }
 .ferramenta-txt h2 em { color: var(--amber); font-style: normal; }
 .ferramenta-lead { font-size: 14.5px; line-height: 1.6; color: rgba(255,255,255,.78); max-width: 52ch; margin: 0 0 16px; }
-.ferramenta-stats { list-style: none; margin: 0 0 22px; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; max-width: 520px; }
-.ferramenta-stats li { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14); border-left: 3px solid var(--amber); border-radius: 10px; padding: 10px 12px; }
-.ferramenta-stats b { display: block; font-family: 'Barlow Condensed', sans-serif; font-size: 28px; line-height: 1; font-weight: 700; color: var(--amber); letter-spacing: .01em; }
-.ferramenta-stats span { display: block; margin-top: 4px; font-size: 11.5px; line-height: 1.3; color: rgba(255,255,255,.78); }
+.ferramenta-serie { margin: 0 0 22px; padding-left: 14px; border-left: 3px solid var(--amber); font-family: 'Barlow Condensed', sans-serif; font-size: 26px; line-height: 1.1; font-weight: 700; letter-spacing: .02em; text-transform: uppercase; color: #fff; }
 .ferramenta-acoes { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; }
 .ferramenta-acoes .btn-primary { padding: 13px 24px; font-size: 15px; border-radius: 10px; box-shadow: 0 10px 28px rgba(245,166,35,.32); }
 .ferramenta-micro { font-size: 12.5px; color: rgba(255,255,255,.6); line-height: 1.5; }
@@ -393,8 +390,7 @@ section { padding: 96px 5%; }
   .ferramenta-img { min-height: 170px; order: -1; }
   .ferramenta-img::after { background: linear-gradient(0deg, var(--navy) 0%, rgba(13,43,107,0) 45%); }
   .ferramenta-acoes .btn-primary { width: 100%; justify-content: center; }
-  .ferramenta-stats { gap: 8px; }
-  .ferramenta-stats b { font-size: 24px; }
+  .ferramenta-serie { font-size: 22px; }
 }
 @media (max-width: 540px) { .ferramenta-tecnica { padding: 48px 4%; } }
 
@@ -821,14 +817,10 @@ footer {
 <section class="ferramenta-tecnica" id="ferramenta">
   <div class="ferramenta-inner fade-up">
     <div class="ferramenta-txt">
-      <span class="ferramenta-eyebrow">Linha 300 · Redutores Planetários</span>
+      <span class="ferramenta-eyebrow">Ferramenta técnica Daxton</span>
       <h2>Redutor para elevação de carga: <em>o modelo certo em minutos</em>.</h2>
       <p class="ferramenta-lead">Ponte rolante, talha ou pórtico? Informe a carga, a velocidade e a classe de utilização. A linha 300 de redutores planetários Bonfiglioli responde com o tamanho que atende, o fator de serviço real e a folha de dados pronta para cotação.</p>
-      <ul class="ferramenta-stats">
-        <li><b>1.210</b><span>combinações do catálogo avaliadas</span></li>
-        <li><b>20</b><span>tamanhos da linha 300</span></li>
-        <li><b>T0–T8</b><span>classes de utilização</span></li>
-      </ul>
+      <p class="ferramenta-serie">Redutores Planetários - 300 M Series</p>
       <div class="ferramenta-acoes">
         <a href="/configurador?modo=elevacao" class="btn-primary">
           Abrir o configurador
