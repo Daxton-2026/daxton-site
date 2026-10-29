@@ -660,6 +660,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
             <span class="tip"><b>Choque pesado:</b> caçamba (grab), eletroímã, carga que trava ou é arrancada do chão.</span></div>
           <div class="fld"><label for="zb">Partidas por hora <em>Z</em></label><select id="zb"><option value="0">Z &lt; 10</option><option value="1">10 &lt; Z &lt; 30</option><option value="2" selected>30 &lt; Z &lt; 100</option></select></div>
           <div class="fld"><label for="tfr">Torque de pico na entrada — % do nominal</label><input id="tfr" type="number" step="5" value="150" inputmode="numeric"></div>
+          <div class="fld" id="fld-fsm"><label for="fsm">Fator de serviço do motor <em>opcional</em></label><input id="fsm" type="number" step="0.05" min="1" value="1" inputmode="decimal"><span class="tip">Padrão 1,00: vale só a potência de placa. Informe, por exemplo, 1,15 para contar a reserva do motor: a potência usada na seleção passa a ser a nominal vezes o fator. Com inversor o fator costuma ser 1,00. Confira na placa ou no catálogo do motor.</span></div>
           <div class="fld" id="fld-n1op" hidden><label for="n1op">Rotação máxima sem carga (inversor) — rpm <em>opcional</em></label><input id="n1op" type="number" step="10" value="" inputmode="numeric"><span class="tip">Se o motor sobe de rotação sem carga (ex.: 2400 rpm), a ferramenta confere o limite do redutor nessa rotação.</span></div>
           <div class="fld"><label for="ver">Versão de saída — para a designação</label><select id="ver">
             <option value="MC">MC — eixo cilíndrico chavetado</option>
@@ -2407,6 +2408,7 @@ function syncN1(){
 function requisito(){
   var n1=V('n1'), n1lib=V('n1lib'), h=V('hv'), tfr=V('tfr')/100;
   var n1op=V('n1op'), ne=Math.max(n1,isFinite(n1op)?n1op:0);
+  var fsm=V('fsm'); if(!(fsm>=1)) fsm=1;
   if(modo==='elev'){ h=($('tcl').value!=='')?TCL[parseInt($('tcl').value,10)]:NaN; }
   var Pm=(modo==='ger')?V('pger'):V('pelev');
   var famv=$('fam').value, fam=(famv===''?null:parseInt(famv,10));
@@ -2420,7 +2422,7 @@ function requisito(){
     Ptam=Q*9.81*v/60/1000/etac;
     Mr2carga=9550*Ptam/n2req;
     if(!(Pm>0)) Padq=stdAbove(Ptam/0.91);   // sem potencia: mesmo criterio da tabela (comercial acima da minima)
-    var Pref=(Pm>0)?Pm:Padq;
+    var Pref=(Pm>0)?Pm*fsm:Padq;
     Mr2mot=(isFinite(Pref)&&Pref>0)?9550*Pref*0.91/n2req:NaN;
     var bs=$('base').value;
     Mr2base=(bs==='carga'||!isFinite(Mr2mot))?Mr2carga:(bs==='motor'?Mr2mot:Math.max(Mr2carga,Mr2mot));
@@ -2432,7 +2434,7 @@ function requisito(){
     pot=true;
   }
   return {n1:n1,ne:ne,n1op:n1op,n1lib:n1lib,Pm:Pm,h:h,tfr:tfr,fam:fam,tol:tol,leit:leit,fs:fs,
-          Q:(modo==='elev'?V('q')*($('qunit').value==='kg'?1:1000):NaN),n2req:n2req,Mr2base:Mr2base,Mr2carga:Mr2carga,Mr2mot:Mr2mot,Padq:Padq,base:(modo==='elev'?$('base').value:null),etac:etac,r:r,Ptam:Ptam,pot:pot};
+          Q:(modo==='elev'?V('q')*($('qunit').value==='kg'?1:1000):NaN),n2req:n2req,Mr2base:Mr2base,Mr2carga:Mr2carga,Mr2mot:Mr2mot,Padq:Padq,fsm:fsm,base:(modo==='elev'?$('base').value:null),etac:etac,r:r,Ptam:Ptam,pot:pot};
 }
 
 var STDP=Array.prototype.map.call(document.getElementById('pelev').options,function(o){return parseFloat(o.value);}).filter(function(v){return v>0;}).sort(function(a,b){return a-b;});
@@ -2453,13 +2455,13 @@ function buscar(q){
     var Mnom=(Pad>0)?9550*Pad/q.n1:NaN;
     if(q.pot) Mr=9550*q.Pm*eta/n2;
     else if(q.base===null||q.base==='carga'||!isFinite(Pad)||!(Pad>0)) Mr=q.Mr2base;
-    else { Mm=9550*Pad*eta/n2; Mr=(q.base==='motor')?Mm:Math.max(q.Mr2carga,Mm); }
+    else { Mm=9550*Pad*((q.Pm>0)?q.fsm:1)*eta/n2; Mr=(q.base==='motor')?Mm:Math.max(q.Mr2carga,Mm); }
     var Mc=Mr*q.fs.v, F=n2*q.h, c=colFor(F);
     if(c<0) continue;
     var Mn=(q.leit===1)?interp(mn,F):mn[c];
     var Mp=isFinite(Mnom)?Mnom*q.tfr*i*eta:Mr*q.tfr;   // sem motor informado: pico = torque requerido x pico%
     var Pmin=(q.Ptam!==null)?q.Ptam/eta:(Mr*n2/9550);
-    var ck={T:Mc<=Mn,P:((p1>0&&Pad>0)?p1>=Pad:true),M:m2max>=Mp};
+    var ck={T:Mc<=Mn,P:((p1>0&&Pad>0)?p1>=Pad*((q.Pm>0)?q.fsm:1):true),M:m2max>=Mp};
     var fail=0; for(var k in ck) if(!ck[k]) fail++;
     var lim = Math.max(nn1, q.n1lib||0);            // contínua tabelada ou a liberada pela fábrica
     var libN = q.ne>nn1 && q.ne<=lim;               // acima da tabelada mas dentro da liberação
@@ -2535,7 +2537,8 @@ function render(){
   $('fld-hv').hidden=(modo==='elev'); $('fld-n1op').hidden=(modo!=='elev');
   var qwb=$('qw'); qwb.hidden=true; if(modo==='elev'&&isFinite(q.Q)&&q.Q>250000){ qwb.hidden=false; $('qwtxt').innerHTML='A carga informada equivale a <b>'+fmt(q.Q/1000,1)+' t</b>. Isso é muito acima do que um redutor da série 300 levanta e costuma ser <b>kg digitado no campo de t</b>. Troque a unidade para kg (ou divida por 1.000) antes de olhar a tabela: os torques abaixo não valem.'; }
   var mw=$('marg'); mw.hidden=true; var pw=$('pminw'); pw.hidden=true;
-  if(modo==='elev'&&ok.length&&isFinite(q.Pm)&&ok[0].Pmin>q.Pm*1.0001){ pw.hidden=false; $('pmintxt').innerHTML='A potência informada (<b>'+fmt(q.Pm,2)+' kW</b>) é menor que a mínima necessária para a carga e a velocidade (<b>'+fmt(ok[0].Pmin,2)+' kW</b>, com rendimento de '+fmt(ok[0].eta,2)+' do redutor e '+fmt(q.etac,3)+' do cabeamento). Confira o rendimento real do redutor; se o motor for este mesmo, verifique a velocidade em plena carga.'; }
+  if(modo==='elev'&&ok.length&&isFinite(q.Pm)&&q.fsm>1&&ok[0].Pmin>q.Pm*1.0001&&ok[0].Pmin<=q.Pm*q.fsm*1.0001){ pw.hidden=false; $('pmintxt').innerHTML='O motor informado (<b>'+fmt(q.Pm,2)+' kW</b>) está abaixo da mínima necessária (<b>'+fmt(ok[0].Pmin,2)+' kW</b>) e só atende contando o <b>fator de serviço '+fmt(q.fsm,2)+'</b>, que dá <b>'+fmt(q.Pm*q.fsm,2)+' kW</b> disponíveis. Isso usa a reserva do motor: confirme que o fator vale para o regime e a alimentação (com inversor costuma ser 1,00). O redutor foi selecionado com essa potência.'; }
+  else if(modo==='elev'&&ok.length&&isFinite(q.Pm)&&ok[0].Pmin>q.Pm*q.fsm*1.0001){ pw.hidden=false; $('pmintxt').innerHTML='A potência informada (<b>'+fmt(q.Pm,2)+' kW</b>) é menor que a mínima necessária para a carga e a velocidade (<b>'+fmt(ok[0].Pmin,2)+' kW</b>, com rendimento de '+fmt(ok[0].eta,2)+' do redutor e '+fmt(q.etac,3)+' do cabeamento). Confira o rendimento real do redutor; se o motor for este mesmo, verifique a velocidade em plena carga.'; }
   if(modo==='elev'&&ok.length&&q.fs.v){ var mm=ok[0].Mn/ok[0].Mc-1;
     if(mm<0.10){ mw.hidden=false; $('margtxt').innerHTML='O menor redutor que passa (<b>'+ok[0].size+' '+ok[0].fam+ok[0].st+' i='+fmt(ok[0].i,0)+'</b>) tem só <b>'+fmt(mm*100,1)+'%</b> de folga sobre o torque de cálculo. Uma mudança pequena de premissa — classe T, número de polias, rotação — pode trocar o tamanho. Em elevação, confirme com a engenharia Bonfiglioli.'; } }
   var tb=$('tb');
@@ -2704,6 +2707,7 @@ function ficha(){
   else L.push(pad('Vida útil             h',  fmt(q.h,0)+' h'));
   L.push(pad('Fator de vida         Fh2',fmt(x.F,0)+'  -> coluna n2h '+fmt(x.col,0)));
   L.push(pad('Torque de pico        Mp2',fmt(x.Mp,0)+' Nm'));
+  if(modo==='elev'&&q.Pm>0&&q.fsm>1) L.push(pad('Fator de serviço do motor', fmt(q.fsm,2)+'  -> '+fmt(q.Pm*q.fsm,2)+' kW disponíveis na seleção'));
   L.push(pad('Potência do motor',        (q.Pm>0?fmt(q.Pm,2)+' kW':(x.adot?fmt(x.Pad,1)+' kW adotada (padrao comercial acima da minima; potencia nao informada)':'nao informada'))+(modo==='elev'?'  (mínimo '+fmt(x.Pmin,2)+' kW)':'')));
   L.push(pad('Flange de entrada IEC',     (pf?pf+(mf&&!pfm?'  (carcaça WEG '+mf.fr+', '+fmt(mf.P,mf.P%1?2:0)+' kW, '+mf.polos+' polos)':''):'A DEFINIR — vem da carcaca do motor')));
   if(pf&&mf&&!pfm) L.push('   Carcaça pela linha WEG W22 IR3 Premium; em outra marca ou linha pode mudar, confirme na placa do motor.');
@@ -2831,7 +2835,7 @@ $('n1').addEventListener('input',function(){
 });
 $('freq').addEventListener('change',function(){syncN1();render()});
 $('polos').addEventListener('change',function(){syncN1();render()});
-['app','q','dt','vel','ram','pta','pol','pelev','qunit','base','tcl','n1op','pger','val','n1','n1lib','carga','zb','hv','tfr','fam','tol','ver','pflg','pos','opc','leit']
+['app','q','dt','vel','ram','pta','pol','pelev','fsm','qunit','base','tcl','n1op','pger','val','n1','n1lib','carga','zb','hv','tfr','fam','tol','ver','pflg','pos','opc','leit']
  .forEach(function(k){ var e=$(k); e.addEventListener('input',render); e.addEventListener('change',render); });
 
 $('cp').addEventListener('click',function(){
