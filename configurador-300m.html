@@ -559,8 +559,8 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
   <li><a href="#req"><span>Σ</span>Requisito calculado</a></li>
   <li><a href="#cand"><span>10</span>Candidatos</a></li>
   <li><a href="#ficha"><span>ID</span>Ficha e designação</a></li>
-  <li><a href="#metodo"><span>05</span>Os cinco passos</a></li>
   <li><a href="#tabelas"><span>A4</span>Tabelas de apoio</a></li>
+  <li><a href="#metodo"><span>05</span>Os cinco passos</a></li>
   <li><a href="#designacao"><span>ID</span>Ler a designação</a></li>
   <li><a href="#interp"><span>&asymp;</span>Interpolação</a></li>
   <li><a href="#verificar"><span>14.5</span>Verificações</a></li>
@@ -769,6 +769,50 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
   </div>
 </section>
 
+<section id="tabelas">
+  <div class="sec-h">
+    <div class="eyebrow">Capítulos 8 e 12</div>
+    <h2>Tabelas de apoio</h2>
+    <p>As três tabelas que o método usa, direto do catálogo. <b>A célula ativa acende conforme os campos lá em cima</b> — mexa em qualquer campo e acompanhe aqui.</p>
+  </div>
+
+  <h3 style="font-size:19px;margin-bottom:10px">Classe de utilização &rarr; horas de vida <span class="mono" style="font-size:15px;color:var(--accent)">h</span></h3>
+  <div class="tblwrap"><table id="tclas">
+    <thead><tr><th>Classe</th><th class="n">T0</th><th class="n">T1</th><th class="n">T2</th><th class="n">T3</th><th class="n">T4</th><th class="n">T5</th><th class="n">T6</th><th class="n">T7</th><th class="n">T8</th></tr></thead>
+    <tbody><tr><th>Duração total de uso · h</th>
+      <td class="n" id="tc-0">200</td><td class="n" id="tc-1">400</td><td class="n" id="tc-2">800</td><td class="n" id="tc-3">1.600</td>
+      <td class="n" id="tc-4">3.200</td><td class="n" id="tc-5">6.300</td><td class="n" id="tc-6">12.500</td><td class="n" id="tc-7">25.000</td><td class="n" id="tc-8">50.000</td>
+    </tr></tbody>
+  </table></div>
+  <p class="cap" id="tccap">Classificação de mecanismos da NBR 8400. Em ponte rolante e pórtico é ela que define o <b>h</b> — não chute a vida útil, a classe do mecanismo já a fixa. Confirme contra a tabela da norma na revisão vigente.</p>
+
+  <h3 style="font-size:19px;margin:26px 0 10px">Tabela A4 — fator de serviço <span class="mono" style="font-size:15px;color:var(--accent)">f<sub>S</sub>'</span></h3>
+  <div class="tblwrap"><table id="ta4">
+    <thead><tr>
+      <th>Tipo de carga</th><th>Partidas/hora</th>
+      <th class="n">≤ 5.000 h<br><span class="sub2">h &lt; 4/dia</span></th>
+      <th class="n">10.000 h<br><span class="sub2">4 a 8/dia</span></th>
+      <th class="n">15.000 h<br><span class="sub2">8 a 12/dia</span></th>
+      <th class="n">25.000 h<br><span class="sub2">12 a 16/dia</span></th>
+      <th class="n">50.000 h<br><span class="sub2">16 a 24/dia</span></th>
+    </tr></thead>
+    <tbody></tbody>
+  </table></div>
+  <p class="cap">Capítulo 12 do catálogo. <b>Acima de 100 partidas/hora a tabela termina</b> — não extrapole, leve ao Serviço Técnico. E se o ciclo tiver cargas muito diferentes, o catálogo oferece caminho melhor: torque equivalente ponderado à quarta potência, equação 23.</p>
+
+  <h3 style="font-size:19px;margin:26px 0 10px">Tabela A3 — rendimento <span class="mono" style="font-size:15px;color:var(--accent)">η</span></h3>
+  <div class="tblwrap"><table id="ta3">
+    <thead><tr><th>Nº de reduções</th><th class="n">Planetário</th><th class="n">Combinado com sem-fim</th><th class="n">Combinado com angular</th></tr></thead>
+    <tbody>
+      <tr id="a3-1"><th>1</th><td class="n">0,97</td><td class="n dim">—</td><td class="n dim">—</td></tr>
+      <tr id="a3-2"><th>2</th><td class="n">0,94</td><td class="n dim">0,73</td><td class="n dim">—</td></tr>
+      <tr id="a3-3"><th>3</th><td class="n">0,91</td><td class="n dim">0,70</td><td class="n">0,91</td></tr>
+      <tr id="a3-4"><th>4</th><td class="n">0,88</td><td class="n dim">—</td><td class="n dim">—</td></tr>
+    </tbody>
+  </table></div>
+  <p class="cap" id="a3cap">Capítulo 8 do catálogo. Nas unidades ortogonais a A3 tabula apenas a linha de 3 reduções — o <b>&eta; exato do R4 confirma-se com a fábrica</b>.</p>
+</section>
+
 <section id="metodo">
   <div class="sec-h">
     <div class="eyebrow">Capítulo 14.4 — o que a página faz por dentro</div>
@@ -848,49 +892,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
   </div>
 </section>
 
-<section id="tabelas">
-  <div class="sec-h">
-    <div class="eyebrow">Capítulos 8 e 12</div>
-    <h2>Tabelas de apoio</h2>
-    <p>As três tabelas que o método usa, direto do catálogo. <b>A célula ativa acende conforme os campos lá em cima</b> — mexa em qualquer campo e acompanhe aqui.</p>
-  </div>
 
-  <h3 style="font-size:19px;margin-bottom:10px">Tabela A4 — fator de serviço <span class="mono" style="font-size:15px;color:var(--accent)">f<sub>S</sub>'</span></h3>
-  <div class="tblwrap"><table id="ta4">
-    <thead><tr>
-      <th>Tipo de carga</th><th>Partidas/hora</th>
-      <th class="n">≤ 5.000 h<br><span class="sub2">h &lt; 4/dia</span></th>
-      <th class="n">10.000 h<br><span class="sub2">4 a 8/dia</span></th>
-      <th class="n">15.000 h<br><span class="sub2">8 a 12/dia</span></th>
-      <th class="n">25.000 h<br><span class="sub2">12 a 16/dia</span></th>
-      <th class="n">50.000 h<br><span class="sub2">16 a 24/dia</span></th>
-    </tr></thead>
-    <tbody></tbody>
-  </table></div>
-  <p class="cap">Capítulo 12 do catálogo. <b>Acima de 100 partidas/hora a tabela termina</b> — não extrapole, leve ao Serviço Técnico. E se o ciclo tiver cargas muito diferentes, o catálogo oferece caminho melhor: torque equivalente ponderado à quarta potência, equação 23.</p>
-
-  <h3 style="font-size:19px;margin:26px 0 10px">Tabela A3 — rendimento <span class="mono" style="font-size:15px;color:var(--accent)">η</span></h3>
-  <div class="tblwrap"><table id="ta3">
-    <thead><tr><th>Nº de reduções</th><th class="n">Planetário</th><th class="n">Combinado com sem-fim</th><th class="n">Combinado com angular</th></tr></thead>
-    <tbody>
-      <tr id="a3-1"><th>1</th><td class="n">0,97</td><td class="n dim">—</td><td class="n dim">—</td></tr>
-      <tr id="a3-2"><th>2</th><td class="n">0,94</td><td class="n dim">0,73</td><td class="n dim">—</td></tr>
-      <tr id="a3-3"><th>3</th><td class="n">0,91</td><td class="n dim">0,70</td><td class="n">0,91</td></tr>
-      <tr id="a3-4"><th>4</th><td class="n">0,88</td><td class="n dim">—</td><td class="n dim">—</td></tr>
-    </tbody>
-  </table></div>
-  <p class="cap" id="a3cap">Capítulo 8 do catálogo. Nas unidades ortogonais a A3 tabula apenas a linha de 3 reduções — o <b>&eta; exato do R4 confirma-se com a fábrica</b>.</p>
-
-  <h3 style="font-size:19px;margin:26px 0 10px">Classe de utilização &rarr; horas de vida <span class="mono" style="font-size:15px;color:var(--accent)">h</span></h3>
-  <div class="tblwrap"><table id="tclas">
-    <thead><tr><th>Classe</th><th class="n">T0</th><th class="n">T1</th><th class="n">T2</th><th class="n">T3</th><th class="n">T4</th><th class="n">T5</th><th class="n">T6</th><th class="n">T7</th><th class="n">T8</th></tr></thead>
-    <tbody><tr><th>Duração total de uso · h</th>
-      <td class="n" id="tc-0">200</td><td class="n" id="tc-1">400</td><td class="n" id="tc-2">800</td><td class="n" id="tc-3">1.600</td>
-      <td class="n" id="tc-4">3.200</td><td class="n" id="tc-5">6.300</td><td class="n" id="tc-6">12.500</td><td class="n" id="tc-7">25.000</td><td class="n" id="tc-8">50.000</td>
-    </tr></tbody>
-  </table></div>
-  <p class="cap" id="tccap">Classificação de mecanismos da NBR 8400. Em ponte rolante e pórtico é ela que define o <b>h</b> — não chute a vida útil, a classe do mecanismo já a fixa. Confirme contra a tabela da norma na revisão vigente.</p>
-</section>
 
   <section id="designacao">
     <div class="sec-h">
