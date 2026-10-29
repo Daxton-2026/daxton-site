@@ -431,6 +431,8 @@ section{padding:40px 0}
 .fld.full{grid-column:1/-1}
 .fld.span2{grid-row:span 2}
 .grp-b{grid-auto-flow:dense}
+.grp-b{align-items:start}
+@media (min-width:600px){.grp-b .fld>label{min-height:2.7em;line-height:1.35;display:flex;align-items:flex-end;flex-wrap:wrap;column-gap:.3em}}
 .fld label{font-size:12.5px;font-weight:600;color:var(--ink2);letter-spacing:0}
 .fld label em{font-family:var(--font);font-weight:700}
 .fld input,.fld select{height:42px;padding:0 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);
@@ -661,7 +663,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
           <div class="fld"><label for="zb">Partidas por hora <em>Z</em></label><select id="zb"><option value="0">Z &lt; 10</option><option value="1">10 &lt; Z &lt; 30</option><option value="2" selected>30 &lt; Z &lt; 100</option></select></div>
           <div class="fld"><label for="tfr">Torque de pico na entrada — % do nominal</label><input id="tfr" type="number" step="5" value="150" inputmode="numeric"></div>
           <div class="fld" id="fld-fsm"><label for="fsm">Fator de serviço do motor <em>opcional</em></label><input id="fsm" type="number" step="0.05" min="1" value="1" inputmode="decimal"><span class="tip">Padrão 1,00: vale só a potência de placa. Informe, por exemplo, 1,15 para contar a reserva do motor: a potência usada na seleção passa a ser a nominal vezes o fator. Com inversor o fator costuma ser 1,00. Confira na placa ou no catálogo do motor.</span></div>
-          <div class="fld" id="fld-n1op" hidden><label for="n1op">Rotação máxima sem carga (inversor) — rpm <em>opcional</em></label><input id="n1op" type="number" step="10" value="" inputmode="numeric"><span class="tip">Se o motor sobe de rotação sem carga (ex.: 2400 rpm), a ferramenta confere o limite do redutor nessa rotação.</span></div>
+          <div class="fld" id="fld-n1op" hidden><label for="n1op">Rotação sem carga — rpm <em>opcional</em></label><input id="n1op" type="number" step="10" value="" inputmode="numeric"><span class="tip"><b>Com inversor.</b> Se o motor sobe de rotação sem carga (ex.: 2400 rpm), a ferramenta confere o limite do redutor nessa rotação.</span></div>
           <div class="fld"><label for="ver">Versão de saída — para a designação</label><select id="ver">
             <option value="MC">MC — eixo cilíndrico chavetado</option>
             <option value="HC" selected>HC — eixo cilíndrico chavetado reforçado</option>
@@ -747,13 +749,6 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
     <div class="alt-grid" id="altgrid"></div>
   </div>
 </section>
-
-  <div class="note"><i></i><div>
-    <h4>Sobre a rotação de entrada a 60 Hz</h4>
-    <p>Boa parte dos tamanhos grandes traz rotação contínua tabelada de <b>1500 rpm</b> — número escrito para 50 Hz, onde o motor de 4 polos gira ≈ 1450. No Brasil o mesmo motor gira ≈ 1750.</p>
-    <p><b>A Bonfiglioli liberou 1750 rpm em regime contínuo</b>, e é esse o valor que a ferramenta adota. Acima dele volta a valer a rotação máxima de serviço intermitente do catálogo (20% em 60 min): a linha aparece com <span class="ck w">!</span> e, acima da intermitente, reprova de fato.</p>
-    <p class="cap" style="margin-top:8px">Confirme a liberação por escrito antes de usar em proposta — o valor tabelado no catálogo continua sendo 1500.</p>
-  </div></div>
 
   <div class="note"><i></i><div>
     <h4>Desvio de rotação: as relações do catálogo são discretas</h4>
