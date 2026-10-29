@@ -2697,18 +2697,28 @@ function ficha(){
   L.push('Modelo: '+d);
   if(!pf) L.push('   ATENCAO: flange de entrada (P__) nao definida — '+(mf&&mf.fora?'motor acima da faixa P71-P250 da serie 300M, consulte a fabrica.':'informe potencia e polos do motor.'));
   L.push(Array(53).join('='));
+  if(modo==='elev'){
+    var qk=q.Q/1000, vn=parseFloat($('vel').value), dn=parseFloat($('dt').value);
+    L.push('DADOS DA APLICAÇÃO');
+    L.push(pad('Capacidade',               fmt(qk,qk%1?2:0)+' t'));
+    L.push(pad('Velocidade',               fmt(vn,vn%1?2:0)+' m/min'));
+    L.push(pad('Ø Tambor',                 fmt(dn,dn%1?1:0)+' mm'));
+    L.push(pad('Cavalamento',              $('ram').value+' ramais, '+$('pta').value+' ponta(s) no tambor, '+$('pol').value+' polia(s)'));
+    L.push(pad('Classe de utilização',     'T'+$('tcl').value+' ('+fmt(q.h,0)+' h)'));
+    L.push(Array(53).join('='));
+  }
   L.push(pad('Rotação de entrada    n1', fmt(q.n1,0)+' rpm'));
   L.push(pad('Rotação de saída      n2', fmt(x.n2,2)+' rpm  (requisito '+fmt(q.n2req,2)+', desvio '+(x.dev>=0?'+':'')+fmt(x.dev*100,1)+'%)'));
   L.push(pad('Relação               i',  fmt(x.i,x.i%1?1:0)));
   L.push(pad('Torque de selecao     Mr2',fmt(x.Mr,0)+' Nm'));
   L.push(pad("Fator de serviço      fS'",fmt(q.fs.v,2)));
   L.push(pad('Torque de cálculo     Mc2',fmt(x.Mc,0)+' Nm'));
-  if(modo==='elev'){ L.push(pad('Classe de utilização',  'T'+$('tcl').value+' ('+fmt(q.h,0)+' h)')); }
-  else L.push(pad('Vida útil             h',  fmt(q.h,0)+' h'));
+  if(modo!=='elev') L.push(pad('Vida útil             h',  fmt(q.h,0)+' h'));
   L.push(pad('Fator de vida         Fh2',fmt(x.F,0)+'  -> coluna n2h '+fmt(x.col,0)));
   L.push(pad('Torque de pico        Mp2',fmt(x.Mp,0)+' Nm'));
   if(modo==='elev'&&q.Pm>0&&q.fsm>1) L.push(pad('Fator de serviço do motor', fmt(q.fsm,2)+'  -> '+fmt(q.Pm*q.fsm,2)+' kW disponíveis na seleção'));
   L.push(pad('Potência do motor',        (q.Pm>0?fmt(q.Pm,2)+' kW':(x.adot?fmt(x.Pad,1)+' kW adotada (padrao comercial acima da minima; potencia nao informada)':'nao informada'))+(modo==='elev'?'  (mínimo '+fmt(x.Pmin,2)+' kW)':'')));
+  if(modo==='elev'&&$('polos').value!=='0') L.push(pad('Polos / Frequência', $('polos').value+' / '+$('freq').value+' Hz'));
   L.push(pad('Flange de entrada IEC',     (pf?pf+(mf&&!pfm?'  (carcaça WEG '+mf.fr+', '+fmt(mf.P,mf.P%1?2:0)+' kW, '+mf.polos+' polos)':''):'A DEFINIR — vem da carcaca do motor')));
   if(pf&&mf&&!pfm) L.push('   Carcaça pela linha WEG W22 IR3 Premium; em outra marca ou linha pode mudar, confirme na placa do motor.');
   L.push(pad('Posição de montagem',       (pos||'A DEFINIR')));
