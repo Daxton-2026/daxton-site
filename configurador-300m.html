@@ -2663,6 +2663,11 @@ function motorFrame(P,polos){
   }
   return {fr:'', p:'', P:P, polos:polos, fora:true};
 }
+// Flanges IEC de entrada que cada tamanho/estágio aceita (catálogo Bonfiglioli 300M IE2-IE3 R4.1, tabelas FP P71...P250 das págs. 263-468).
+// Combinação ausente = o catálogo não traz entrada IEC (só hidráulica ou consulta à fábrica).
+var FLG={"300L1":[71,80,90,100,112,132],"300L2":[71,80,90,100,112,132],"300L3":[71,80,90,100,112,132],"300L4":[71,80,90,100,112,132],"300R2":[71,80,90,100,112,132],"300R3":[71,80,90,100,112,132],"300R4":[71,80,90,100,112,132],"301L1":[71,80,90,100,112,132],"301L2":[71,80,90,100,112,132],"301L3":[71,80,90,100,112,132],"301L4":[71,80,90,100,112,132],"301R2":[71,80,90,100,112,132],"301R3":[71,80,90,100,112,132],"301R4":[71,80,90,100,112,132],"303L1":[132,160,180,200],"303L2":[71,80,90,100,112,132,160],"303L3":[71,80,90,100,112,132,160],"303L4":[71,80,90,100,112,132,160],"303R2":[71,80,90,100,112,132],"303R3":[71,80,90,100,112,132],"303R4":[71,80,90,100,112,132],"304L1":[132,160,180,200],"304L2":[71,80,90,100,112,132,160],"304L3":[71,80,90,100,112,132,160],"304L4":[71,80,90,100,112,132,160],"304R2":[71,80,90,100,112,132],"304R3":[71,80,90,100,112,132],"304R4":[71,80,90,100,112,132],"305L1":[132,160,180,200],"305L2":[71,80,90,100,112,132,160],"305L3":[71,80,90,100,112,132,160],"305L4":[71,80,90,100,112,132,160],"305R2":[71,80,90,100,112,132],"305R3":[71,80,90,100,112,132],"305R4":[71,80,90,100,112,132],"306L1":[160,180,200,225,250],"306L2":[132,160,180,200],"306L3":[71,80,90,100,112,132,160],"306L4":[71,80,90,100,112,132,160],"306R2":[71,80,90,100,112,132,160],"306R3":[71,80,90,100,112,132,160],"306R4":[71,80,90,100,112,132,160],"307L1":[180,200,225,250],"307L2":[132,160,180,200],"307L3":[71,80,90,100,112,132,160],"307L4":[71,80,90,100,112,132,160],"307R2":[132,160,180,200],"307R3":[71,80,90,100,112,132,160],"307R4":[71,80,90,100,112,132,160],"309L1":[180,200,225,250],"309L2":[132,160,180,200],"309L3":[71,80,90,100,112,132,160],"309L4":[71,80,90,100,112,132,160],"309R2":[132,160,180,200],"309R3":[71,80,90,100,112,132,160],"309R4":[71,80,90,100,112,132,160],"310ML1":[200,225,250],"310ML2":[160,180,200,225,250],"310ML3":[132,160,180,200],"310ML4":[71,80,90,100,112,132,160],"310MR2":[160,180,200,225,250],"310MR3":[71,80,90,100,112,132,160],"310MR4":[71,80,90,100,112,132,160],"311ML1":[200,225,250],"311ML2":[180,200,225,250],"311ML3":[132,160,180,200],"311ML4":[71,80,90,100,112,132,160],"311MR2":[180,200,225,250],"311MR3":[132,160,180,200],"311MR4":[71,80,90,100,112,132,160],"313ML2":[180,200,225,250],"313ML3":[132,160,180,200],"313ML4":[71,80,90,100,112,132,160],"313MR2":[180,200,225,250],"313MR3":[132,160,180,200],"313MR4":[71,80,90,100,112,132,160],"314ML2":[200,225,250],"314ML3":[160,180,200,225,250],"314ML4":[132,160,180,200],"314MR3":[180,200,225,250],"314MR4":[71,80,90,100,112,132,160],"315ML2":[200,225,250],"315ML3":[180,200,225,250],"315ML4":[132,160,180,200],"315MR3":[180,200,225,250],"315MR4":[132,160,180,200],"316ML2":[200,225,250],"316ML3":[180,200,225,250],"316ML4":[132,160,180,200],"316MR3":[180,200,225,250],"316MR4":[132,160,180,200],"317ML3":[180,200,225,250],"317ML4":[132,160,180,200],"317MR3":[180,200,225,250],"317MR4":[132,160,180,200],"318ML3":[180,200,225,250],"318ML4":[180,200,225,250],"318MR4":[180,200,225,250],"319L3":[180,200,225,250],"319L4":[180,200,225,250],"319R4":[180,200,225,250],"321L4":[180,200,225,250],"321R4":[180,200,225,250],"323L4":[200,225,250],"325L4":[200,225,250]};
+function flgLista(x){ return FLG[x.size+x.fam+x.st]||[]; }
+function flgFaixa(a){ return a.length?('P'+a[0]+(a.length>1?' a P'+a[a.length-1]:'')):''; }
 function ficha(){
   var o=$('out');
   Array.prototype.forEach.call(document.querySelectorAll('#ta3 tr.hl'),function(e){e.classList.remove('hl')});
@@ -2675,7 +2680,8 @@ function ficha(){
   var pfm=$('pflg').value, pos=($('pos').value||'').trim(), opc=($('opc').value||'').trim();
   var Pef=(q.Pm>0)?q.Pm:(x.adot?x.Pad:NaN), npol=parseInt($('polos').value,10)||0;
   var mf=(modo==='elev'&&isFinite(Pef))?motorFrame(Pef,npol):null;
-  var pf=pfm||(mf&&mf.p)||'';
+  var pf0=pfm||(mf&&mf.p)||'', fl=flgLista(x), flOk=!pf0||fl.indexOf(parseInt(pf0.slice(1),10))>=0;
+  var pf=flOk?pf0:'';
   var ratio=(x.i%1?fmt(x.i,1):fmt(x.i,0));
   var d=x.size+' '+x.fam+' '+x.st+' '+ratio+' '+ver
         +' '+(pf||'P___')+' '+(pos||'___')+(opc?' '+opc:'');
@@ -2697,7 +2703,10 @@ function ficha(){
   L.push('FOLHA DE DADOS — REDUTOR PLANETÁRIO 300M');
   L.push('Aplicação: '+($('app').value||'—'));
   L.push('Modelo: '+d);
-  if(!pf) L.push('   ATENCAO: flange de entrada (P__) nao definida — '+(mf&&mf.fora?'motor acima da faixa P71-P250 da serie 300M, consulte a fabrica.':'informe potencia e polos do motor.'));
+  if(!pf) L.push('   ATENCAO: flange de entrada (P__) nao definida — '+
+    (pf0&&!flOk?(fl.length?'o motor pede '+pf0+(mf&&mf.fr?' (carcaca '+mf.fr+')':'')+', mas o '+x.size+' '+x.fam+x.st+' aceita '+flgFaixa(fl)+' no catalogo. Escolha outro candidato ou consulte a fabrica.'
+                         :'o '+x.size+' '+x.fam+x.st+' nao tem entrada IEC no catalogo. Consulte a fabrica.')
+    :(mf&&mf.fora?'motor acima da faixa P71-P250 da serie 300M, consulte a fabrica.':'informe potencia e polos do motor.')));
   L.push(Array(53).join('='));
   if(modo==='elev'){
     var qk=q.Q/1000, vn=parseFloat($('vel').value), dn=parseFloat($('dt').value);
@@ -2721,7 +2730,7 @@ function ficha(){
   if(modo==='elev'&&q.Pm>0&&q.fsm>1) L.push(pad('Fator de serviço do motor', fmt(q.fsm,2)+'  -> '+fmt(q.Pm*q.fsm,2)+' kW disponíveis na seleção'));
   L.push(pad('Potência do motor',        (q.Pm>0?fmt(q.Pm,2)+' kW':(x.adot?fmt(x.Pad,1)+' kW adotada (padrao comercial acima da minima; potencia nao informada)':'nao informada'))+(modo==='elev'?'  (mínimo '+fmt(x.Pmin,2)+' kW)':'')));
   if(modo==='elev'&&$('polos').value!=='0') L.push(pad('Polos / Frequência', $('polos').value+' / '+$('freq').value+' Hz'));
-  L.push(pad('Flange de entrada IEC',     (pf?pf+(mf&&!pfm?'  (carcaça WEG '+mf.fr+', '+fmt(mf.P,mf.P%1?2:0)+' kW, '+mf.polos+' polos)':''):'A DEFINIR — vem da carcaca do motor')));
+  L.push(pad('Flange de entrada IEC',     (pf?pf+(mf&&!pfm?'  (carcaça WEG '+mf.fr+', '+fmt(mf.P,mf.P%1?2:0)+' kW, '+mf.polos+' polos)':''):(pf0&&!flOk?'NAO DISPONIVEL neste redutor ('+pf0+'; aceita '+(flgFaixa(fl)||'nenhuma IEC')+')':'A DEFINIR — vem da carcaca do motor'))));
   if(pf&&mf&&!pfm) L.push('   Carcaça pela linha WEG W22 IR3 Premium; em outra marca ou linha pode mudar, confirme na placa do motor.');
   L.push(pad('Posição de montagem',       (pos||'A DEFINIR')));
   if(opc) L.push(pad('Opções e acessórios', opc));
