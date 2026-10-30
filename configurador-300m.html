@@ -2369,11 +2369,14 @@ Array.prototype.forEach.call(document.getElementById('tcl').options,function(o){
 var A4Z=['Z < 10','10 < Z < 30','30 < Z < 100'];
 var modo='ger', sel=null, list=[], vis=[], verTodos=false;
 // Quadro enxuto: só quem atende, uma linha por tamanho+família+estágios (a relação de menor desvio)
-// e só os 3 menores tamanhos. "Mostrar todas" lista todas as aprovadas. Reprovadas só aparecem quando nenhuma atende.
+// e só os 3 menores tamanhos, com fS real até FSMAX vezes o exigido (acima disso é superdimensionado; o 1º sempre fica).
+// "Mostrar todas" lista todas as aprovadas. Reprovadas só aparecem quando nenhuma atende.
+var FSMAX=2.5;
 function enxuto(ok){
   if(verTodos) return ok.slice(0,60);
   var seen={}, sz=[], out=[];
   for(var j=0;j<ok.length;j++){ var x=ok[j], k=x.si+x.fam+x.st; if(seen[k]) continue;
+    if(out.length&&x.Mn/x.Mc>FSMAX) continue;
     if(sz.indexOf(x.si)<0){ if(sz.length>=3) continue; sz.push(x.si); }
     seen[k]=1; out.push(x); }
   return out;
@@ -2598,7 +2601,7 @@ function render(){
   $('cnt').innerHTML=(ok.length
     ? (verTodos
        ? 'Mostrando <b>todas as '+ok.length+'</b> combinações que atendem'+(ok.length>60?' (as 60 primeiras)':'')+'. <a href="#" id="tball">Mostrar só as recomendadas</a>.'
-       : 'Os <b>3 menores tamanhos</b> que atendem, uma linha por tamanho e número de estágios (relação com menor desvio). '+(ok.length>vis.length?'<a href="#" id="tball">Mostrar todas as '+ok.length+'</a>.':''))
+       : 'Até <b>3 tamanhos</b> que atendem, uma linha por tamanho e número de estágios (relação com menor desvio), sem os superdimensionados: f<sub>S</sub> real até '+fmt(FSMAX,1)+' vezes o exigido. '+(ok.length>vis.length?'<a href="#" id="tball">Mostrar todas as '+ok.length+'</a>.':''))
     : '<b style="color:var(--crit)">Nenhuma combinação atende.</b> As linhas abaixo mostram o que falha — a coluna com ✕ é o motivo.')
     + (lb? ' <b>'+lb+'</b> usam a liberação de fábrica de '+fmt(q.n1lib,0)+' rpm (marcadas <span class="ck y">✓ lib</span>).' : '')
     + (wn? ' <b style="color:var(--warn)">'+wn+' com n₁ acima do liberado</b> — ver nota.' : '');
