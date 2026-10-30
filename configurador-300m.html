@@ -736,7 +736,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
     <thead><tr>
       <th>Tamanho</th><th class="n">i</th><th class="n">n₂</th><th class="n">desvio</th>
       <th class="n">coluna n₂·h</th><th class="n">M<sub>n2</sub></th><th class="n">M<sub>c2</sub></th><th class="n" title="Fator de serviço exigido (tabela A4) — o que o catálogo pede para a aplicação">f<sub>S</sub>' exigido</th><th class="n" title="Fator de serviço real do redutor: M n2 ÷ M r2. Tem de ser ≥ f S' exigido">f<sub>S</sub> real</th>
-      <th>torque</th><th>P₁</th><th>n₁</th><th>M<sub>2máx</sub></th>
+      <th>torque</th><th>P₁</th><th>n₁</th><th>M<sub>2máx</sub></th><th title="Flange IEC de entrada pedida pela carcaça do motor: o redutor tem de aceitá-la no catálogo">flange</th>
     </tr></thead>
     <tbody id="tb"></tbody>
   </table></div>
@@ -2435,7 +2435,7 @@ function requisito(){
     Mr2base=9550*Pm*0.91/n2req;   // referência a 3 estágios; por candidato usa o eta dele
     pot=true;
   }
-  return {n1:n1,ne:ne,n1op:n1op,n1lib:n1lib,Pm:Pm,h:h,tfr:tfr,fam:fam,tol:tol,leit:leit,fs:fs,
+  return {npol:(parseInt($('polos').value,10)||0),n1:n1,ne:ne,n1op:n1op,n1lib:n1lib,Pm:Pm,h:h,tfr:tfr,fam:fam,tol:tol,leit:leit,fs:fs,
           Q:(modo==='elev'?V('q')*($('qunit').value==='kg'?1:1000):NaN),n2req:n2req,Mr2base:Mr2base,Mr2carga:Mr2carga,Mr2mot:Mr2mot,Padq:Padq,fsm:fsm,base:(modo==='elev'?$('base').value:null),etac:etac,r:r,Ptam:Ptam,pot:pot};
 }
 
@@ -2464,6 +2464,10 @@ function buscar(q){
     var Mp=isFinite(Mnom)?Mnom*q.tfr*i*eta:Mr*q.tfr;   // sem motor informado: pico = torque requerido x pico%
     var Pmin=(q.Ptam!==null)?q.Ptam/eta:(Mr*n2/9550);
     var ck={T:Mc<=Mn,P:((p1>0&&Pad>0)?p1>=Pad*((q.Pm>0)?q.fsm:1):true),M:m2max>=Mp};
+    // flange: a carcaça do motor (potência + polos) tem de estar entre as flanges IEC que este tamanho/estágio aceita
+    var flp=null;
+    if(modo==='elev'&&Pad>0){ var mfr=motorFrame(Pad,q.npol);
+      if(mfr&&mfr.p){ flp=parseInt(mfr.p.slice(1),10); ck.F=(FLG[SIZES[si]+(fm?'R':'L')+st]||[]).indexOf(flp)>=0; } }
     var fail=0; for(var k in ck) if(!ck[k]) fail++;
     var lim = Math.max(nn1, q.n1lib||0);            // contínua tabelada ou a liberada pela fábrica
     var libN = q.ne>nn1 && q.ne<=lim;               // acima da tabelada mas dentro da liberação
@@ -2472,7 +2476,7 @@ function buscar(q){
     if(warnX){ ck.M=ck.M; fail++; }
     out.push({si:si,size:SIZES[si],fam:fm?'R':'L',st:st,i:i,n2:n2,dev:dev,eta:eta,
       col:COLS[c],colIdx:c,Mn:Mn,MnLit:mn[c],MnInt:interp(mn,F),Mr:Mr,Mc:Mc,F:F,
-      fS:Mn/Mr,Pad:Pad,Mm:Mm,adot:adot,p1:p1,nn1:nn1,n1max:n1max,m2max:m2max,Mp:Mp,Pmin:Pmin,ck:ck,fail:fail,
+      fS:Mn/Mr,flp:flp,Pad:Pad,Mm:Mm,adot:adot,p1:p1,nn1:nn1,n1max:n1max,m2max:m2max,Mp:Mp,Pmin:Pmin,ck:ck,fail:fail,
       warnN:warnN,warnX:warnX,libN:libN});
   }
   out.sort(function(a,b){ return a.fail-b.fail || a.si-b.si || a.st-b.st || Math.abs(a.dev)-Math.abs(b.dev); });
@@ -2555,7 +2559,7 @@ function render(){
          ? 'Nenhuma combinação dentro do desvio de rotação de ±'+fmt(q.tol*100,0)+
            '%. Amplie a tolerância, troque a configuração, ou reveja n₁ — a relação necessária é '+fmt(q.n1/q.n2req,1)+'.'
          : 'Dados de entrada incompletos.');
-    tb.innerHTML='<tr><td colspan="13" style="color:var(--muted)">'+msg+'</td></tr>';
+    tb.innerHTML='<tr><td colspan="14" style="color:var(--muted)">'+msg+'</td></tr>';
     $('cnt').textContent='—'; sel=null; renderAlt(q); renderSum(); ficha(); return;
   }
   tb.innerHTML=list.slice(0,14).map(function(x,k){
@@ -2572,7 +2576,8 @@ function render(){
       '<td>'+chip(x.ck.T)+'</td>'+
       '<td>'+chip(x.ck.P,x.ck.P?'':fmt(x.p1,1))+'</td>'+
       '<td>'+chip(x.warnX?false:(x.warnN?'w':true), (x.warnN||x.warnX)?fmt(x.nn1,0):(x.libN?'lib':''))+'</td>'+
-      '<td>'+chip(x.ck.M,x.ck.M?'':fmt(x.m2max,0))+'</td></tr>';
+      '<td>'+chip(x.ck.M,x.ck.M?'':fmt(x.m2max,0))+'</td>'+
+      '<td>'+(x.flp?chip(x.ck.F,'P'+x.flp):'<span style="color:var(--muted)">—</span>')+'</td></tr>';
   }).join('');
   Array.prototype.forEach.call(tb.querySelectorAll('tr[data-k]'),function(tr){
     tr.addEventListener('click',function(){ sel=list[parseInt(tr.dataset.k,10)]; mark(); ficha(); });
@@ -2612,7 +2617,7 @@ function renderSum(){
       '<div><span>Folga sobre M<sub>c2</sub></span><b>'+fmt((x.Mn/x.Mc-1)*100,1)+'%</b></div>'+
       '<div><span>Torque de seleção</span><b>'+fmt(x.Mr,0)+' Nm</b></div>'+
     '</div>'+
-    '<div class="sum-ck">'+chip(x.ck.T,'Torque')+chip(x.ck.P,'P₁')+nchip+chip(x.ck.M,'M₂máx')+'</div>'+
+    '<div class="sum-ck">'+chip(x.ck.T,'Torque')+chip(x.ck.P,'P₁')+nchip+chip(x.ck.M,'M₂máx')+(x.flp?chip(x.ck.F,'Flange P'+x.flp):'')+'</div>'+
     '<div class="sum-pm"><span>Potência mínima do motor</span><b>'+fmt(x.Pmin,2)+' kW</b></div>'+
     (x.adot?'<div class="sum-pm"><span>Motor adotado (padrão comercial)</span><b>'+fmt(x.Pad,1)+' kW</b></div>':'')+
     '<a class="sum-btn" href="#ficha">Ver folha de dados <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>'+foot;
