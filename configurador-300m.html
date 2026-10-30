@@ -730,7 +730,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
   <div class="sec-h">
     <div class="eyebrow">Passo 3</div>
     <h2>Candidatos</h2>
-    <p>Ordenados pelo menor tamanho que passa em tudo. Clique em qualquer linha para ver a ficha completa. As colunas de verificação vêm do capítulo 14.5.</p>
+    <p>Só aparecem os redutores que atendem, do menor tamanho para o maior. Clique em qualquer linha para ver a ficha completa. As colunas de verificação vêm do capítulo 14.5.</p>
   </div>
   <div class="tblwrap"><table id="tbl">
     <thead><tr>
@@ -2367,7 +2367,17 @@ var TCL=[200,400,800,1600,3200,6300,12500,25000,50000];
 var MG=[1,2,3,4,5,6,7,8,8];
 Array.prototype.forEach.call(document.getElementById('tcl').options,function(o){ if(o.value!==''&&MG[+o.value]) o.textContent+=' · M'+MG[+o.value]; });
 var A4Z=['Z < 10','10 < Z < 30','30 < Z < 100'];
-var modo='ger', sel=null, list=[];
+var modo='ger', sel=null, list=[], vis=[], verTodos=false;
+// Quadro enxuto: só quem atende, uma linha por tamanho+família+estágios (a relação de menor desvio)
+// e só os 3 menores tamanhos. "Mostrar todas" lista todas as aprovadas. Reprovadas só aparecem quando nenhuma atende.
+function enxuto(ok){
+  if(verTodos) return ok.slice(0,60);
+  var seen={}, sz=[], out=[];
+  for(var j=0;j<ok.length;j++){ var x=ok[j], k=x.si+x.fam+x.st; if(seen[k]) continue;
+    if(sz.indexOf(x.si)<0){ if(sz.length>=3) continue; sz.push(x.si); }
+    seen[k]=1; out.push(x); }
+  return out;
+}
 function buildA4(){
   var tb=$('ta4').querySelector('tbody'), h='';
   for(var l=0;l<3;l++){
@@ -2562,7 +2572,8 @@ function render(){
     tb.innerHTML='<tr><td colspan="14" style="color:var(--muted)">'+msg+'</td></tr>';
     $('cnt').textContent='—'; sel=null; renderAlt(q); renderSum(); ficha(); return;
   }
-  tb.innerHTML=list.slice(0,14).map(function(x,k){
+  vis=ok.length?enxuto(ok):list.slice(0,14);
+  tb.innerHTML=vis.map(function(x,k){
     return '<tr data-k="'+k+'"'+(x.fail===0?(x.warnN?' class="warnrow"':''):' class="failrow"')+'>'+
       '<td><b>'+x.size+' '+x.fam+x.st+'</b></td>'+
       '<td class="n">'+fmt(x.i,1)+'</td>'+
@@ -2580,15 +2591,18 @@ function render(){
       '<td>'+(x.flp?chip(x.ck.F,'P'+x.flp):'<span style="color:var(--muted)">—</span>')+'</td></tr>';
   }).join('');
   Array.prototype.forEach.call(tb.querySelectorAll('tr[data-k]'),function(tr){
-    tr.addEventListener('click',function(){ sel=list[parseInt(tr.dataset.k,10)]; mark(); ficha(); });
+    tr.addEventListener('click',function(){ sel=vis[parseInt(tr.dataset.k,10)]; mark(); ficha(); });
   });
   var wn=ok.filter(function(x){return x.warnN;}).length;
   var lb=ok.filter(function(x){return x.libN;}).length;
   $('cnt').innerHTML=(ok.length
-    ? '<b>'+ok.length+'</b> combinações atendem torque, P₁ e M<sub>2máx</sub>, de '+list.length+' dentro do desvio de rotação. Mostrando as 14 primeiras.'
+    ? (verTodos
+       ? 'Mostrando <b>todas as '+ok.length+'</b> combinações que atendem'+(ok.length>60?' (as 60 primeiras)':'')+'. <a href="#" id="tball">Mostrar só as recomendadas</a>.'
+       : 'Os <b>3 menores tamanhos</b> que atendem, uma linha por tamanho e número de estágios (relação com menor desvio). '+(ok.length>vis.length?'<a href="#" id="tball">Mostrar todas as '+ok.length+'</a>.':''))
     : '<b style="color:var(--crit)">Nenhuma combinação atende.</b> As linhas abaixo mostram o que falha — a coluna com ✕ é o motivo.')
     + (lb? ' <b>'+lb+'</b> usam a liberação de fábrica de '+fmt(q.n1lib,0)+' rpm (marcadas <span class="ck y">✓ lib</span>).' : '')
     + (wn? ' <b style="color:var(--warn)">'+wn+' com n₁ acima do liberado</b> — ver nota.' : '');
+  var ta=$('tball'); if(ta) ta.addEventListener('click',function(e){ e.preventDefault(); verTodos=!verTodos; render(); });
   var np=$('nopm'); np.hidden=true;
   if(modo==='elev'&&ok.length&&!(q.Pm>0)&&ok[0].adot){ np.hidden=false; $('nopmtxt').innerHTML='A potência do motor não foi informada. Por segurança, o configurador adotou a <b>próxima potência comercial acima da mínima</b>: mínima de <b>'+fmt(ok[0].Pmin,2)+' kW</b>, adotada de <b>'+fmt(ok[0].Pad,1)+' kW</b>, e selecionou o redutor pelo torque de saída dela. Se o cliente for usar um motor menor, a escolha é dele: informe a potência no bloco 2 e o configurador seleciona por ela e avisa que ficou abaixo da mínima.'; }
   renderAlt(q);
@@ -2646,7 +2660,7 @@ function renderAlt(q){
 function mark(){
   renderSum();
   Array.prototype.forEach.call($('tb').querySelectorAll('tr[data-k]'),function(tr){
-    tr.classList.toggle('sel', list[parseInt(tr.dataset.k,10)]===sel);
+    tr.classList.toggle('sel', vis[parseInt(tr.dataset.k,10)]===sel);
   });
 }
 
