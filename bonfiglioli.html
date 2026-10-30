@@ -360,7 +360,10 @@ section { padding: 96px 5%; }
 @media (max-width: 1460px) { .nav-links { gap: .8rem; } .nav-links a.nav-home { display: none; } .nav-links a { letter-spacing: 0; } .nav-cta { padding: 8px 12px !important; } .nav-links a.nav-tool { padding: 6px 9px; } }
 .nav-links a.nav-tool { display: inline-flex; align-items: center; gap: 7px; padding: 7px 12px; border: 1px solid rgba(255,255,255,.4); border-radius: 6px; white-space: nowrap; }
 .nav-tool-tag { background: var(--amber); color: var(--navy-deep); font-size: 9.5px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; line-height: 1.2; }
-@media (hover:hover){.nav-links a.nav-tool:hover { border-color: var(--amber); }}
+/* botão de destaque: contorno e texto âmbar, sem competir com o botão cheio de contato */
+.nav-links a.nav-tool { color: var(--amber); font-weight: 700; border: 1.5px solid var(--amber); background: rgba(245,166,35,.14); }
+@media (hover:hover){.nav-links a.nav-tool:hover { color: var(--navy-deep); background: var(--amber); }}
+@media (hover:hover){.nav-links a.nav-tool:hover .nav-tool-tag { background: var(--navy-deep); color: var(--amber); }}
 @media (max-width:1100px){ .nav-tool-tag { display: none; } .nav-links a.nav-tool { padding: 6px 9px; } }
 
 /* faixa de dimensionamento rápido, logo abaixo do topo */
