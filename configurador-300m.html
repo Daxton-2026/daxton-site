@@ -2872,6 +2872,18 @@ buildA4(); syncN1(); setEnt();
 var SO_ELEV=true;
 if(SO_ELEV){ $('modes').style.display='none'; }
 setModo((SO_ELEV||/[?&]modo=elev/.test(location.search))?'elev':'ger');
+// Preenchimento pela URL (faixa de dimensionamento da pagina Bonfiglioli): ?q=carga em t&vel=m/min&tcl=0..8
+(function(){
+  try{
+    var u=new URLSearchParams(location.search), mudou=false;
+    function num(k,lo,hi){ var v=parseFloat((u.get(k)||'').replace(',','.')); return (isFinite(v)&&v>=lo&&v<=hi)?v:null; }
+    var q=num('q',0.01,1000), vel=num('vel',0.01,200), tcl=num('tcl',0,8);
+    if(q!==null){ $('q').value=q; $('qunit').value=(u.get('qunit')==='kg')?'kg':'t'; mudou=true; }
+    if(vel!==null){ $('vel').value=vel; mudou=true; }
+    if(tcl!==null&&Math.floor(tcl)===tcl){ $('tcl').value=String(tcl); mudou=true; }
+    if(mudou) render();
+  }catch(e){}
+})();
 })();
 
 </script>
