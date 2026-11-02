@@ -987,7 +987,7 @@ function mecCR(x){
   return {ok:ok,why:ok?'':'Não disponível nesta relação (restrição do catálogo/SAP). Escolha outra relação na pré-seleção.'};
 }
 function mecSpec(x){
-  if(x.lin==='VF'||x.lin==='W') return vfSpec(x);
+  if(/^(VF|W)/.test(x.lin)) return vfSpec(x);
   var F=[], sz=sz2(x.tam), small=(x.lin==='S')?x.tam<=40:x.tam<=41, fo=MC.forma||'';
   var forms=(ACO.forma[x.lin]||{})[sz]||[], flgs=(ACO.flange[x.lin]||{})[sz]||[], veds=(ACO.ved[x.lin]||{})[sz]||[];
   F.push({id:'forma',g:'Construção',label:'Versão do eixo de saída / forma construtiva',blank:'— a definir —',opts:forms.map(function(c){return {v:c,t:formaTxt(x.lin,c)};}),
@@ -1061,7 +1061,7 @@ function mecPintura(F){
     opts:[{v:'AC',t:'AC — certificado de conformidade com o pedido'},{v:'CC',t:'CC — certificado de inspeção (amostragem do lote)'},{v:'CC AC',t:'CC AC — inspeção e conformidade'}]});
 }
 function mecAvisos(x){
-  if(x.lin==='VF'||x.lin==='W') return vfAvisos(x);
+  if(/^(VF|W)/.test(x.lin)) return vfAvisos(x);
   var A=[], lub=MC.lub||'', pos=MC.pos||'', oil=(lub&&lub!=='SO');
   if(oil){
     if(x.lin==='A'&&x.tam>=50&&(pos==='B6'||pos==='B7')) A.push('O catálogo não oferece opção de óleo L.. nas posições B6 e B7 para A50 a A90.');
@@ -1083,6 +1083,7 @@ function mecClean(x){
       var vals=[]; if(f.type==='check') vals=['1']; else if(f.groups) f.groups.forEach(function(g){ g.o.forEach(function(o){ vals.push(o.v); }); }); else (f.opts||[]).forEach(function(o){ vals.push(o.v); });
       if(f.dis||vals.indexOf(v)<0){ delete MC[f.id]; ch=true; }
     });
+    Object.keys(MC).forEach(function(k){ if(!F.some(function(f){ return f.id===k; })){ delete MC[k]; ch=true; } });
     if(!ch) return F;
   }
   return mecSpec(x);
@@ -1124,28 +1125,31 @@ function mecSync(){
 function mecLab(F,id){ var f=F.filter(function(a){return a.id===id;})[0]; if(!f||!MC[id]) return ''; if(f.type==='check') return f.txt;
   var all=[]; if(f.groups) f.groups.forEach(function(g){ all=all.concat(g.o); }); else all=f.opts||[]; var m=all.filter(function(o){return o.v===MC[id];})[0]; return m?m.t:MC[id]; }
 function mecTokens(x){
-  var F=mecSpec(x), T=[], vw=(x.lin==='VF'||x.lin==='W');
+  var F=mecSpec(x), T=[], vw=/^(VF|W)/.test(x.lin);
   function L(id){ return mecLab(F,id).replace(/^[^—:]*[—:]\s*/,''); }
   var SER={A:'Série A — redutor ortogonal helicoidal-cônico (saída a 90° do motor).',C:'Série C — redutor coaxial helicoidal (saída em linha com o motor).',F:'Série F — redutor de eixos paralelos, para montagem pendular ou com flange.',S:'Série S — redutor de um estágio só.',
     VF:'Linha VF — redutor de coroa e rosca sem-fim.',W:'Linha W — redutor de coroa e rosca sem-fim com carcaça universal.'};
-  T.push([x.lin,SER[x.lin]]);
+  T.push([x.lin,vw?VFO.tipo[x.lin]:SER[x.lin]]);
   T.push([vw?String(x.tam):sz2(x.tam),'Tamanho dentro da '+(vw?'linha':'série')+': quanto maior o número, maior o torque.']);
   if(!vw) T.push([String(x.est),'Número de estágios de redução.']);
   if(vw&&MC.lim) T.push([MC.lim,'Limitador de torque: '+L('lim')+'.']);
   T.push(MC.forma?[MC.forma,(vw?'Versão: ':'Versão do eixo de saída: ')+L('forma')+'.']:['..',(vw?'Versão':'Versão do eixo de saída')+' a definir: escolha no campo acima.']);
   if(MC.flange) T.push([MC.flange,'Flange de saída: '+L('flange')+'.']);
-  if(x.lin==='W'&&x.tam===75) T.push([MC.bore||'D30',MC.bore?'Furo do eixo de saída Ø28 mm, sob consulta.':'Furo do eixo de saída Ø30 mm (padrão do W 75).']);
+  if(vw&&vfInfo(x).out==='W'&&vfInfo(x).os===75) T.push([MC.bore||'D30',MC.bore?'Furo do eixo de saída Ø28 mm, sob consulta.':'Furo do eixo de saída Ø30 mm (padrão do W 75).']);
   T.push([ratioPt(x),'Relação de redução exata, como na tabela do catálogo.']);
   if(MC.ent==='HS') T.push(['HS','Entrada por eixo maciço, sem flange de motor.']);
   else if(MC.ent==='SERVO') T.push(['S_..','Adaptador para servomotor: o código completo depende do servomotor.']);
-  else { T.push([x.flp?'P'+x.flp:'P..',x.flp?'Flange de entrada IEC para o motor. A carcaça vem do motor, não do redutor'+(x.mf&&x.mf.fr?' (aqui, carcaça '+x.mf.fr+')':'')+'.':'Flange de entrada IEC: a definir pela carcaça do motor.']);
+  else { var fp=x.flp||(x.mf&&x.mf.p?parseInt(String(x.mf.p).slice(1),10):null);
+    T.push([fp?'P'+fp:'P..',fp?'Flange de entrada IEC para o motor. A carcaça vem do motor, não do redutor'+(x.mf&&x.mf.fr?' (aqui, carcaça '+x.mf.fr+')':'')+'.'+(x.flp?'':' Confira o flange na tabela do catálogo para este tipo.'):'Flange de entrada IEC: a definir pela carcaça do motor.']);
     if(vw&&(MC.ent==='IEC B5'||MC.ent==='IEC B14')) T.push([MC.ent.slice(4),'Montagem do motor '+MC.ent.slice(4)+'.']); }
   T.push(MC.pos?[MC.pos,'Posição de montagem.']:['..','Posição de montagem a definir: escolha no campo acima. A designação só fica completa com ela.']);
+  if(MC.arr) T.push([MC.arr,'Arranjo dos dois redutores do combinado.']);
   if(MC.ved) T.push([MC.ved,'Vedação: '+L('ved')+'.']);
   if(MC.lub) T.push([MC.lub,'Lubrificação: '+L('lub')+'.']);
   if(MC.lts) T.push([MC.lts,'Estoque prolongado: '+L('lts')+'.']);
   if(MC.cr){ var c=x.lin==='A'?(MC.cr==='CW'?'AL':'AR'):(MC.cr==='CW'?'AR':'AL'); T.push([c,'Contra-recuo: rotação livre no sentido '+(MC.cr==='CW'?'horário':'anti-horário')+' na saída.']); }
-  [['rb','RB','Folga angular reduzida.'],['rbi','RB','Eixo de entrada duplo, saindo também do lado oposto ao motor.'],['ihb','IHB','Rolamentos com maior capacidade de carga.'],['hdb','HDB','Rolamentos reforçados no eixo de saída (carga radial maior).'],['fl','FL','Furação lateral usinada e roscada.'],['kav','KAV','Kit antivibração para montagem pendular.'],['bp','BP','Respiro com válvula.']].forEach(function(o){ if(MC[o[0]]) T.push([o[1],o[2]]); });
+  [['rb','RB','Folga angular reduzida.'],['ihb','IHB','Rolamentos com maior capacidade de carga.'],['hdb','HDB','Rolamentos reforçados no eixo de saída (carga radial maior).'],['fl','FL','Furação lateral usinada e roscada.'],['kav','KAV','Kit antivibração para montagem pendular.'],['bp','BP','Respiro com válvula.']].forEach(function(o){ if(MC[o[0]]) T.push([o[1],o[2]]); });
+  if(MC.rbi) T.push([MC.rbi==='1'?'RB':MC.rbi,MC.rbi==='RBO'?'Eixo de entrada duplo no 2º redutor do combinado.':'Eixo de entrada duplo, saindo também do lado oposto ao motor.']);
   if(MC.out) T.push([MC.out,'Eixo de saída: '+L('out')+'.']);
   if(MC.pes) T.push([MC.pes,L('pes')+'.']);
   if(MC.sc) T.push([MC.sc,'Posição alternativa do braço de torque e da tampa de proteção.']);
@@ -1160,7 +1164,7 @@ function mecDsg(x){ return mecTokens(x).map(function(t){return t[0];}).join(' ')
 function mecCodeHtml(x){
   var T=mecTokens(x);
   return '<h3 class="mec-g">Código do redutor</h3><div class="desig-box"><div class="desig-code">'+T.map(function(t){return t[0];}).join(' &nbsp; ')+'</div><div class="desig-list">'+
-    T.map(function(t){ return '<div><b>'+t[0]+'</b><span>'+t[1]+'</span></div>'; }).join('')+'</div><p class="cap" style="margin-top:10px">Mesmo formato da designação do catálogo'+((x.lin==='VF'||x.lin==='W')?' VF-W':' ACF')+'. ".." marca o que ainda falta escolher. É este código que vai na ficha e no pedido.</p></div>';
+    T.map(function(t){ return '<div><b>'+t[0]+'</b><span>'+t[1]+'</span></div>'; }).join('')+'</div><p class="cap" style="margin-top:10px">Mesmo formato da designação do catálogo'+(/^(VF|W)/.test(x.lin)?' VF-W':' ACF')+'. ".." marca o que ainda falta escolher. É este código que vai na ficha e no pedido.</p></div>';
 }
 function mecLines(x,pad){
   var F=mecSpec(x), L=[], lab={};
@@ -1168,94 +1172,110 @@ function mecLines(x,pad){
     if(f.type==='check') return f.label; var all=[]; if(f.groups) f.groups.forEach(function(g){all=all.concat(g.o);}); else all=f.opts||[];
     var m=all.filter(function(o){return o.v===t;})[0]; return m?m.t:t; }
   L.push('CONFIGURAÇÃO MECÂNICA (SÓ O REDUTOR)');
-  L.push(pad((x.lin==='VF'||x.lin==='W')?'Versão':'Versão do eixo de saída',opt('forma')||'A DEFINIR'));
+  L.push(pad(/^(VF|W)/.test(x.lin)?'Versão':'Versão do eixo de saída',opt('forma')||'A DEFINIR'));
   if(x.lin==='A'||x.lin==='F') L.push(pad('Flange de saída',opt('flange')||(/^QF/.test(MC.forma||'')?'nao se aplica (Quick-fit)':'sem flange / a definir')));
   L.push(pad('Posição de montagem',opt('pos')||'A DEFINIR'));
   L.push(pad('Entrada',opt('ent')||'a definir (flange IEC pela carcaça do motor)'));
-  var ex=[['lim','Limitador de torque'],['bore','Furo do eixo de saída'],['ved','Vedação'],['lub','Lubrificação'],['lts','Estoque prolongado'],['cr','Contra-recuo'],['rb','Folga angular reduzida'],['bp','Respiro com válvula'],['ihb','Rolamentos reforçados'],['hdb','Carga radial reforçada'],['sc','Braço de torque: posição'],['rbi','Eixo de entrada duplo'],['out','Eixo de saída'],['pes','Kit de pés'],['ta','Braço de torque: posição'],['scw','Tampa de proteção: posição'],['fl','Furação lateral'],['kav','Kit antivibração'],['prot','Proteção superficial'],['cor','Cor'],['cert','Certificados']], any=false;
+  var ex=[['lim','Limitador de torque'],['arr','Arranjo do combinado'],['bore','Furo do eixo de saída'],['ved','Vedação'],['lub','Lubrificação'],['lts','Estoque prolongado'],['cr','Contra-recuo'],['rb','Folga angular reduzida'],['bp','Respiro com válvula'],['ihb','Rolamentos reforçados'],['hdb','Carga radial reforçada'],['sc','Braço de torque: posição'],['rbi','Eixo de entrada duplo'],['out','Eixo de saída'],['pes','Kit de pés'],['ta','Braço de torque: posição'],['scw','Tampa de proteção: posição'],['fl','Furação lateral'],['kav','Kit antivibração'],['prot','Proteção superficial'],['cor','Cor'],['cert','Certificados']], any=false;
   ex.forEach(function(e){ var v=opt(e[0]); if(v){ any=true; L.push(pad(e[1],MC[e[0]]==='1'?'sim':v)); } });
   if(!any) L.push('Demais opções ......................... padrão de fábrica');
   mecAvisos(x).forEach(function(a){ L.push('ATENCAO: '+a); });
   return L;
 }
-/* ---------- VF / W: catálogo VF-W (BR_CAT_VFW_STD_ENG_R11) e listas do SAP (aba VF - W) ---------- */
+/* ---------- VF / W e derivados: catálogo VF-W (BR_CAT_VFW_STD_ENG_R11) e listas do SAP (aba VF - W) ---------- */
 var VFO={
   forma:{VF27:['A','N','V','F1','F2'],VF30:['A','N','V','P1','F1','F2','U'],VF44:['A','N','V','P1','F1','F2','FA1','FA2','U'],VF49:['A','N','V','P1','F1','F2','FA1','FA2','U'],
     VF130:['A','N','V','P1','P2','F1','F2','FC1','FC2','FR1','FR2'],VF150:['A','N','V','P1','P2','F1','F2','FC1','FC2','FR1','FR2'],VF185:['A','N','V','P1','P2','F1','F2','FC1','FC2','FR1','FR2'],
     VF210:['A','N','V','P'],VF250:['A','N','V','P'],W63:['U','UF1','UF2','UFC1','UFC2'],W75:['U','UF1','UF2','UFC1','UFC2','UFCR1','UFCR2'],W86:['U','UF1','UF2','UFC1','UFC2'],W110:['U','UF1','UF2','UFC1','UFC2']},
   txt:{N:'Pés, rosca sem-fim embaixo',A:'Pés, rosca sem-fim em cima',V:'Pés, rosca sem-fim vertical',F:'Flange padrão',FA:'Flange de saída prolongado',FC:'Flange curto',FR:'Flange curto com rolamentos reforçados',
     P:'Tampa lateral para montagem pendular',U:'Montagem por pés',UF:'Flange de montagem padrão',UFC:'Flange de montagem reduzido no comprimento',UFCR:'Flange de montagem reduzido no comprimento e no diâmetro'},
-  // LUB.02: posições em que a opção de óleo vale (W 110 e VF 130 a VF 250)
+  // LUB.02: posições em que a opção de óleo vale (W 110 e VF 130 a VF 250, pelo redutor de saída)
   lubpos:{'W110':['B3','B6','B7','B8'],'VF130':['B3','B6','B7','B8'],'VF130V':['B6','B7','V5','V6'],'VF130FR':['B3','B8'],'VF150':['B3','B6','B7','B8'],'VF150V':['B6','B7','V5','V6'],'VF150FR':['B3','B8'],
-    'VF185':['B3','B6','B7','B8'],'VF185V':['B6','B7','V5','V6'],'VF185FR':['B3','B8'],'VF210':['B3','B8'],'VF210V':['V5','V6'],'VF250':['B3','B8'],'VF250V':['V5','V6']}
+    'VF185':['B3','B6','B7','B8'],'VF185V':['B6','B7','V5','V6'],'VF185FR':['B3','B8'],'VF210':['B3','B8'],'VF210V':['V5','V6'],'VF250':['B3','B8'],'VF250V':['V5','V6']},
+  tipo:{VF:'Linha VF — redutor de coroa e rosca sem-fim.',VFR:'Linha VFR — pré-estágio helicoidal + sem-fim VF.',W:'Linha W — sem-fim com carcaça universal.',WR:'Linha WR — pré-estágio helicoidal + sem-fim W.',
+    'VF/VF':'Combinado VF/VF — dois sem-fim VF em série.','VF/W':'Combinado VF/W — sem-fim VF na entrada e W na saída.','W/VF':'Combinado W/VF — sem-fim W na entrada e VF na saída.'},
+  iec:{VF:'P27 (só VF 27) ou P56 a P225',VFR:'P63 e P80 a P160',W:'P71 a P132',WR:'P63 a P112','VF/VF':'P56, P63 e P90 a P132','VF/W':'P56 a P80','W/VF':'P71 a P112'}
 };
+function vfInfo(x){
+  var lin=x.lin, comb=lin.indexOf('/')>=0, out=comb?lin.split('/')[1]:lin.replace('R',''), ts=String(x.tam), os=parseInt(comb?ts.split('/')[1]:ts,10);
+  return {lin:lin,comb:comb,R:/R$/.test(lin),out:out,os:os,ts:ts,single:!comb};
+}
 function vfFormaTxt(c){
   var m=/^([A-Z]+?)([12]?)$/.exec(c), b=m[1], s=m[2], t=VFO.txt[b]||'';
   if(c==='P') t=VFO.txt.P+' (P1 = P2)';
   return c+(t?' — '+t:'')+(s?', lado '+s:'');
 }
-function vfKey(x){ return x.lin+x.tam; }
 function vfSpec(x){
-  var F=[], k=vfKey(x), fo=MC.forma||'', vf=(x.lin==='VF'), small=vf?x.tam<=49:x.tam<=86;
+  var F=[], I=vfInfo(x), vfo=(I.out==='VF'), fo=MC.forma||'', small=vfo?I.os<=49:I.os<=86, k=I.out+I.os;
   F.push({id:'forma',g:'Construção',label:'Versão (forma construtiva)',blank:'— a definir —',opts:(VFO.forma[k]||[]).map(function(c){ return {v:c,t:vfFormaTxt(c)}; }),
-    hint:'Lado 1 ou 2 conforme os croquis de arranjo do catálogo VF-W.'});
-  var six=(!vf||x.tam>=130), pl=six?['B3','B6','B7','B8','V5','V6']:['B3'];
+    hint:(I.comb?'Nos combinados a versão é a do segundo redutor (lado da máquina). ':'')+'Lado 1 ou 2 conforme os croquis de arranjo do catálogo VF-W.'});
+  var six=!(vfo&&I.os<=49), pl=six?['B3','B6','B7','B8','V5','V6']:['B3'];
   F.push({id:'pos',g:'Construção',label:'Posição de montagem',blank:'— a definir —',opts:pl.map(function(c,i){ return {v:c,t:c+(six&&i===0?' (padrão)':'')}; }),
-    hint:six?'Posições do catálogo para '+x.lin+' '+x.tam+'.':'Do VF 27 ao VF 49 o catálogo designa sempre B3.'});
+    hint:six?'Posições do catálogo para '+x.lin+' '+I.ts+'.':'Nestes tamanhos o catálogo designa sempre B3.'});
+  if(I.comb) F.push({id:'arr',g:'Construção',label:'Arranjo do combinado',blank:'— padrão de fábrica (cinza no catálogo) —',opts:['CW1','CW2','CW3','CW4','CCW1','CCW2','CCW3','CCW4'].map(function(c){return {v:c,t:c};}),
+    hint:'Posição relativa dos dois redutores, conforme os diagramas de arranjo do catálogo. Com flange IEC, alguns arranjos limitam o tamanho do flange do motor (tabela do catálogo).'});
   var eo=[];
-  if(x.lin==='VF'&&x.tam===27) eo.push({v:'IEC',t:'Flange IEC P27 (só VF 27)'});
-  else { eo.push({v:'IEC B5',t:'Flange IEC, motor B5'+(x.flp?' — P'+x.flp+' pela carcaça escolhida':'')});
-    if(!vf||x.tam<=49) eo.push({v:'IEC B14',t:'Flange IEC, motor B14'+(x.flp?' — P'+x.flp+' pela carcaça escolhida':'')}); }
+  if(x.lin==='VF'&&I.os===27) eo.push({v:'IEC',t:'Flange IEC P27 (só VF 27)'});
+  else {
+    var b5=(x.lin==='VF'&&I.os>=30)||(x.lin==='VFR'&&I.os>=49)||x.lin==='W'||x.lin==='WR', b14=(x.lin==='VF'&&I.os>=30&&I.os<=49)||x.lin==='W';
+    var pf=x.flp?' — P'+x.flp+' pela carcaça escolhida':'';
+    if(b5) eo.push({v:'IEC B5',t:'Flange IEC, motor B5'+pf});
+    if(b14) eo.push({v:'IEC B14',t:'Flange IEC, motor B14'+pf});
+    if(!b5&&!b14) eo.push({v:'IEC',t:'Flange IEC'+pf});
+  }
   eo.push({v:'HS',t:'HS — eixo de entrada maciço'});
-  F.push({id:'ent',g:'Construção',label:'Entrada (lado do motor)',blank:'— a definir —',opts:eo,hint:'Só o redutor: o motor e o freio não entram nesta ficha.'});
-  if(x.lin==='W'&&x.tam===75) F.push({id:'bore',g:'Construção',label:'Furo do eixo de saída (W 75)',blank:'— D30 (padrão) —',opts:[{v:'D28',t:'D28 — Ø28 mm, sob consulta'}]});
-  var limOk=(vf&&(x.tam===44||x.tam===49))||!vf;
-  if(limOk) F.push({id:'lim',g:'Construção',label:'Limitador de torque (VF…L / W…L)',blank:'— sem limitador —',opts:[{v:'L1',t:'L1 — porca de regulagem à esquerda (padrão)'},{v:'L2',t:'L2 — porca de regulagem à direita'}],
+  F.push({id:'ent',g:'Construção',label:'Entrada (lado do motor)',blank:'— a definir —',opts:eo,hint:'Flanges IEC do catálogo para '+x.lin+': '+VFO.iec[x.lin]+'. Só o redutor: o motor e o freio não entram nesta ficha.'});
+  if(I.out==='W'&&I.os===75) F.push({id:'bore',g:'Construção',label:'Furo do eixo de saída (W 75)',blank:'— D30 (padrão) —',opts:[{v:'D28',t:'D28 — Ø28 mm, sob consulta'}]});
+  var limOk=I.single&&((vfo&&(I.os===44||I.os===49))||!vfo);
+  if(limOk) F.push({id:'lim',g:'Construção',label:'Limitador de torque ('+(vfo?'VF…L':'W…L')+')',blank:'— sem limitador —',opts:[{v:'L1',t:'L1 — porca de regulagem à esquerda (padrão)'},{v:'L2',t:'L2 — porca de regulagem à direita'}],
     hint:'Limitador por atrito dentro do redutor, regulado de fábrica pelo Mn2 a 1400 rpm. O catálogo não recomenda em equipamentos de elevação. Lado visto do motor, com o redutor em B3.'});
-  // vedação: VF e W 110; não em VF 30 com RB nem VF 30 HS
-  var vOk=(vf||x.tam===110), v30=(vf&&x.tam===30&&(MC.rbi==='1'||MC.ent==='HS'));
+  var vOk=(vfo||I.os===110), v30=(x.lin==='VF'&&I.os===30&&(MC.rbi||MC.ent==='HS'));
   if(vOk) F.push({id:'ved',g:'Vedação e lubrificação',label:'Vedação',blank:'— padrão de fábrica —',dis:v30,reason:v30?'No VF 30 com RB ou com entrada HS o catálogo não oferece VV nem PV.':'',
     opts:[{v:'VV',t:'VV: retentor de entrada em elastômero fluorado'},{v:'PV',t:'PV: retentores de entrada e saída em elastômero fluorado'}]});
   var lp=VFO.lubpos[k+(fo==='V'?'V':(/^FR/.test(fo)?'FR':''))], pos=MC.pos||'', lubBlock=(!small&&lp&&pos&&lp.indexOf(pos)<0);
-  F.push({id:'lub',g:'Vedação e lubrificação',label:'Lubrificação',blank:small?'— padrão: com óleo de fábrica'+(vf?' (PAG 320, LO)':'')+' —':'— padrão: fornecido sem óleo —',dis:lubBlock,
-    reason:lubBlock?'Pela tabela LUB.02 do catálogo, a opção de óleo não vale para '+x.lin+' '+x.tam+(fo?' '+fo:'')+' na posição '+pos+'.':'',
+  F.push({id:'lub',g:'Vedação e lubrificação',label:'Lubrificação',blank:small?'— padrão: com óleo de fábrica'+(vfo?' (PAG 320, LO)':'')+' —':'— padrão: fornecido sem óleo —',dis:lubBlock,
+    reason:lubBlock?'Pela tabela LUB.02 do catálogo, a opção de óleo não vale para '+I.out+' '+I.os+(fo?' '+fo:'')+' na posição '+pos+'.':'',
     groups:[{l:'Sem óleo',o:small?[{v:'SO',t:'SO — fornecido sem óleo'}]:[]},
       {l:'PAG — sintético poliglicol (Omala S4 WE)',o:[['LH','150'],['LS','220'],['LO','320'],['LK','460']].map(function(o){ return {v:o[0],t:o[0]+' — PAG Omala S4 WE '+o[1]+(o[0]==='LK'?' (obrigatório com limitador de torque)':'')}; })},
       {l:'Grau alimentício (Klübersynth UH1 6)',o:[['LA','150'],['LB','220'],['LC','320'],['LD','460']].map(function(o){ return {v:o[0],t:o[0]+' — Grau alimentício Klübersynth UH1 6-'+o[1]}; })}],
     hint:small?'Tamanho fornecido com óleo de fábrica no padrão. Com SO vai sem óleo.':'Tamanho fornecido sem óleo no padrão. A opção de óleo depende da versão e da posição (tabela LUB.02).'});
-  if(!(vf&&x.tam===27)) F.push({id:'rbi',g:'Opções do redutor',type:'check',label:'Eixo de entrada duplo (RB)',txt:'RB — eixo de entrada saindo também do lado oposto ao motor',
-    hint:(vf&&x.tam>=210)?'Nas versões A e P do VF 210 e VF 250 a ventilação forçada não é possível com RB.':'Cotas da ponta extra na tabela do catálogo.'});
-  var outs=(vf&&x.tam===27)?[{v:'AO',t:'AO — eixo de saída do lado oposto ao padrão'},{v:'ESL1',t:'ESL1 — eixo de saída encaixável simples (código do SAP)'},{v:'ESL2',t:'ESL2 — eixo de saída encaixável simples (código do SAP)'}]
+  if(I.comb) F.push({id:'rbi',g:'Opções do redutor',label:'Eixo de entrada duplo',blank:'— não —',opts:[{v:'RB',t:'RB — eixo de entrada duplo'},{v:'RBO',t:'RBO — eixo de entrada duplo no 2º redutor (só combinados)'}],hint:'Cotas da ponta extra na tabela do catálogo.'});
+  else if(!(x.lin==='VF'&&I.os===27)) F.push({id:'rbi',g:'Opções do redutor',type:'check',label:'Eixo de entrada duplo (RB)',txt:'RB — eixo de entrada saindo também do lado oposto ao motor',
+    hint:(vfo&&I.os>=210)?'Nas versões A e P do VF 210 e VF 250 a ventilação forçada não é possível com RB.':'Cotas da ponta extra na tabela do catálogo.'});
+  var outs=(x.lin==='VF'&&I.os===27)?[{v:'AO',t:'AO — eixo de saída do lado oposto ao padrão'},{v:'ESL1',t:'ESL1 — eixo de saída encaixável simples (código do SAP)'},{v:'ESL2',t:'ESL2 — eixo de saída encaixável simples (código do SAP)'}]
     :[{v:'ESL1',t:'ESL1 — eixo de saída encaixável simples (código do SAP)'},{v:'ESL2',t:'ESL2 — eixo de saída encaixável simples (código do SAP)'},{v:'ESD',t:'ESD — eixo de saída encaixável duplo (código do SAP)'}];
   F.push({id:'out',g:'Opções do redutor',label:'Eixo de saída',blank:'— eixo oco (padrão) —',opts:outs,hint:'Acessório "eixo de saída encaixável" do catálogo (simples ou duplo); o lado de ESL1 e ESL2 segue o SAP.'});
-  if(!vf){ var kvNo=(MC.rbi==='1')||(x.tam===110&&pos==='B6');
+  if(x.lin==='W'||x.lin==='WR'){ var kvNo=(!!MC.rbi)||(I.os===110&&pos==='B6');
     F.push({id:'pes',g:'Opções do redutor',label:'Kit de pés intercambiável com VF',blank:'— nenhum —',opts:[{v:'KA',t:'KA — kit para intercambiar com VF versão A'}].concat(kvNo?[]:[{v:'KV',t:'KV — kit para intercambiar com VF versão V'}]),
       hint:kvNo?'KV não vale com RB nem no W 110 em B6.':'Cotas na tabela 30.2 do catálogo.'}); }
-  var ta=vfTA(x,fo);
+  var ta=vfTA(I,fo);
   if(ta) F.push({id:'ta',g:'Opções do redutor',label:'Braço de torque: posição',blank:'— padrão de fábrica —',opts:ta.map(function(c){ return {v:c,t:c}; }),
     hint:'Posições TA1, TA1B, TA1D (lado 1) e TA2, TA2B, TA2D (lado 2) conforme a versão. Não monta do lado do limitador de torque nem do mesmo lado da tampa de proteção.'});
-  if(!vf&&fo){ var sc=/^(UF|UFC|UFCR)1$/.test(fo)?['SC2']:(/^(UF|UFC|UFCR)2$/.test(fo)?['SC1']:['SC1','SC2']);
+  if(I.out==='W'&&fo){ var sc=/^(UF|UFC|UFCR)1$/.test(fo)?['SC2']:(/^(UF|UFC|UFCR)2$/.test(fo)?['SC1']:['SC1','SC2']);
     F.push({id:'scw',g:'Opções do redutor',label:'Tampa de proteção do eixo: posição',blank:'— padrão —',opts:sc.map(function(c){ return {v:c,t:c}; }),hint:'O W sai com tampa plástica no eixo de saída. Não pode ficar do mesmo lado do braço de torque.'}); }
   F.push({id:'bp',g:'Opções do redutor',type:'check',label:'Respiro com válvula',txt:'BP — respiro com válvula (abre entre 0,10 e 0,15 bar)',hint:'Disponibilidade por posição de montagem no manual de instalação.'});
   mecPintura(F);
   return F;
 }
-function vfTA(x,fo){
+function vfTA(I,fo){
   if(!fo) return null;
-  var S1=['TA1','TA1B','TA1D'], S2=['TA2','TA2B','TA2D'];
-  if(x.lin==='W'){ if(fo==='U') return S1.concat(S2); if(/1$/.test(fo)) return S2; if(/2$/.test(fo)) return S1; return null; }
-  var t=x.tam;
+  var S1=['TA1','TA1B','TA1D'], S2=['TA2','TA2B','TA2D'], t=I.os;
+  if(I.out==='W'){ if(fo==='U') return S1.concat(S2); if(/1$/.test(fo)) return S2; if(/2$/.test(fo)) return S1; return null; }
   if(t>=30&&t<=49){ if(fo==='F1'||fo==='FA1') return S2; if(fo==='F2'||fo==='FA2') return S1; if(fo==='P1') return S1.concat(S2); }
   if(t>=130&&t<=185){ if(fo==='P1') return S1; if(fo==='P2') return S2; }
   if(t>=210&&fo==='P') return S1.concat(S2);
   return null;
 }
 function vfAvisos(x){
-  var A=[];
+  var A=[], I=vfInfo(x);
   if(MC.lim&&MC.lub&&MC.lub!=='LK') A.push('Com limitador de torque (VF…L / W…L) o catálogo exige o óleo LK.');
   if(MC.lim) A.push('Limitador de torque: o catálogo não recomenda em equipamentos de elevação.');
   if(MC.ta&&MC.scw) A.push('Braço de torque e tampa de proteção não podem ficar do mesmo lado: confira as posições no catálogo.');
-  if(MC.rbi&&x.lin==='VF'&&x.tam>=210&&(MC.forma==='A'||MC.forma==='P')) A.push('VF 210 e VF 250 nas versões A e P: com RB a ventilação forçada não é possível.');
+  if(MC.rbi&&I.out==='VF'&&I.os>=210&&(MC.forma==='A'||MC.forma==='P')) A.push('VF 210 e VF 250 nas versões A e P: com RB a ventilação forçada não é possível.');
+  if(I.comb&&MC.arr&&MC.ent&&MC.ent!=='HS') A.push('Combinado com flange IEC: alguns arranjos só aceitam flange de motor até um certo tamanho (tabela de arranjos do catálogo). Confirme com a fábrica.');
+  var IR={VF:[[27,27],[56,225]],VFR:[[63,63],[80,160]],W:[[71,132]],WR:[[63,112]],'VF/VF':[[56,56],[63,63],[90,132]],'VF/W':[[56,80]],'W/VF':[[71,112]]}[x.lin];
+  var fp=x.flp||(x.mf&&x.mf.p?parseInt(String(x.mf.p).slice(1),10):null);
+  if(MC.ent!=='HS'&&fp&&IR&&!IR.some(function(r){ return fp>=r[0]&&fp<=r[1]; })) A.push('Flange P'+fp+' (da carcaça do motor) fora da faixa de entrada IEC do catálogo para '+x.lin+': '+VFO.iec[x.lin]+'. Reveja a potência ou o tipo.');
   if(MC.prot==='C5') A.push('C5: o catálogo manda consultar o Serviço Técnico Bonfiglioli.');
   return A;
 }
