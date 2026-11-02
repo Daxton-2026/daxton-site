@@ -550,6 +550,18 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 
 <div class="backbar noprint"><div class="wrap"><a href="/bonfiglioli"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M20 12H5M11 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Retornar</a></div></div>
 
+<style>
+.tipos{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.tipo{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;padding:12px 12px 11px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink2);cursor:pointer;font:inherit;transition:border-color .15s,background .15s,box-shadow .15s}
+.tipo svg{color:var(--accent);margin-bottom:4px}
+.tipo b{font-size:14px;color:var(--ink);line-height:1.2}
+.tipo span{font-size:12px;color:var(--muted);line-height:1.35}
+@media (hover:hover){.tipo:hover{border-color:var(--accent)}}
+.tipo:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.tipo.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent-soft) 70%,var(--surface));box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 16%,transparent)}
+@media (max-width:900px){.tipos{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.alt-c.pick{cursor:pointer}.alt-c.pick:hover{border-color:var(--accent)}
+</style>
 <header class="top">
   <div class="wrap">
     <div class="mast">
@@ -590,31 +602,42 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
   <div class="sec-h">
     <div class="eyebrow">Passo 1</div>
     <h2>Dados de entrada</h2>
-    <p>O torque exigido sai da potência do motor e da rotação de saída. O fator de serviço exigido vem do regime de trabalho. A ferramenta devolve o menor redutor cujo fator de serviço real cobre o exigido.</p>
+    <p>Na ordem em que o projeto é decidido: primeiro o tipo de redutor, que a máquina impõe; depois o acionamento, a saída e o regime de trabalho.</p>
   </div>
   <div class="wb">
     <div class="wb-in">
       <div class="grp grp-key">
-        <div class="grp-h"><span class="gn">1</span><div><h3>Dados essenciais</h3><p>Identifique o projeto e informe potência, redução (ou rotação de saída) e regime de trabalho.</p></div><span class="tag-ess">Essencial</span></div>
+        <div class="grp-h"><span class="gn">1</span><div><h3>Aplicação e tipo de redutor</h3><p>Se a geometria da máquina já está definida, escolha o tipo. Sem certeza, deixe "Comparar todos".</p></div><span class="tag-ess">Essencial</span></div>
         <div class="grp-b">
           <div class="fld full"><label for="app">Identificação do projeto / aplicação</label><input id="app" type="text" value="Transportador de correia" placeholder="ex.: Transportador — Cliente X"></div>
-          <div class="fld"><label for="pot">Potência do motor <em>P</em> — kW</label><input id="pot" type="number" step="0.01" value="5.5" inputmode="decimal"><span class="tip">Potência nominal de placa do motor.</span></div>
+          <div class="fld full"><label id="lserie">Tipo de redutor</label><input type="hidden" id="serie" value=""><div class="tipos" id="tipos" role="radiogroup" aria-labelledby="lserie"><button type="button" class="tipo on" data-v="" role="radio" aria-checked="true"><svg viewBox="0 0 48 32" width="48" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="4" width="14" height="10" rx="2"/><rect x="26" y="4" width="14" height="10" rx="2"/><rect x="6" y="18" width="14" height="10" rx="2"/><rect x="26" y="18" width="14" height="10" rx="2"/></svg><b>Comparar todos</b><span>A, C, F e S lado a lado</span></button><button type="button" class="tipo" data-v="C" role="radio" aria-checked="false"><svg viewBox="0 0 48 32" width="48" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="9" width="16" height="14" rx="2"/><rect x="20" y="6" width="14" height="20" rx="2"/><path d="M34 16h10"/><path d="M0 16h4"/></svg><b>C · Coaxial</b><span>Saída em linha com o motor</span></button><button type="button" class="tipo" data-v="A" role="radio" aria-checked="false"><svg viewBox="0 0 48 32" width="48" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="12" width="18" height="12" rx="2"/><rect x="22" y="6" width="12" height="20" rx="2"/><path d="M28 6V0M0 18h4"/></svg><b>A · Ortogonal</b><span>Saída a 90° do motor</span></button><button type="button" class="tipo" data-v="F" role="radio" aria-checked="false"><svg viewBox="0 0 48 32" width="48" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="18" height="12" rx="2"/><rect x="14" y="16" width="26" height="12" rx="2"/><path d="M0 10h4M40 22h6"/></svg><b>F · Eixos paralelos</b><span>Saída paralela, deslocada</span></button><button type="button" class="tipo" data-v="S" role="radio" aria-checked="false"><svg viewBox="0 0 48 32" width="48" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="16" cy="16" r="10"/><circle cx="34" cy="16" r="6"/><path d="M0 16h6M40 16h8"/></svg><b>S · Monoestágio</b><span>Uma só redução</span></button></div></div>
+        </div>
+      </div>
+      <div class="grp grp-key">
+        <div class="grp-h"><span class="gn">2</span><div><h3>Acionamento e saída</h3><p>Motor e o que a máquina pede no eixo de saída.</p></div><span class="tag-ess">Essencial</span></div>
+        <div class="grp-b">
+          <div class="fld"><label for="pot">Potência do motor <em>P</em> — kW</label><input id="pot" type="number" step="0.01" value="5.5" inputmode="decimal"></div>
+          <div class="fld"><label for="polos">Polos do motor &rarr; <em>n₁</em></label><select id="polos"><option value="2">2 polos · 3500 rpm</option><option value="4" selected>4 polos · 1750 rpm</option><option value="6">6 polos · 1170 rpm</option><option value="8">8 polos · 870 rpm</option><option value="0">Informar n₁ (inversor)</option></select><span class="tip">60 Hz. Com inversor, escolha "Informar n₁" em Opções avançadas.</span></div>
           <div class="fld"><label for="ent">Entro com</label><select id="ent"><option value="n" selected>A rotação de saída n₂</option><option value="i">A redução necessária i</option></select></div>
           <div class="fld"><label id="lval" for="val"></label><input id="val" type="number" step="any" value="60" inputmode="decimal"><span class="tip" id="tipent"></span></div>
-          <div class="fld"><label for="hd">Horas de trabalho por dia</label><select id="hd"><option value="8">até 8 h/dia</option><option value="16" selected>16 h/dia</option><option value="24">24 h/dia</option></select></div>
-          <div class="fld"><label for="zr">Partidas por hora <em>Z<sub>r</sub></em></label><input id="zr" type="number" step="1" min="0" max="300" value="10" inputmode="numeric"><span class="tip">Entre 0 e 300. Acima disso o catálogo pede consulta ao Serviço Técnico.</span></div>
-          <div class="fld"><label for="kk">Tipo de carga — curva K</label><select id="kk"><option value="1">K1 — carga uniforme</option><option value="2" selected>K2 — choque moderado</option><option value="3">K3 — choque pesado</option></select><span class="tip">K = inércia da carga ÷ inércia do motor: até 0,25 é K1; até 3 é K2; até 10 é K3. Acima de 10 consulte o Serviço Técnico.</span></div>
         </div>
       </div>
-      <div class="grp">
-        <div class="grp-h"><span class="gn">2</span><div><h3>Motor e acionamento</h3><p>Os polos definem a rotação de entrada n₁ e a faixa do catálogo usada.</p></div><span class="tag-opt">Padrão 4 polos</span></div>
+      <div class="grp grp-key">
+        <div class="grp-h"><span class="gn">3</span><div><h3>Regime de trabalho</h3><p>Define o fator de serviço exigido pelo catálogo.</p></div><span class="tag-ess">Essencial</span></div>
         <div class="grp-b">
-          <div class="fld"><label for="polos">Polos do motor &rarr; <em>n₁</em></label><select id="polos"><option value="2">2 polos</option><option value="4" selected>4 polos</option><option value="6">6 polos</option><option value="8">8 polos</option><option value="0">Informar n₁ manualmente</option></select></div>
-          <div class="fld"><label for="n1">Rotação de entrada <em>n₁</em> — rpm</label><input id="n1" type="number" step="10" value="1750" inputmode="numeric"><span class="tip">Com inversor, informe a rotação com carga.</span></div>
-          <div class="fld"><label for="serie">Série</label><select id="serie"><option value="">A, C, F e S</option><option value="A">A — cônico helicoidal</option><option value="C">C — coaxial</option><option value="F">F — eixos paralelos</option><option value="S">S — monoestágio</option></select></div>
+          <div class="fld"><label for="hd">Turnos de trabalho</label><select id="hd"><option value="8">1 turno · até 8 h/dia</option><option value="16" selected>2 turnos · 16 h/dia</option><option value="24">3 turnos · 24 h/dia</option></select></div>
+          <div class="fld"><label for="zr">Partidas por hora <em>Z<sub>r</sub></em></label><input id="zr" type="number" step="1" min="0" max="300" value="10" inputmode="numeric"><span class="tip">De 0 a 300. Acima disso, consulte o Serviço Técnico.</span></div>
+          <div class="fld"><label for="kk">Tipo de carga</label><select id="kk"><option value="1">Uniforme</option><option value="2" selected>Choque moderado</option><option value="3">Choque pesado</option></select><span class="tip"><b>Uniforme:</b> correia, ventilador, bomba. <b>Moderado:</b> elevador de canecas, misturador. <b>Pesado:</b> britador, prensa. Equivale às curvas K1, K2 e K3 do catálogo (K = inércia da carga ÷ inércia do motor). Exemplos orientativos; acima de K = 10, consulte o Serviço Técnico.</span></div>
+          <div class="fld"><label for="fr">Carga radial no eixo de saída <em>opcional</em> — N</label><input id="fr" type="number" step="10" min="0" value="" inputmode="numeric" placeholder="ex.: 3000"><span class="tip">Se informada, a ferramenta compara com R<sub>n2</sub> do catálogo. Confira a posição de aplicação da carga no catálogo.</span></div>
+        </div>
+      </div>
+      <details class="grp adv">
+        <summary><span class="gn">4</span><div><h3>Opções avançadas</h3><p>Rotação de entrada manual (inversor) e desvio de rotação aceito.</p></div><svg class="chev" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+        <div class="grp-b">
+          <div class="fld"><label for="n1">Rotação de entrada <em>n₁</em> — rpm</label><input id="n1" type="number" step="10" value="1750" inputmode="numeric"><span class="tip">Com inversor, informe a rotação com carga. Digitar um valor diferente dos polos escolhidos muda o seletor para "Informar n₁".</span></div>
           <div class="fld"><label for="tol">Desvio de rotação aceito — ±%</label><input id="tol" type="number" step="1" value="10" inputmode="numeric"></div>
         </div>
-      </div>
+      </details>
     </div>
     <aside class="wb-out" aria-live="polite" aria-label="Resultado"><div class="sum" id="sum"></div></aside>
   </div>
@@ -635,6 +658,10 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
     <div class="eyebrow">Passo 3</div>
     <h2>Candidatos</h2>
     <p>Só aparecem os que atendem, do menor tamanho para o maior. Clique em uma linha para ver a ficha. Uma linha por série, tamanho e número de estágios (relação com menor desvio).</p>
+  </div>
+  <div class="alt" id="bestbox" hidden>
+    <div class="alt-h"><h3>Melhor opção por tipo</h3><p>O menor modelo que atende em cada tipo de redutor. Escolha pelo espaço de instalação e pela geometria da máquina: clique em um cartão para ver os candidatos daquele tipo e a ficha.</p></div>
+    <div class="alt-grid" id="bestgrid"></div>
   </div>
   <div class="tblwrap"><table id="tbl">
     <thead><tr>
@@ -724,6 +751,7 @@ function fsReq(h,K,z){
   for(var k=0;k<Z.length-1;k++){ if(z<=Z[k+1]){ return a[k]+(a[k+1]-a[k])*(z-Z[k])/(Z[k+1]-Z[k]); } }
   return a[a.length-1];
 }
+var FOCUS=null;
 var ROWS=ACF.rows, PT=ACF.pt, FL=ACF.fl, SEL=null, list=[], vis=[], lastQ=null;
 function requisito(){
   var P=V('pot'), n1=V('n1'), val=V('val'), ent=$('ent').value;
@@ -743,13 +771,13 @@ function buscar(q){
     var Mn=r[4+3*q.bi]; if(!(Mn>0)) continue;
     var n2=q.n1/i, dev=n2/q.n2req-1; if(Math.abs(dev)>q.tol) continue;
     var Mr=q.P*9550/n2, fS=Mn/Mr, key=lin+tam+'_'+est;
-    var ck={T:fS>=q.fsr-1e-9};
+    var ck={T:fS>=q.fsr-1e-9}; var Fr0=V('fr'), Rn2c=r[6+3*q.bi]; if(Fr0>0&&Rn2c>0) ck.R=Rn2c>=Fr0;
     var pt=PT[key], ptv=null; if(pt){ ptv=(q.blk===1400)?pt[0]:(q.blk===2800?pt[1]:null); }
     var th=(ptv===null||ptv===undefined)?null:(q.P<=ptv);
     var mf=motorFrame(q.P,q.polos), fl=FL[key], flp=null, flok=null;
     if(mf&&mf.p&&fl){ flp=parseInt(mf.p.slice(1),10); flok=fl.indexOf(flp)>=0; }
     var Pn1=r[5+3*q.bi], Rn2=r[6+3*q.bi];
-    out.push({lin:lin,tam:tam,est:est,i:i,n2:n2,dev:dev,Mn:Mn,Mr:Mr,fS:fS,ck:ck,pt:ptv,th:th,flp:flp,flok:flok,mf:mf,Pn1:Pn1,Rn2:Rn2,fail:ck.T?0:1,key:key});
+    out.push({lin:lin,tam:tam,est:est,i:i,n2:n2,dev:dev,Mn:Mn,Mr:Mr,fS:fS,ck:ck,pt:ptv,th:th,flp:flp,flok:flok,mf:mf,Pn1:Pn1,Rn2:Rn2,fail:(ck.T?0:1)+(ck.R===false?1:0),key:key});
   }
   out.sort(function(a,b){ return a.fail-b.fail || a.tam-b.tam || a.est-b.est || 'ACFS'.indexOf(a.lin)-'ACFS'.indexOf(b.lin) || Math.abs(a.dev)-Math.abs(b.dev); });
   return out;
@@ -789,13 +817,29 @@ function render(){
   var tb=$('tb');
   if(!list.length){
     var msg=!q.ok?'<b style="color:var(--crit)">Dados de entrada incompletos ou fora do gráfico.</b>':'Nenhuma combinação dentro do desvio de rotação de ±'+fmt(q.tol*100,0)+'%. Amplie o desvio ou reveja n₁ e n₂ (relação necessária '+fmt(q.n1/q.n2req,1)+').';
-    tb.innerHTML='<tr><td colspan="11" style="color:var(--muted)">'+msg+'</td></tr>'; $('cnt').textContent='—'; SEL=null; renderAlt(q); renderSum(); ficha(); return;
+    tb.innerHTML='<tr><td colspan="12" style="color:var(--muted)">'+msg+'</td></tr>'; $('cnt').textContent='—'; SEL=null; renderAlt(q); renderSum(); ficha(); return;
   }
-  vis=ok.length?enxuto(ok,q):list.slice(0,10);
+  var lins=[]; ok.forEach(function(x){ if(lins.indexOf(x.lin)<0) lins.push(x.lin); });
+  var focus=q.serie||((FOCUS&&lins.indexOf(FOCUS)>=0)?FOCUS:(ok.length?ok[0].lin:null));
+  q.focus=focus;
+  var bb=$('bestbox'); bb.hidden=true;
+  if(!q.serie&&lins.length>0){
+    var NM={A:'A · Ortogonal',C:'C · Coaxial',F:'F · Eixos paralelos',S:'S · Monoestágio'};
+    var bests=[]; 'CAFS'.split('').forEach(function(l){ var b=ok.filter(function(x){return x.lin===l;})[0]; bests.push({l:l,x:b}); });
+    $('bestgrid').innerHTML=bests.map(function(c){ var x=c.x, on=(x&&c.l===focus);
+      return '<div class="alt-c pick'+(on?' on':'')+'" data-l="'+c.l+'"><div class="alt-t">'+NM[c.l]+'</div>'+
+        (x?'<div class="alt-m">'+x.lin+' '+(x.tam<10?'0'+x.tam:x.tam)+' '+x.est+' '+ratioTxt(x)+'</div><div class="alt-s">f<sub>S</sub> '+fmt(x.fS,2)+' · folga '+fmt((x.fS/q.fsr-1)*100,0)+'%</div><div class="alt-s">R<sub>n2</sub> '+(x.Rn2>0?fmt(x.Rn2,0)+' N':'—')+(x.th===false?' · térmica!':'')+'</div>':'<div class="alt-m none">Sem candidato</div><div class="alt-s">&nbsp;</div>')+
+        '<div class="alt-d">'+(on?'Em detalhe abaixo':'')+'</div></div>'; }).join('');
+    Array.prototype.forEach.call($('bestgrid').querySelectorAll('.pick'),function(el){ el.addEventListener('click',function(){ if(!el.querySelector('.alt-m.none')){ FOCUS=el.dataset.l; render(); document.getElementById('tbl').scrollIntoView({behavior:'smooth',block:'nearest'}); } }); });
+    bb.hidden=false;
+  }
+  var okf=ok.filter(function(x){return !focus||x.lin===focus;});
+  vis=ok.length?enxuto(okf,q):list.slice(0,10);
   tb.innerHTML=vis.map(function(x,k){
     return '<tr data-k="'+k+'"'+(x.fail===0?'':' class="failrow"')+'>'+
       '<td><b>'+x.lin+' '+(x.tam<10?'0'+x.tam:x.tam)+' '+x.est+'</b></td><td class="n">'+ratioTxt(x)+'</td><td class="n">'+fmt(x.n2,2)+'</td><td class="n">'+(x.dev>=0?'+':'')+fmt(x.dev*100,1)+'%</td>'+
       '<td class="n">'+fmt(x.Mn,0)+'</td><td class="n">'+fmt(x.Mr,0)+'</td><td class="n">'+fmt(q.fsr,2)+'</td><td class="n">'+fmt(x.fS,2)+'</td>'+
+      '<td class="n">'+(V('fr')>0&&x.ck.R!==undefined?chip(x.ck.R,fmt(x.Rn2,0)):fmt(x.Rn2,0))+'</td>'+
       '<td>'+chip(x.ck.T)+'</td><td>'+(x.th===null?(x.lin==='A'?'<span style="color:var(--muted)" title="Série A: ver item 48 do catálogo">item 48</span>':'<span style="color:var(--muted)">—</span>'):chip(x.th?true:'w',x.th?'':fmt(x.pt,1)+' kW'))+'</td>'+
       '<td>'+(x.flp?chip(x.flok?true:'w','P'+x.flp):'<span style="color:var(--muted)">—</span>')+'</td></tr>';
   }).join('');
@@ -808,7 +852,7 @@ function mark(){ renderSum(); Array.prototype.forEach.call($('tb').querySelector
 function renderAlt(q){
   var box=$('altbox'); if(!q.ok){ box.hidden=true; return; }
   var cards=[8,16,24].map(function(h){ var q2={}; for(var k in q) q2[k]=q[k]; q2.hd=h; q2.fsr=fsReq(h,q.K,q.zr);
-    var l=buscar(q2), best=null; for(var j=0;j<l.length;j++){ if(l[j].fail===0){ best=l[j]; break; } } return {h:h,f:q2.fsr,x:best}; });
+    q2.serie=q.focus||q.serie; var l=buscar(q2), best=null; for(var j=0;j<l.length;j++){ if(l[j].fail===0){ best=l[j]; break; } } return {h:h,f:q2.fsr,x:best}; });
   var base=null; cards.forEach(function(c){ if(c.h===q.hd) base=c.x; });
   $('altgrid').innerHTML=cards.map(function(c){
     var on=(c.h===q.hd), x=c.x, d='';
@@ -828,7 +872,7 @@ function renderSum(){
   el.innerHTML='<div class="sum-st '+(pass?'ok':'bad')+'">'+(pass?'Atende':'Não atende')+'</div><div class="sum-k">Redutor selecionado</div>'+
     '<div class="sum-m">'+x.lin+' '+(x.tam<10?'0'+x.tam:x.tam)+' '+x.est+' '+ratioTxt(x)+'</div><div class="sum-sub">n₂ '+fmt(x.n2,2)+' rpm · desvio '+(x.dev>=0?'+':'')+fmt(x.dev*100,1)+'%</div>'+
     '<div class="sum-grid"><div><span>f<sub>S</sub> exigido</span><b>'+fmt(q.fsr,2)+'</b></div><div><span>f<sub>S</sub> real</span><b>'+fmt(x.fS,2)+'</b></div><div><span>Torque admissível M<sub>n2</sub></span><b>'+fmt(x.Mn,0)+' Nm</b></div><div><span>Torque exigido M<sub>r2</sub></span><b>'+fmt(x.Mr,0)+' Nm</b></div></div>'+
-    '<div class="sum-ck">'+chip(x.ck.T,'Torque')+(x.th===null?'':chip(x.th?true:'w','Térmica'))+(x.flp?chip(x.flok?true:'w','Flange P'+x.flp):'')+'</div>'+
+    '<div class="sum-ck">'+chip(x.ck.T,'Torque')+(x.ck.R===undefined?'':chip(x.ck.R,'Carga radial'))+(x.th===null?'':chip(x.th?true:'w','Térmica'))+(x.flp?chip(x.flok?true:'w','Flange P'+x.flp):'')+'</div>'+
     '<div class="sum-pm"><span>Carga radial admissível R<sub>n2</sub></span><b>'+(x.Rn2>0?fmt(x.Rn2,0)+' N':'—')+'</b></div>'+
     '<a class="sum-btn" href="#ficha">Ver folha de dados <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>'+foot;
 }
@@ -854,7 +898,7 @@ function ficha(){
   L.push(pad('Torque admissível     Mn2',fmt(x.Mn,0)+' Nm  (catálogo, bloco '+q.blk+' rpm)'));
   L.push(pad('Fator de serviço exigido',fmt(q.fsr,2)));
   L.push(pad('Fator de serviço real',fmt(x.fS,2)+'   '+(x.ck.T?'atende':'NAO ATENDE')));
-  L.push(pad('Carga radial adm.     Rn2',(x.Rn2>0?fmt(x.Rn2,0)+' N':'nao tabelada')));
+  L.push(pad('Carga radial adm.     Rn2',(x.Rn2>0?fmt(x.Rn2,0)+' N':'nao tabelada')+(x.ck.R===undefined?'':'   carga informada '+fmt(V('fr'),0)+' N: '+(x.ck.R?'atende':'NAO ATENDE')+' (confira a posicao de aplicacao no catalogo)')));
   var fl=FL[x.key];
   L.push(pad('Flange de entrada IEC',x.flp?('P'+x.flp+(x.flok?'':'  ATENCAO: nao consta para este modelo no catalogo')+(x.mf?'  (carcaça WEG '+x.mf.fr+', '+x.mf.polos+' polos)':'')):'A DEFINIR — vem da carcaça do motor'));
   if(fl) L.push('   Flanges IEC com motor tabelado neste modelo: P'+fl.join(', P'));
@@ -877,11 +921,15 @@ function ficha(){
 $('ent').addEventListener('change',function(){ setEnt(); if($('ent').value==='i'&&V('val')<2) $('val').value=30; render(); });
 $('polos').addEventListener('change',function(){ var p=parseInt($('polos').value,10); if(p>0) $('n1').value=RPM[p]; render(); });
 $('n1').addEventListener('input',function(){ var p=parseInt($('polos').value,10); if(p>0&&Math.abs(V('n1')-RPM[p])>0.5) $('polos').value='0'; });
-['app','pot','val','hd','zr','kk','n1','serie','tol'].forEach(function(k){ var e=$(k); e.addEventListener('input',render); e.addEventListener('change',render); });
+['app','pot','val','hd','zr','kk','n1','tol','fr'].forEach(function(k){ var e=$(k); e.addEventListener('input',render); e.addEventListener('change',render); });
 $('cp').addEventListener('click',function(){ var btn=this, t=$('out').textContent;
   function done(){ var o=btn.textContent; btn.textContent='Copiado'; setTimeout(function(){btn.textContent=o;},1400); }
   if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(done,function(){}); }
   else { var ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');done();}catch(e){} document.body.removeChild(ta); } });
+Array.prototype.forEach.call(document.querySelectorAll('#tipos .tipo'),function(bt){ bt.addEventListener('click',function(){
+  $('serie').value=bt.dataset.v; FOCUS=null;
+  Array.prototype.forEach.call(document.querySelectorAll('#tipos .tipo'),function(o){ var on=(o===bt); o.classList.toggle('on',on); o.setAttribute('aria-checked',on?'true':'false'); });
+  render(); }); });
 $('pp').addEventListener('click',function(){ window.print(); });
 setEnt(); render();
 })();
