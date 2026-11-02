@@ -409,6 +409,7 @@ section{padding:40px 0}
 /* bancada: entrada + resultado */
 .wb{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:24px;align-items:start}
 .wb-in,#g-elev{display:grid;gap:18px;min-width:0}
+body[data-modo="ger"] .only-elev,body[data-modo="elev"] .only-ger{display:none!important}
 .wb-out{position:sticky;top:64px;min-width:0}
 @media (max-width:1020px){.wb{grid-template-columns:1fr}.wb-out{position:static}}
 
@@ -585,7 +586,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
     <p>No fim sai uma <b>folha de dados pronta para colar no pedido</b>, com o modelo no mesmo formato que a Bonfiglioli usa na proposta. Nada é enviado para lugar nenhum: tudo roda no seu navegador, inclusive sem internet.</p>
   </div>
   <ol class="wsteps">
-    <li><span>1</span>Preencha carga, velocidade e classe T</li>
+    <li><span>1</span><b id="st1" style="font-weight:inherit">Preencha carga, velocidade e classe T</b></li>
     <li><span>2</span>Escolha um candidato na tabela</li>
     <li><span>3</span>Copie a folha e mande para cotação</li>
   </ol>
@@ -596,7 +597,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
   <div class="sec-h">
     <div class="eyebrow">Passo 1</div>
     <h2>Dados de entrada</h2>
-    <p>O torque parte da carga, do tambor e do cavalamento. A ferramenta calcula a potência mínima pela carga, adota a próxima potência comercial acima dela e nunca seleciona abaixo do torque de saída desse motor.</p>
+    <p id="ent-p">O torque parte da carga, do tambor e do cavalamento. A ferramenta calcula a potência mínima pela carga, adota a próxima potência comercial acima dela e nunca seleciona abaixo do torque de saída desse motor.</p>
   </div>
 
   <div class="modes" id="modes" role="group" aria-label="Modo de entrada" hidden>
@@ -609,26 +610,36 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 
       <div id="g-elev">
         <div class="grp grp-key">
-          <div class="grp-h"><span class="gn">1</span><div><h3>Dados essenciais</h3><p>Identifique o projeto e informe os sete campos que definem a seleção.</p></div><span class="tag-ess">Essencial</span></div>
+          <div class="grp-h"><span class="gn">1</span><div><h3>Dados essenciais</h3><p id="g1-p">Identifique o projeto e informe os sete campos que definem a seleção.</p></div><span class="tag-ess">Essencial</span></div>
           <div class="grp-b">
             <div class="fld full"><label for="app">Identificação do projeto / aplicação</label><input id="app" type="text" value="Elevação principal — carro guincho" placeholder="ex.: Ponte rolante 20 t — Cliente X"></div>
-            <div class="fld full"><label for="tcl">Classe de utilização <em>T</em> — horas totais</label>
+
+            <div class="fld only-ger"><label for="pger">Potência do motor <em>P</em> — kW</label><input id="pger" type="number" step="0.1" value="75" inputmode="decimal">
+              <span class="tip">Potência nominal de placa. O torque de saída sai dela, pelo método do catálogo 300M.</span></div>
+            <div class="fld only-ger"><label for="ent">Entro com</label><select id="ent">
+              <option value="i" selected>A redução necessária i</option>
+              <option value="n">A rotação de saída n₂</option>
+            </select></div>
+            <div class="fld only-ger"><label id="lval" for="val"></label><input id="val" type="number" step="any" value="120" inputmode="decimal"><span class="tip" id="tipent"></span></div>
+            <div class="fld only-ger" id="fld-hv"><label for="hv">Vida útil — <em>horas totais</em></label><input id="hv" type="number" step="500" min="500" value="10000" inputmode="numeric">
+              <span class="tip"><b>Horas totais de operação ao longo da vida do redutor</b>, não por dia. Ex.: 16 h/dia × 300 dias × 5 anos = 24.000 h. A tabela A4 usa as colunas 5.000 / 10.000 / 15.000 / 25.000 / 50.000 h e toma a primeira que cobre o valor.</span></div>
+            <div class="fld full only-elev"><label for="tcl">Classe de utilização <em>T</em> — horas totais</label>
               <select id="tcl"><option value="">— escolha —</option><option value="0">T0 — 200 h</option><option value="1">T1 — 400 h</option><option value="2">T2 — 800 h</option><option value="3">T3 — 1.600 h</option><option value="4">T4 — 3.200 h</option><option value="5">T5 — 6.300 h</option><option value="6">T6 — 12.500 h</option><option value="7">T7 — 25.000 h</option><option value="8">T8 — 50.000 h</option></select>
               <span class="tip">Classe de funcionamento do mecanismo (FEM / ISO 4301-1). Define as horas de vida do redutor.</span></div>
-            <div class="fld"><label for="q">Carga total <em>Q</em></label><div class="inl"><input id="q" type="number" step="0.1" value="20" inputmode="decimal"><select id="qunit"><option value="t" selected>t</option><option value="kg">kg</option></select></div>
+            <div class="fld only-elev"><label for="q">Carga total <em>Q</em></label><div class="inl"><input id="q" type="number" step="0.1" value="20" inputmode="decimal"><select id="qunit"><option value="t" selected>t</option><option value="kg">kg</option></select></div>
               <span class="tip"><b>É o que o tambor levanta</b>: carga útil mais moitão, gancho, travessa e o que mais estiver pendurado.</span></div>
-            <div class="fld"><label for="vel">Velocidade <em>v</em> — m/min</label><input id="vel" type="number" step="0.1" value="6" inputmode="decimal"></div>
-            <div class="fld"><label for="dt">Ø do tambor <em>D</em> — mm</label><input id="dt" type="number" step="0.1" value="500" inputmode="decimal"></div>
-            <div class="fld"><label for="ram">Ramais no moitão</label><input id="ram" type="number" step="1" value="4" inputmode="numeric"></div>
-            <div class="fld"><label for="pta">Pontas de cabo no tambor</label><input id="pta" type="number" step="1" value="2" inputmode="numeric"></div>
-            <div class="fld"><label for="pol">Nº de polias no cabo</label><input id="pol" type="number" step="1" value="2" inputmode="numeric"></div>
+            <div class="fld only-elev"><label for="vel">Velocidade <em>v</em> — m/min</label><input id="vel" type="number" step="0.1" value="6" inputmode="decimal"></div>
+            <div class="fld only-elev"><label for="dt">Ø do tambor <em>D</em> — mm</label><input id="dt" type="number" step="0.1" value="500" inputmode="decimal"></div>
+            <div class="fld only-elev"><label for="ram">Ramais no moitão</label><input id="ram" type="number" step="1" value="4" inputmode="numeric"></div>
+            <div class="fld only-elev"><label for="pta">Pontas de cabo no tambor</label><input id="pta" type="number" step="1" value="2" inputmode="numeric"></div>
+            <div class="fld only-elev"><label for="pol">Nº de polias no cabo</label><input id="pol" type="number" step="1" value="2" inputmode="numeric"></div>
           </div>
         </div>
 
         <div class="grp">
-          <div class="grp-h"><span class="gn">2</span><div><h3>Motor e acionamento</h3><p>Opcional. Sem a potência, a ferramenta adota a próxima potência comercial acima da mínima necessária.</p></div><span class="tag-opt">Opcional</span></div>
+          <div class="grp-h"><span class="gn">2</span><div><h3>Motor e acionamento</h3><p id="g2-p">Opcional. Sem a potência, a ferramenta adota a próxima potência comercial acima da mínima necessária.</p></div><span class="tag-opt" id="g2-tag">Opcional</span></div>
           <div class="grp-b">
-            <div class="fld"><label for="pelev">Potência do motofreio</label><select id="pelev"><option value="">Automática (padrão comercial)</option><option value="0.18">0,18 kW (0,25 cv)</option><option value="0.25">0,25 kW (0,33 cv)</option><option value="0.37">0,37 kW (0,5 cv)</option><option value="0.55">0,55 kW (0,75 cv)</option><option value="0.75">0,75 kW (1 cv)</option><option value="1.1">1,1 kW (1,5 cv)</option><option value="1.5">1,5 kW (2 cv)</option><option value="2.2">2,2 kW (3 cv)</option><option value="3">3 kW (4 cv)</option><option value="3.7">3,7 kW (5 cv)</option><option value="4.5">4,5 kW (6 cv)</option><option value="5.5">5,5 kW (7,5 cv)</option><option value="7.5">7,5 kW (10 cv)</option><option value="9.2">9,2 kW (12,5 cv)</option><option value="11">11 kW (15 cv)</option><option value="15">15 kW (20 cv)</option><option value="18.5">18,5 kW (25 cv)</option><option value="22">22 kW (30 cv)</option><option value="30">30 kW (40 cv)</option><option value="37">37 kW (50 cv)</option><option value="45">45 kW (60 cv)</option><option value="55">55 kW (75 cv)</option><option value="75">75 kW (100 cv)</option><option value="90">90 kW (125 cv)</option><option value="110">110 kW (150 cv)</option><option value="132">132 kW (175 cv)</option><option value="150">150 kW (200 cv)</option><option value="185">185 kW (250 cv)</option><option value="220">220 kW (300 cv)</option><option value="260">260 kW (350 cv)</option><option value="300">300 kW (400 cv)</option><option value="330">330 kW (450 cv)</option><option value="370">370 kW (500 cv)</option></select>
+            <div class="fld only-elev"><label for="pelev">Potência do motofreio</label><select id="pelev"><option value="">Automática (padrão comercial)</option><option value="0.18">0,18 kW (0,25 cv)</option><option value="0.25">0,25 kW (0,33 cv)</option><option value="0.37">0,37 kW (0,5 cv)</option><option value="0.55">0,55 kW (0,75 cv)</option><option value="0.75">0,75 kW (1 cv)</option><option value="1.1">1,1 kW (1,5 cv)</option><option value="1.5">1,5 kW (2 cv)</option><option value="2.2">2,2 kW (3 cv)</option><option value="3">3 kW (4 cv)</option><option value="3.7">3,7 kW (5 cv)</option><option value="4.5">4,5 kW (6 cv)</option><option value="5.5">5,5 kW (7,5 cv)</option><option value="7.5">7,5 kW (10 cv)</option><option value="9.2">9,2 kW (12,5 cv)</option><option value="11">11 kW (15 cv)</option><option value="15">15 kW (20 cv)</option><option value="18.5">18,5 kW (25 cv)</option><option value="22">22 kW (30 cv)</option><option value="30">30 kW (40 cv)</option><option value="37">37 kW (50 cv)</option><option value="45">45 kW (60 cv)</option><option value="55">55 kW (75 cv)</option><option value="75">75 kW (100 cv)</option><option value="90">90 kW (125 cv)</option><option value="110">110 kW (150 cv)</option><option value="132">132 kW (175 cv)</option><option value="150">150 kW (200 cv)</option><option value="185">185 kW (250 cv)</option><option value="220">220 kW (300 cv)</option><option value="260">260 kW (350 cv)</option><option value="300">300 kW (400 cv)</option><option value="330">330 kW (450 cv)</option><option value="370">370 kW (500 cv)</option></select>
               <span class="tip">Em branco, vale a potência comercial acima da mínima. Informando, vale a sua: a seleção nunca fica abaixo do torque de saída dela, e o aviso aparece se ela for menor que a mínima.</span></div>
             <div class="fld"><label for="polos">Polos do motor &rarr; <em>n₁</em></label><select id="polos">
             <option value="2">2 polos</option>
@@ -649,7 +660,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
           
           <div class="fld"><label for="fam">Configuração</label><select id="fam"><option value="">Coaxial e ortogonal</option><option value="0" selected>Coaxial — série L</option><option value="1">Ortogonal — série R</option></select></div>
           <div class="fld"><label for="tol">Desvio de rotação aceito — ±%</label><input id="tol" type="number" step="1" value="10" inputmode="numeric"></div>
-          <div class="fld span2"><label for="base">Base do torque exigido</label><select id="base"><option value="max" selected>O maior dos dois</option><option value="motor">Torque de saída (potência do motor)</option></select>
+          <div class="fld span2 only-elev"><label for="base">Base do torque exigido</label><select id="base"><option value="max" selected>O maior dos dois</option><option value="motor">Torque de saída (potência do motor)</option></select>
             <span class="tip"><b>Torque requerido</b> é o que a carga pede no eixo de saída; <b>torque de saída</b>, o que o motor entrega no mesmo eixo. O padrão usa o <b>maior</b> dos dois.</span></div>
           
           
@@ -665,8 +676,8 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
             <span class="tip"><b>Choque pesado:</b> caçamba (grab), eletroímã, carga que trava ou é arrancada do chão.</span></div>
           <div class="fld"><label for="zb">Partidas por hora <em>Z</em></label><select id="zb"><option value="0">Z &lt; 10</option><option value="1">10 &lt; Z &lt; 30</option><option value="2" selected>30 &lt; Z &lt; 100</option></select></div>
           <div class="fld"><label for="tfr">Torque de pico na entrada — % do nominal</label><input id="tfr" type="number" step="5" value="150" inputmode="numeric"></div>
-          <div class="fld" id="fld-fsm"><label for="fsm">Fator de serviço do motor <em>opcional</em></label><input id="fsm" type="number" step="0.05" min="1" value="1" inputmode="decimal"><span class="tip">Padrão 1,00: vale só a potência de placa. Informe, por exemplo, 1,15 para contar a reserva do motor: a potência usada na seleção passa a ser a nominal vezes o fator. Com inversor o fator costuma ser 1,00. Confira na placa ou no catálogo do motor.</span></div>
-          <div class="fld" id="fld-n1op" hidden><label for="n1op">Rotação sem carga — rpm <em>opcional</em></label><input id="n1op" type="number" step="10" value="" inputmode="numeric"><span class="tip"><b>Com inversor.</b> Se o motor sobe de rotação sem carga (ex.: 2400 rpm), a ferramenta confere o limite do redutor nessa rotação.</span></div>
+          <div class="fld only-elev" id="fld-fsm"><label for="fsm">Fator de serviço do motor <em>opcional</em></label><input id="fsm" type="number" step="0.05" min="1" value="1" inputmode="decimal"><span class="tip">Padrão 1,00: vale só a potência de placa. Informe, por exemplo, 1,15 para contar a reserva do motor: a potência usada na seleção passa a ser a nominal vezes o fator. Com inversor o fator costuma ser 1,00. Confira na placa ou no catálogo do motor.</span></div>
+          <div class="fld only-elev" id="fld-n1op" hidden><label for="n1op">Rotação sem carga — rpm <em>opcional</em></label><input id="n1op" type="number" step="10" value="" inputmode="numeric"><span class="tip"><b>Com inversor.</b> Se o motor sobe de rotação sem carga (ex.: 2400 rpm), a ferramenta confere o limite do redutor nessa rotação.</span></div>
           <div class="fld"><label for="ver">Versão de saída — para a designação</label><select id="ver">
             <option value="MC">MC — eixo cilíndrico chavetado</option>
             <option value="HC" selected>HC — eixo cilíndrico chavetado reforçado</option>
@@ -699,14 +710,6 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
             <span class="tip">A Bonfiglioli liberou <b>1750 rpm</b> em regime contínuo, acima da tabelada nos rating charts.</span></div>
         <div class="fld"><label for="leit">Leitura do M<sub>n2</sub></label><select id="leit"><option value="0" selected>Literal — próxima coluna de n₂·h</option><option value="1">Interpolada na curva do catálogo</option></select></div>
         <div id="ctit"></div><div id="csub"></div>
-        <div id="g-ger" hidden>
-          <input id="pger" type="number" value="75"><select id="ent">
-              <option value="i" selected>A redução necessária i</option>
-              <option value="n">A rotação de saída n₂</option>
-            </select>
-          <label id="lval"></label><input id="val" type="number" value="120"><span id="tipent"></span>
-        </div>
-        <div id="fld-hv"><input id="hv" type="number" value="1600"></div>
       </div>
     </div>
 
@@ -2423,7 +2426,7 @@ function syncN1(){
 function requisito(){
   var n1=V('n1'), n1lib=V('n1lib'), h=V('hv'), tfr=V('tfr')/100;
   var n1op=V('n1op'), ne=Math.max(n1,isFinite(n1op)?n1op:0);
-  var fsm=V('fsm'); if(!(fsm>=1)) fsm=1;
+  var fsm=V('fsm'); if(!(fsm>=1)||modo!=='elev') fsm=1;
   if(modo==='elev'){ h=($('tcl').value!=='')?TCL[parseInt($('tcl').value,10)]:NaN; }
   var Pm=(modo==='ger')?V('pger'):V('pelev');
   var famv=$('fam').value, fam=(famv===''?null:parseInt(famv,10));
@@ -2479,7 +2482,7 @@ function buscar(q){
     var ck={T:Mc<=Mn,P:((p1>0&&Pad>0)?p1>=Pad*((q.Pm>0)?q.fsm:1):true),M:m2max>=Mp};
     // flange: a carcaça do motor (potência + polos) tem de estar entre as flanges IEC que este tamanho/estágio aceita
     var flp=null;
-    if(modo==='elev'&&Pad>0){ var mfr=motorFrame(Pad,q.npol);
+    if(Pad>0){ var mfr=motorFrame(Pad,q.npol);
       if(mfr&&mfr.p){ flp=parseInt(mfr.p.slice(1),10); ck.F=(FLG[SIZES[si]+(fm?'R':'L')+st]||[]).indexOf(flp)>=0; } }
     var fail=0; for(var k in ck) if(!ck[k]) fail++;
     var lim = Math.max(nn1, q.n1lib||0);            // contínua tabelada ou a liberada pela fábrica
@@ -2553,7 +2556,7 @@ function render(){
 
   list=buscar(q); lastQ=q;
   var ok=list.filter(function(x){return x.fail===0;});
-  $('fld-hv').hidden=(modo==='elev'); $('fld-n1op').hidden=(modo!=='elev');
+  $('fld-n1op').hidden=(modo!=='elev');
   var qwb=$('qw'); qwb.hidden=true; if(modo==='elev'&&isFinite(q.Q)&&q.Q>250000){ qwb.hidden=false; $('qwtxt').innerHTML='A carga informada equivale a <b>'+fmt(q.Q/1000,1)+' t</b>. Isso é muito acima do que um redutor da série 300 levanta e costuma ser <b>kg digitado no campo de t</b>. Troque a unidade para kg (ou divida por 1.000) antes de olhar a tabela: os torques abaixo não valem.'; }
   var mw=$('marg'); mw.hidden=true; var pw=$('pminw'); pw.hidden=true;
   if(modo==='elev'&&ok.length&&isFinite(q.Pm)&&q.fsm>1&&ok[0].Pmin>q.Pm*1.0001&&ok[0].Pmin<=q.Pm*q.fsm*1.0001){ pw.hidden=false; $('pmintxt').innerHTML='O motor informado (<b>'+fmt(q.Pm,2)+' kW</b>) está abaixo da mínima necessária (<b>'+fmt(ok[0].Pmin,2)+' kW</b>) e só atende contando o <b>fator de serviço '+fmt(q.fsm,2)+'</b>, que dá <b>'+fmt(q.Pm*q.fsm,2)+' kW</b> disponíveis. Isso usa a reserva do motor: confirme que o fator vale para o regime e a alimentação (com inversor costuma ser 1,00). O redutor foi selecionado com essa potência.'; }
@@ -2616,9 +2619,8 @@ function ratioTxt(x){ return (x.i%1?fmt(x.i,1):fmt(x.i,0)); }
 function renderSum(){
   var q=lastQ, el=$('sum'); if(!el||!q) return;
   var foot='<p class="sum-f">Pré-seleção. O tamanho definitivo é confirmado por escrito pela engenharia Bonfiglioli.</p>';
-  if(modo!=='elev'){ el.innerHTML=''; return; }
   if(!isFinite(q.h)){
-    el.innerHTML='<div class="sum-st wait">Aguardando</div><div class="sum-k">Próximo passo</div><div class="sum-m sm">Escolha a classe de utilização T</div><p class="sum-p">Ela define a vida do redutor. Com ela escolhida, o resultado aparece aqui na hora.</p>'+foot; return; }
+    el.innerHTML='<div class="sum-st wait">Aguardando</div><div class="sum-k">Próximo passo</div><div class="sum-m sm">'+(modo==='elev'?'Escolha a classe de utilização T':'Informe a vida útil em horas totais')+'</div><p class="sum-p">'+(modo==='elev'?'Ela define a vida do redutor.':'Ela define a coluna da tabela A4.')+' Com ela preenchida, o resultado aparece aqui na hora.</p>'+foot; return; }
   if(!list.length){
     el.innerHTML='<div class="sum-st bad">Sem resultado</div><div class="sum-k">Redutor</div><div class="sum-m sm">Nenhuma combinação no desvio de ±'+fmt(q.tol*100,0)+'%</div><p class="sum-p">Amplie o desvio de rotação em Opções avançadas ou revise velocidade, tambor e cavalamento. Relação necessária: <b>'+fmt(q.n1/q.n2req,1)+'</b>.</p>'+foot; return; }
   var x=sel||list[0], pass=(x.fail===0);
@@ -2635,14 +2637,35 @@ function renderSum(){
       '<div><span>Torque de seleção</span><b>'+fmt(x.Mr,0)+' Nm</b></div>'+
     '</div>'+
     '<div class="sum-ck">'+chip(x.ck.T,'Torque')+chip(x.ck.P,'P₁')+nchip+chip(x.ck.M,'M₂máx')+(x.flp?chip(x.ck.F,'Flange P'+x.flp):'')+'</div>'+
-    '<div class="sum-pm"><span>Potência mínima do motor</span><b>'+fmt(x.Pmin,2)+' kW</b></div>'+
+    (modo==='elev'?'<div class="sum-pm"><span>Potência mínima do motor</span><b>'+fmt(x.Pmin,2)+' kW</b></div>':'<div class="sum-pm"><span>Potência do motor</span><b>'+fmt(q.Pm,q.Pm%1?2:0)+' kW</b></div>')+
     (x.adot?'<div class="sum-pm"><span>Motor adotado (padrão comercial)</span><b>'+fmt(x.Pad,1)+' kW</b></div>':'')+
     '<a class="sum-btn" href="#ficha">Ver folha de dados <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>'+foot;
 }
+function renderAltGer(q){
+  var box=$('altbox');
+  if(!q.fs.v||!(q.n2req>0)){ box.hidden=true; return; }
+  var cg=parseInt($('carga').value,10), zz=parseInt($('zb').value,10), base=null, cards=[];
+  A4H.forEach(function(H,c){
+    var f=fsLookup(H,cg,zz), q2={}; for(var k in q) q2[k]=q[k]; q2.h=H; q2.fs=f;
+    var l2=f.v?buscar(q2):[], best=null;
+    for(var j=0;j<l2.length;j++){ if(l2[j].fail===0){ best=l2[j]; break; } }
+    cards.push({H:H,f:f,x:best}); if(H===q.fs.c) base=best;
+  });
+  $('altgrid').innerHTML=cards.map(function(c){
+    var on=(c.H===q.fs.c), x=c.x, d='';
+    if(x&&base&&!on){ var dd=x.si-base.si; d=(dd===0)?'mesmo tamanho':((dd>0?'+':'−')+Math.abs(dd)+(Math.abs(dd)===1?' tamanho':' tamanhos')); }
+    return '<div class="alt-c'+(on?' on':'')+'"><div class="alt-t">'+fmt(c.H,0)+' h <small>f<sub>S</sub>\' '+fmt(c.f.v,2)+'</small></div>'+
+      (x?'<div class="alt-m">'+x.size+' '+x.fam+x.st+' '+ratioTxt(x)+'</div><div class="alt-s">f<sub>S</sub> '+fmt(x.fS,2)+' · folga '+fmt((x.Mn/x.Mc-1)*100,0)+'%</div>':
+         '<div class="alt-m none">Sem candidato</div><div class="alt-s">&nbsp;</div>')+
+      '<div class="alt-d">'+(on?'Sua vida (coluna aplicada)':d)+'</div></div>';
+  }).join('');
+  box.hidden=false;
+}
 function renderAlt(q){
   var box=$('altbox'); if(!box) return;
+  if(modo==='ger'){ renderAltGer(q); return; }
   var t0=isFinite(q.h)?TCL.indexOf(q.h):-1;
-  if(modo!=='elev'||t0<0||!(q.n2req>0)){ box.hidden=true; return; }
+  if(t0<0||!(q.n2req>0)){ box.hidden=true; return; }
   var lo=Math.max(0,t0-2), hi=Math.min(TCL.length-1,t0+2), cards=[], base=null, cg=parseInt($('carga').value,10), zz=parseInt($('zb').value,10);
   for(var t=lo;t<=hi;t++){
     var f=fsLookup(TCL[t],cg,zz), q2={}; for(var k in q) q2[k]=q[k]; q2.h=TCL[t]; q2.fs=f;
@@ -2701,7 +2724,7 @@ function ficha(){
   var q=requisito(), x=sel, ver=$('ver').value;
   var pfm=$('pflg').value, pos=($('pos').value||'').trim(), opc=($('opc').value||'').trim();
   var Pef=(q.Pm>0)?q.Pm:(x.adot?x.Pad:NaN), npol=parseInt($('polos').value,10)||0;
-  var mf=(modo==='elev'&&isFinite(Pef))?motorFrame(Pef,npol):null;
+  var mf=isFinite(Pef)?motorFrame(Pef,npol):null;
   var pf0=pfm||(mf&&mf.p)||'', fl=flgLista(x), flOk=!pf0||fl.indexOf(parseInt(pf0.slice(1),10))>=0;
   var pf=flOk?pf0:'';
   var ratio=(x.i%1?fmt(x.i,1):fmt(x.i,0));
@@ -2739,6 +2762,13 @@ function ficha(){
     L.push(pad('Cavalamento',              $('ram').value+' ramais, '+$('pta').value+' ponta(s) no tambor, '+$('pol').value+' polia(s)'));
     L.push(pad('Classe de utilização',     'T'+$('tcl').value+' ('+fmt(q.h,0)+' h)'));
     L.push(Array(53).join('='));
+  } else {
+    L.push('DADOS DA APLICAÇÃO');
+    L.push(pad('Requisito de saída',       ($('ent').value==='i'?'i = '+fmt(V('val'),V('val')%1?1:0):'n2 = '+fmt(V('val'),2)+' rpm')));
+    L.push(pad('Vida útil (horas totais)', fmt(q.h,0)+' h'));
+    L.push(pad('Tipo de carga',            A4L[parseInt($('carga').value,10)]));
+    L.push(pad('Partidas por hora',        A4Z[parseInt($('zb').value,10)]));
+    L.push(Array(53).join('='));
   }
   L.push(pad('Rotação de entrada    n1', fmt(q.n1,0)+' rpm'));
   L.push(pad('Rotação de saída      n2', fmt(x.n2,2)+' rpm  (requisito '+fmt(q.n2req,2)+', desvio '+(x.dev>=0?'+':'')+fmt(x.dev*100,1)+'%)'));
@@ -2746,12 +2776,11 @@ function ficha(){
   L.push(pad('Torque de selecao     Mr2',fmt(x.Mr,0)+' Nm'));
   L.push(pad("Fator de serviço      fS'",fmt(q.fs.v,2)));
   L.push(pad('Torque de cálculo     Mc2',fmt(x.Mc,0)+' Nm'));
-  if(modo!=='elev') L.push(pad('Vida útil             h',  fmt(q.h,0)+' h'));
   L.push(pad('Fator de vida         Fh2',fmt(x.F,0)+'  -> coluna n2h '+fmt(x.col,0)));
   L.push(pad('Torque de pico        Mp2',fmt(x.Mp,0)+' Nm'));
   if(modo==='elev'&&q.Pm>0&&q.fsm>1) L.push(pad('Fator de serviço do motor', fmt(q.fsm,2)+'  -> '+fmt(q.Pm*q.fsm,2)+' kW disponíveis na seleção'));
   L.push(pad('Potência do motor',        (q.Pm>0?fmt(q.Pm,2)+' kW':(x.adot?fmt(x.Pad,1)+' kW adotada (padrao comercial acima da minima; potencia nao informada)':'nao informada'))+(modo==='elev'?'  (mínimo '+fmt(x.Pmin,2)+' kW)':'')));
-  if(modo==='elev'&&$('polos').value!=='0') L.push(pad('Polos / Frequência', $('polos').value+' / '+$('freq').value+' Hz'));
+  if($('polos').value!=='0') L.push(pad('Polos / Frequência', $('polos').value+' / '+$('freq').value+' Hz'));
   L.push(pad('Flange de entrada IEC',     (pf?pf+(mf&&!pfm?'  (carcaça WEG '+mf.fr+', '+fmt(mf.P,mf.P%1?2:0)+' kW, '+mf.polos+' polos)':''):(pf0&&!flOk?'NAO DISPONIVEL neste redutor ('+pf0+'; aceita '+(flgFaixa(fl)||'nenhuma IEC')+')':'A DEFINIR — vem da carcaca do motor'))));
   if(pf&&mf&&!pfm) L.push('   Carcaça pela linha WEG W22 IR3 Premium; em outra marca ou linha pode mudar, confirme na placa do motor.');
   L.push(pad('Posição de montagem',       (pos||'A DEFINIR')));
@@ -2780,7 +2809,7 @@ function ficha(){
     if(isFinite(q.n1op)&&q.n1op>0) L.push('- rotacao maxima do motor sem carga (inversor): '+fmt(q.n1op,0)+' rpm');
     if($('qunit').value==='kg') L.push('- carga informada em kg ('+fmt(V('q'),1)+' kg = '+fmt(V('q')/1000,3)+' t)');
   } else {
-    L.push('- torque derivado da potencia do motor (metodo do catalogo)');
+    L.push('- torque derivado da potencia do motor (metodo do catalogo), rendimento '+fmt(x.eta,2));
     L.push('- acionamento: '+$('freq').value+' Hz, '+($('polos').value!=='0'?$('polos').value+' polos':'n1 informado manualmente'));
   }
   L.push("- fS' pela tabela A4: "+A4L[parseInt($('carga').value,10)]+', '+A4Z[parseInt($('zb').value,10)]+', coluna '+fmt(q.fs.c,0)+' h');
@@ -2854,15 +2883,28 @@ function interpCalc(){
 
 function setModo(m){
   modo=m;
+  document.body.setAttribute('data-modo',m);
   $('m-ger').setAttribute('aria-pressed', m==='ger');
   $('m-elev').setAttribute('aria-pressed', m==='elev');
-  $('g-ger').hidden=(m!=='ger'); $('g-elev').hidden=(m!=='elev');
-  $('ctit').textContent=(m==='ger')?'Geral — potência e redução':'Elevação — tambor de cabo';
-  $('csub').textContent=(m==='ger')
-    ? 'Os valores iniciais são um exemplo de triturador de 75 kW. Altere qualquer campo.'
-    : 'Os valores iniciais são um exemplo de carro guincho de 20 t. Altere qualquer campo.';
-  if(m==='elev'){ $('app').value='Elevação principal — carro guincho'; $('carga').value='1'; $('zb').value='2'; $('hv').value=1600; $('tfr').value=150; $('tol').value=10; $('tcl').value=''; $('pelev').value=''; }
-  else { $('app').value='Triturador'; $('carga').value='1'; $('zb').value='1'; $('hv').value=10000; $('tfr').value=200; $('tol').value=15; }
+  var g=(m==='ger');
+  $('ctit').textContent=g?'Aplicação geral — potência e redução':'Elevação — tambor de cabo';
+  $('csub').textContent=g?'Os valores iniciais são um exemplo de triturador de 75 kW. Altere qualquer campo.':'Os valores iniciais são um exemplo de carro guincho de 20 t. Altere qualquer campo.';
+  $('st1').textContent=g?'Preencha potência, redução e vida útil':'Preencha carga, velocidade e classe T';
+  $('ent-p').textContent=g
+    ? 'O torque parte da potência do motor e da redução (ou da rotação de saída). A ferramenta lê o fator de serviço na tabela A4 e devolve o menor redutor da série 300M que atende.'
+    : 'O torque parte da carga, do tambor e do cavalamento. A ferramenta calcula a potência mínima pela carga, adota a próxima potência comercial acima dela e nunca seleciona abaixo do torque de saída desse motor.';
+  $('g1-p').textContent=g?'Identifique o projeto e informe potência, redução (ou rotação de saída) e vida útil.':'Identifique o projeto e informe os sete campos que definem a seleção.';
+  $('g2-p').textContent=g?'Os polos definem a rotação de entrada n₁. Com inversor, informe a rotação com carga.':'Opcional. Sem a potência, a ferramenta adota a próxima potência comercial acima da mínima necessária.';
+  $('g2-tag').textContent=g?'Essencial':'Opcional';
+  // tipo de carga e partidas sao essenciais no modo geral: sobem para o grupo 1
+  var g1b=document.querySelector('#g-elev .grp-key .grp-b'), adv=document.querySelector('details.grp.adv .grp-b');
+  ['carga','zb'].forEach(function(id){
+    var f=$(id).parentNode;
+    if(g){ g1b.appendChild(f); } else { adv.insertBefore(f, adv.firstChild); }
+  });
+  if(m==='elev'){ $('app').value='Elevação principal — carro guincho'; $('carga').value='1'; $('zb').value='2'; $('hv').value=1600; $('tfr').value=150; $('tol').value=10; $('tcl').value=''; $('pelev').value=''; $('fam').value='0'; }
+  else { $('app').value='Triturador'; $('carga').value='1'; $('zb').value='1'; $('hv').value=10000; $('tfr').value=200; $('tol').value=15; $('fam').value=''; }
+  setEnt();
   render();
 }
 iIds.forEach(function(k){ var e=$(k); if(e){ e.addEventListener('input',interpCalc); } });
@@ -2899,10 +2941,9 @@ $('pp').addEventListener('click',function(){
   window.print();
 });
 buildA4(); syncN1(); setEnt(); 
-// No ar so a elevacao. Para reativar o modo geral: SO_ELEV=false (e mostrar o card no hub).
-var SO_ELEV=true;
-if(SO_ELEV){ $('modes').style.display='none'; }
-setModo((SO_ELEV||/[?&]modo=elev/.test(location.search))?'elev':'ger');
+// Modo pela URL: ?modo=geral (aplicacao geral) ou ?modo=elevacao (padrao). O seletor interno fica oculto: cada modo e um card na pagina Bonfiglioli.
+$('modes').style.display='none';
+setModo(/[?&]modo=ger/.test(location.search)?'ger':'elev');
 // Preenchimento pela URL (faixa de dimensionamento da pagina Bonfiglioli): ?q=carga em t&vel=m/min&tcl=0..8
 (function(){
   try{
@@ -2912,6 +2953,13 @@ setModo((SO_ELEV||/[?&]modo=elev/.test(location.search))?'elev':'ger');
     if(q!==null){ $('q').value=q; $('qunit').value=(u.get('qunit')==='kg')?'kg':'t'; mudou=true; }
     if(vel!==null){ $('vel').value=vel; mudou=true; }
     if(tcl!==null&&Math.floor(tcl)===tcl){ $('tcl').value=String(tcl); mudou=true; }
+    if(modo==='ger'){
+      var pw=num('p',0.01,5000), ii=num('i',1,5000), nn=num('n2',0.01,5000), hh=num('h',100,200000);
+      if(pw!==null){ $('pger').value=pw; mudou=true; }
+      if(ii!==null){ $('ent').value='i'; setEnt(); $('val').value=ii; mudou=true; }
+      else if(nn!==null){ $('ent').value='n'; setEnt(); $('val').value=nn; mudou=true; }
+      if(hh!==null){ $('hv').value=hh; mudou=true; }
+    }
     if(mudou) render();
   }catch(e){}
 })();
