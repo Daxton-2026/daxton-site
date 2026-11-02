@@ -30,6 +30,21 @@ img{max-width:100%}
 .backbar a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){.backbar a,.backbar a svg{transition:none}}
 @media print{.backbar{display:none!important}}
+.ess{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:999px;background:var(--amber);color:#2A1A00;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;vertical-align:1px}
+.alt{margin-top:26px}
+.alt-h h3{font-size:19px;font-weight:650;letter-spacing:-.01em}
+.alt-h p{margin:5px 0 14px;font-size:14px;color:var(--ink2);max-width:72ch}
+.alt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.alt-c{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:15px 16px;display:flex;flex-direction:column;gap:3px}
+.alt-c.on{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 14%,transparent),var(--shadow)}
+.alt-t{font-weight:700;font-size:14px;color:var(--ink)}.alt-t small{font-weight:500;color:var(--muted);font-size:12px;margin-left:4px}
+.alt-m{font-family:"JetBrains Mono",monospace;font-size:20px;font-weight:700;color:var(--accent);margin-top:6px;overflow-wrap:anywhere}
+.alt-m.none{font-family:var(--font);font-size:14px;color:var(--crit);font-weight:600}
+.alt-s{font-size:12px;color:var(--muted)}
+.alt-d{margin-top:8px;font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2)}
+.alt-c.on .alt-d{display:inline-block;background:var(--amber);color:#2A1A00;border-radius:999px;padding:3px 10px;margin-top:6px}
+#gdesig{margin-bottom:18px}
+#gdesig .desig-code{white-space:normal;overflow-wrap:anywhere;line-height:1.45}
 </style>
 <style>
 :root{
@@ -505,12 +520,9 @@ h3.sub{font-size:21px;font-weight:600;margin:26px 0 8px;text-transform:uppercase
           <select id="g_carga"><option value="0">Uniforme</option><option value="1" selected>Choque moderado</option><option value="2">Choque pesado</option></select></div>
         <div class="fld"><label for="g_zb">Partidas por hora <em>Z</em></label>
           <select id="g_zb"><option value="0">Z &lt; 10</option><option value="1">10 &lt; Z &lt; 30</option><option value="2" selected>30 &lt; Z &lt; 100</option></select></div>
-        <div class="fld"><label for="g_tcl">Classe de utilização <em>T</em> — horas totais</label>
+        <div class="fld"><label for="g_tcl">Classe de utilização <em>T</em> — horas totais <span class="ess">essencial</span></label>
           <select id="g_tcl"><option value="">— escolha —</option><option value="0">T0 — 200 h</option><option value="1">T1 — 400 h</option><option value="2">T2 — 800 h</option><option value="3">T3 — 1.600 h</option><option value="4">T4 — 3.200 h</option><option value="5">T5 — 6.300 h</option><option value="6">T6 — 12.500 h</option><option value="7">T7 — 25.000 h</option><option value="8">T8 — 50.000 h</option></select>
-          <span class="tip">A vida vem da classe do projeto, não de um palpite. Sem ela a ferramenta não calcula.</span></div>
-        <div class="fld"><label for="g_espec">Espectro de carga</label>
-          <select id="g_espec"><option value="">— escolha —</option><option value="0.125">L1 — leve</option><option value="0.25">L2 — moderado</option><option value="0.5">L3 — pesado</option><option value="1">L4 — muito pesado</option></select>
-          <span class="tip" id="g_mgrp">Grupo do mecanismo: —</span></div>
+          <span class="tip">A vida vem da classe do projeto, não de um palpite. Sem ela a ferramenta não calcula.</span><span class="tip" id="g_mgrp">Grupo do mecanismo: —</span></div>
       </div>
       <div class="calc-in">
         <div class="fld"><label for="g_tfr">Torque de pico — % do nominal</label><input id="g_tfr" type="number" step="5" value="150">
@@ -597,6 +609,11 @@ h3.sub{font-size:21px;font-weight:600;margin:26px 0 8px;text-transform:uppercase
     <tbody id="tb"></tbody>
   </table></div>
   <p class="cap" id="cnt">—</p>
+  <div class="alt" id="altbox" hidden>
+    <div class="alt-h"><h3>Alternativas por classe de utilização</h3>
+      <p>O caso ativo com a classe T acima e abaixo da sua. Subir a classe aumenta o fator de serviço exigido e pode subir o tamanho. A ferramenta não tem preço: peça a cotação de cada alternativa.</p></div>
+    <div class="alt-grid" id="altgrid"></div>
+  </div>
 </section>
 
 
@@ -605,6 +622,11 @@ h3.sub{font-size:21px;font-weight:600;margin:26px 0 8px;text-transform:uppercase
     <div class="eyebrow">Passo 4 · <span id="ficha-case">Caso 1</span></div>
     <h2>Folha de dados</h2>
     <p>Do caso ativo. O bloco sai formatado para colar no pedido de cotação à Bonfiglioli.</p>
+  </div>
+  <div class="desig-box" id="gdesig" hidden>
+    <div class="desig-code" id="dcode">—</div>
+    <div class="desig-list" id="dlist"></div>
+    <p class="cap" style="margin-top:10px">Mesmo formato do modelo da proposta da fábrica: tamanho, desenho, estágios, relação, versão de saída, flange de entrada, posição de montagem e opções. Versão, flange, posição e opções vêm de Premissas de cálculo (Passo 1). É este código que vai na folha e no pedido.</p>
   </div>
   <div class="sheet">
     <div class="sheet-h"><h3 id="dsg">—</h3><span class="sheet-btns"><button type="button" id="cp">Copiar</button><button type="button" id="pp">Imprimir em PDF</button></span></div>
@@ -1982,6 +2004,8 @@ function interp(mn,F){
 /* Busca nos rating charts. q: n1, n2req, Mr (N.m no eixo de saida), fs, h, tfr (fracao),
    tol (fracao), leit, n1lib, fam (null|0|1), Pm (kW fixo, ou 0 = calcular por candidato),
    Mnom (N.m nominal do motor, ou 0 = pico = Mr*tfr). */
+var STDCV=[0.25,0.33,0.5,0.75,1,1.5,2,3,4,5,6,7.5,10,12.5,15,20,25,30,40,50,60,75,100,125,150,175,200,250,300,350,400,450,500];
+function stdAboveCV(pcv){ var v=STDCV; for(var k=0;k<v.length;k++){ if(v[k]>=pcv-1e-9) return v[k]; } return NaN; }
 function search(q){
   if(!q.fs||!q.fs.v||!ok(q.n1)||!ok(q.n2req)||!ok(q.Mr)) return [];
   var out=[];
@@ -1992,13 +2016,15 @@ function search(q){
     var n2=q.n1/i, dev=n2/q.n2req-1;
     if(Math.abs(dev)>q.tol) continue;
     var eta=ETA[st];
-    var Mmot=(q.Mnom>0)?q.Mnom*i*eta:NaN;             /* torque de saida: o que o motor instalado entrega no eixo de saida */
+    var Mnom=q.Mnom, Pad=null;
+    if(!(q.Pm>0)&&q.Ptam>0){ Pad=stdAboveCV(q.Ptam/eta/CVW); if(!(Pad>0)) continue; Mnom=9550*Pad*CVW/q.n1; }
+    var Mmot=(Mnom>0)?Mnom*i*eta:NaN;             /* torque de saida: o que o motor instalado entrega no eixo de saida */
     var MrS=isFinite(Mmot)?Math.max(q.Mr,Mmot):q.Mr;   /* torque de selecao: o maior entre requerido (carga) e de saida (motor) */
     var Mc=MrS*q.fs.v, F=n2*q.h, c=colFor(F);
     if(c<0) continue;
     var Mn=(q.leit===1)?interp(mn,F):mn[c];
-    var Mp=(q.Mnom>0)?q.Mnom*q.tfr*i*eta:q.Mr*q.tfr;
-    var Pm=(q.Pm>0)?q.Pm:q.Mr*n2/9550/eta;
+    var Mp=(Mnom>0)?Mnom*q.tfr*i*eta:q.Mr*q.tfr;
+    var Pm=(q.Pm>0)?q.Pm:(Pad>0?Pad*CVW:q.Mr*n2/9550/eta);
     var ck={T:Mc<=Mn,P:(p1>0?p1>=Pm:true),M:m2max>=Mp};
     var fail=0; for(var k in ck) if(!ck[k]) fail++;
     var lim=Math.max(nn1,q.n1lib||0);
@@ -2008,7 +2034,7 @@ function search(q){
     if(warnX) fail++;
     out.push({si:si,size:SIZES[si],fam:fm?'R':'L',famN:fm,st:st,i:i,n2:n2,dev:dev,eta:eta,
       col:COLS[c],Mn:Mn,MnLit:mn[c],MnInt:interp(mn,F),Mr:MrS,MrCarga:q.Mr,Mmot:Mmot,Mc:Mc,F:F,fS:Mn/MrS,
-      p1:p1,Pm:Pm,nn1:nn1,n1max:n1max,m2max:m2max,Mp:Mp,ck:ck,fail:fail,
+      p1:p1,Pm:Pm,Pad:Pad,nn1:nn1,n1max:n1max,m2max:m2max,Mp:Mp,ck:ck,fail:fail,
       warnN:warnN,warnX:warnX,libN:libN,
       key:SIZES[si]+'|'+fm+'|'+st+'|'+i});
   }
@@ -2097,12 +2123,13 @@ function calcE(c,G){
     r.fail=(r.ck.T===false?1:0)+(r.ck.M===false?1:0);
   } else {
     var q={n1:nmot,n2req:r.n2req,Mr:r.T,fs:r.fs,h:G.hv,tfr:G.tfr,tol:G.tol,leit:G.leit,
-           n1lib:G.n1lib,fam:G.fam(c),Pm:r.Pkw,Mnom:(ok(nmot)?9550*r.Pkw/nmot:0)};
+           n1lib:G.n1lib,fam:G.fam(c),Pm:r.Pkw,Mnom:(ok(nmot)?9550*r.Pkw/nmot:0),Ptam:(r.Pkw>0)?NaN:r.T*r.n2req/9550};
     r.list=search(q);
     r.cand=chosen(r.list,c.selKey);
     if(r.cand){
       var x=r.cand; r.i=x.i; r.eta=x.eta; r.Tn=x.Mn; r.Tmax=x.m2max; r.n2=x.n2; r.Mp=x.Mp;
       r.ck=x.ck; r.fail=x.fail;
+      if(x.Pad>0){ r.adot=true; r.Pcv=x.Pad; r.Pkw=x.Pad*CVW; }
     }
   }
   if(ok(r.i)){
@@ -2112,11 +2139,11 @@ function calcE(c,G){
     r.vc1=r.ncorr*Math.PI*r.Dp/1000;
     r.vel=r.vc1/(nm/nt);
     r.Preq=r.Fc*r.vc1/(4500*r.eta*ee)/na;
-    r.okP=(r.Preq<=Pcv*1.0001);
+    r.okP=(r.Preq<=(r.adot?r.Pcv:Pcv)*1.0001);
   }
   r.cab=cable(c,r);
   var Fbr=num(c.Fbr); r.fsBand=(ok(Fbr)&&ok(F))?Fbr/F:NaN;
-  r.ok=(r.i>0)&&r.fail===0&&r.okP!==false&&!(r.cand&&r.cand.warnX)&&!(isFinite(r.fsBand)&&r.fsBand<1);
+  r.ok=(r.i>0)&&r.fail===0&&!(r.cand&&r.cand.warnX)&&!(isFinite(r.fsBand)&&r.fsBand<1);
   return r;
 }
 
@@ -2196,10 +2223,10 @@ var TCL=[200,400,800,1600,3200,6300,12500,25000,50000];
 var G={fam:function(c){ return c.fam==='0'?0:(c.fam==='1'?1:null); }};
 function readG(){
   G.carga=parseInt($('g_carga').value,10); G.zb=parseInt($('g_zb').value,10);
-  var tc=$('g_tcl').value, ks=parseFloat($('g_espec').value);
-  G.hv=(tc!==''&&isFinite(ks))?TCL[parseInt(tc,10)]:NaN; G.tcl=tc; G.ks=ks;
+  var tc=$('g_tcl').value, ks=0.5;
+  G.hv=(tc!=='')?TCL[parseInt(tc,10)]:NaN; G.tcl=tc; G.ks=ks;
   G.mg=isFinite(G.hv)?Math.max(1,Math.min(8,Math.round(Math.log(G.hv*ks/100)/Math.LN2)+1)):null;
-  $('g_mgrp').innerHTML=G.mg?('Grupo do mecanismo: <b>M'+G.mg+'</b> (estimado por T × espectro)'):'Grupo do mecanismo: —';
+  $('g_mgrp').innerHTML=G.mg?('Grupo do mecanismo: <b>M'+G.mg+'</b> (estimado pela classe T, espectro L3 assumido)'):'Grupo do mecanismo: —';
   G.tfr=E.num($('g_tfr').value)/100; G.tol=E.num($('g_tol').value)/100;
   G.leit=parseInt($('g_leit').value,10); G.n1lib=E.num($('g_n1lib').value);
   G.etaRold=E.num($('g_etar').value); G.etaEst=0.97;
@@ -2207,6 +2234,8 @@ function readG(){
   G.opc=($('g_opc').value||'').trim(); G.app=($('g_app').value||'').trim();
   G.variant=$('g_var').value;
 }
+var MGT=TCL.map(function(h){ return Math.max(1,Math.min(8,Math.round(Math.log(h*0.5/100)/Math.LN2)+1)); });
+Array.prototype.forEach.call($('g_tcl').options,function(o){ if(o.value!=='') o.textContent+=' · M'+MGT[+o.value]; });
 var VARN={padrao:'Padrão',atracacao:'Atracação',tracao:'Tração constante',combinado:'Combinado naval',manrider:'Man-rider'};
 
 /* ---------- famílias ---------- */
@@ -2215,7 +2244,7 @@ var FAML={G:'Guincho',M:'Molinete',C:'Carretel de barreiras'};
 var VEL={G:'Velocidade do cabo',M:'Velocidade da amarra',C:'Velocidade de recolhimento da barreira'};
 
 /* ---------- linhas da grade ---------- */
-var PCV=[['','— escolha —'],['0.25','0,25 cv (0,18 kW)'],['0.33','0,33 cv (0,25 kW)'],['0.5','0,5 cv (0,37 kW)'],['0.75','0,75 cv (0,55 kW)'],['1','1 cv (0,75 kW)'],['1.5','1,5 cv (1,1 kW)'],['2','2 cv (1,5 kW)'],['3','3 cv (2,2 kW)'],['4','4 cv (3 kW)'],['5','5 cv (3,7 kW)'],['6','6 cv (4,5 kW)'],['7.5','7,5 cv (5,5 kW)'],['10','10 cv (7,5 kW)'],['12.5','12,5 cv (9,2 kW)'],['15','15 cv (11 kW)'],['20','20 cv (15 kW)'],['25','25 cv (18,5 kW)'],['30','30 cv (22 kW)'],['40','40 cv (30 kW)'],['50','50 cv (37 kW)'],['60','60 cv (45 kW)'],['75','75 cv (55 kW)'],['100','100 cv (75 kW)'],['125','125 cv (90 kW)'],['150','150 cv (110 kW)'],['175','175 cv (132 kW)'],['200','200 cv (150 kW)'],['250','250 cv (185 kW)'],['300','300 cv (220 kW)'],['350','350 cv (260 kW)'],['400','400 cv (300 kW)'],['450','450 cv (330 kW)'],['500','500 cv (370 kW)']];
+var PCV=[['','Automática (padrão comercial)'],['0.25','0,25 cv (0,18 kW)'],['0.33','0,33 cv (0,25 kW)'],['0.5','0,5 cv (0,37 kW)'],['0.75','0,75 cv (0,55 kW)'],['1','1 cv (0,75 kW)'],['1.5','1,5 cv (1,1 kW)'],['2','2 cv (1,5 kW)'],['3','3 cv (2,2 kW)'],['4','4 cv (3 kW)'],['5','5 cv (3,7 kW)'],['6','6 cv (4,5 kW)'],['7.5','7,5 cv (5,5 kW)'],['10','10 cv (7,5 kW)'],['12.5','12,5 cv (9,2 kW)'],['15','15 cv (11 kW)'],['20','20 cv (15 kW)'],['25','25 cv (18,5 kW)'],['30','30 cv (22 kW)'],['40','40 cv (30 kW)'],['50','50 cv (37 kW)'],['60','60 cv (45 kW)'],['75','75 cv (55 kW)'],['100','100 cv (75 kW)'],['125','125 cv (90 kW)'],['150','150 cv (110 kW)'],['175','175 cv (132 kW)'],['200','200 cv (150 kW)'],['250','250 cv (185 kW)'],['300','300 cv (220 kW)'],['350','350 cv (260 kW)'],['400','400 cv (300 kW)'],['450','450 cv (330 kW)'],['500','500 cv (370 kW)']];
 var FAM=[['','Coaxial e ortogonal'],['0','Coaxial — série L'],['1','Ortogonal — série R']];
 var RM=[['db','Série 300 — busca'],['man','Redutor informado']];
 var APOIO=[['redutor','No eixo do redutor'],['mancal','Mancais próprios do tambor']];
@@ -2252,13 +2281,13 @@ function redRows(){ return [
 function verifRows(){ return [
   {k:'cand',l:'Redutor selecionado',t:'c',cls:'big wrapc',f:function(r){
      if(r.man) return 'informado';
-     if(!isFinite(G.hv)) return '<span style="color:var(--crit)">escolha a classe T e o espectro</span>';
+     if(!isFinite(G.hv)) return '<span style="color:var(--crit)">escolha a classe T</span>';
      if(!r.cand) return '<span style="color:var(--crit)">nenhum atende</span>';
      return esc(r.cand.size+' '+r.cand.fam+' '+r.cand.st+' · i '+fr(r.cand.i)); }},
   {k:'ired',l:'Redução real',t:'c',f:function(r){return fr(r.i)}},
   {k:'Tmot',l:'Torque de saída (motor)',u:'N·m',t:'c',f:function(r){return isFinite(r.Tmot)?fmt(r.Tmot,0):'—'}},
   {k:'Tsel',l:'Torque de seleção',u:'N·m',t:'c',f:function(r){return fmt(isFinite(r.Tsel)?r.Tsel:r.T,0)}},
-  {k:'fsA4',l:'f′S exigido (tabela A4)',t:'c',f:function(r){return r.fs.v?fmt(r.fs.v,2):(isFinite(G.hv)?'sem A4':'escolha T e espectro')}},
+  {k:'fsA4',l:'f′S exigido (tabela A4)',t:'c',f:function(r){return r.fs.v?fmt(r.fs.v,2):(isFinite(G.hv)?'sem A4':'escolha a classe T')}},
   {k:'fsE',l:'Fator de serviço obtido (Tn ÷ torque de seleção)',t:'c',cls:'big',f:function(r){return fmt(r.fsE,2)}},
   {k:'ck',l:'Verificações',t:'c',cls:'wrapc',f:function(r){
      if(r.man) return chip(r.ck.T,'T')+' '+chip(r.ck.M,'M₂');
@@ -2273,11 +2302,11 @@ function brakeRows(){ return [
 ]; }
 function sitRow(){ return {k:'sit',l:'Situação do caso',t:'c',cls:'big',f:function(r,c){
   if(G.variant==='manrider') return chip(false,'fora do escopo — man-rider');
-  if(!isFinite(G.hv)) return chip(false,'escolha a classe T e o espectro');
+  if(!isFinite(G.hv)) return chip(false,'escolha a classe T');
   if(isFinite(r.F)&&r.F>100000) return chip(false,'confira a unidade: tração em kgf ('+fmt(r.F,0)+' kgf é muito alto)');
-  if(c&&c.Pcv!==undefined&&!(parseFloat(c.Pcv)>0)) return chip(false,'escolha a potência instalada');
   if(!(r.i>0)) return chip(false,'sem redutor');
   if(!r.ok) return chip(false,'não atende');
+  if(r.mode==='E'&&r.okP===false) return chip('w','atende · motor abaixo da potência mínima');
   if(r.cand&&(r.cand.warnN)) return chip('w','atende, com alerta');
   if(isFinite(r.fsE)&&r.fs.v&&r.fsE/r.fs.v-1<0.10) return chip('w','atende · margem apertada ('+fmt((r.fsE/r.fs.v-1)*100,1)+'%)');
   var mancal=(c&&c.apoio==='mancal');
@@ -2305,7 +2334,7 @@ function rowsFor(f,d){
       {k:'iext',l:'Redução externa (_ : 1)',t:'n'},
       {k:'etaext',l:'Rendimento da redução externa',t:'n'},
       {k:'nmot',l:'Rotação do motor',u:'rpm',t:'n'},
-      {k:'Pcv',l:'Potência instalada',t:'s',o:PCV,tip:'Potências padrão de motor até 500 cv. Motor fora do padrão: escolha a potência logo acima.'},
+      {k:'Pcv',l:'Potência instalada',t:'s',o:PCV,tip:'Deixe em Automática e a ferramenta adota a próxima potência comercial acima da mínima pela carga. Se escolher um motor menor que a mínima, o caso segue, com aviso.'},
       {k:'apoio',l:f==='M'?'Apoio do barbotin':'Apoio do tambor',t:'s',o:APOIO,tip:'Mancalizado: a carga radial não passa pelo redutor (marcada com * abaixo).'},
       {k:'T',l:'Torque requerido (carga) por acionamento',u:'N·m',t:'c',cls:'big',f:function(r){return fmt(r.T,0)}},
       {k:'Fr',l:'Carga radial no '+(f==='M'?'barbotin':(f==='C'?'carretel':'cabo')),u:'N',t:'c',f:function(r,c){return fmt(r.Fr,0)+(c&&c.apoio==='mancal'?' *':'')}},
@@ -2318,7 +2347,7 @@ function rowsFor(f,d){
       {k:'vc1',l:'Velocidade na camada de referência',u:'m/min',t:'c',f:function(r){return fmt(r.vc1,2)}},
       {k:'vel',l:f==='G'?'Velocidade de elevação real':'Velocidade real',u:'m/min',t:'c',f:function(r){return fmt(r.vel,2)}},
       {k:'Preq',l:'Potência requerida',u:'CV',t:'c',cls:'big',f:function(r){return fmt(r.Preq,2)}},
-      {k:'chkP',l:'Potência instalada atende?',t:'c',f:function(r){return !(r.Pkw>0)?chip(null,'escolha a potência'):r.okP===undefined?chip(null,'—'):(r.okP?chip(true,'ok'):chip(false,'insuficiente'))}},
+      {k:'chkP',l:'Potência instalada atende?',t:'c',f:function(r){return !(r.Pkw>0)?chip(null,'—'):r.okP===undefined?chip(null,'—'):(r.okP?chip(true,r.adot?'adotada '+fmt(r.Pkw,1)+' kW':'ok'):chip('w','abaixo da mínima'))}},
       sitRow()]);
   } else {
     R.push({g:'Velocidade e sistema hidráulico'},
@@ -2447,7 +2476,7 @@ function renderCand(){
     tb.innerHTML='<tr><td colspan="12" style="color:var(--muted)">Este caso usa <b>redutor informado</b> — sem busca no catálogo. Troque a linha “Redutor” do caso para <b>Série 300 — busca</b> para ver os candidatos.</td></tr>';
     $('cnt').textContent='Verificações do redutor informado: torque nominal informado ≥ T × f′S (tabela A4) e torque máximo informado ≥ torque de pico.'; return; }
   if(!r.list.length){
-    var why=!isFinite(G.hv)?'Escolha a classe de utilização T e o espectro de carga em Premissas de cálculo (Passo 1): sem elas a ferramenta não calcula.'
+    var why=!isFinite(G.hv)?'Escolha a classe de utilização T em Premissas de cálculo (Passo 1): sem ela a ferramenta não calcula.'
       :!r.fs.v?'Sem fator de serviço na tabela A4 para esta vida. Leve o caso ao Serviço Técnico.'
       :(!isFinite(r.T)||!isFinite(r.n2req)?'Dados de entrada incompletos.'
        :'Nenhuma combinação dentro do desvio de ±'+fmt(G.tol*100,0)+'%. A redução necessária é '+fmt(r.mode==='E'?r.ireq:(E.num(c.n1)/r.n2req),1)+' — amplie o desvio, troque n₁ ou divida o torque em mais redutores.');
@@ -2502,11 +2531,11 @@ function pad(l,v){ var n=Math.max(2,38-l.length); return l+' '+Array(n+1).join('
 function renderFicha(){
   var m=M(), c=m.cases[m.act], r=RES[m.act], o=$('out'), E_=isE(), f=S.fam;
   $('ficha-case').textContent='Caso '+(m.act+1);
-  if(!(r.i>0)){ o.textContent='Sem redutor selecionado neste caso.'; $('dsg').textContent='—'; return; }
+  if(!(r.i>0)){ o.textContent='Sem redutor selecionado neste caso.'; $('dsg').textContent='—'; renderCode(null); return; }
   var ratio=fr(r.i), d;
   if(r.man) d='REDUTOR INFORMADO · i '+ratio;
   else d=r.cand.size+' '+r.cand.fam+' '+r.cand.st+' '+ratio+' '+G.ver+' '+(G.pflg||'P___')+' '+(G.pos||'___')+(G.opc?' '+G.opc:'');
-  $('dsg').textContent=d;
+  $('dsg').textContent=d; renderCode(r);
   var L=[], line=Array(57).join('=');
   L.push('FOLHA DE DADOS — '+FAMN[f]+' '+(E_?'ELÉTRICO':'HIDRÁULICO')+' / REDUTOR PLANETÁRIO');
   L.push('Projeto: '+(G.app||'—'));
@@ -2535,8 +2564,8 @@ function renderFicha(){
   L.push(line);
   L.push('ACIONAMENTO');
   if(E_){
-    L.push(pad('Motor', fmt(E.num(c.Pcv)*E.CVW,1)+' kW · '+fmt(E.num(c.nmot),0)+' rpm'));
-    L.push(pad('Potência requerida', fmt(r.Preq*E.CVW,2)+' kW   '+(r.okP?'atende':'INSUFICIENTE')));
+    L.push(pad('Motor', fmt(r.Pkw,1)+' kW · '+fmt(E.num(c.nmot),0)+' rpm'+(r.adot?'  (adotada: proxima comercial acima da minima pela carga)':'')));
+    L.push(pad('Potência requerida', fmt(r.Preq*E.CVW,2)+' kW   '+(r.okP?'atende':'ABAIXO DA MINIMA — escolha do cliente, com aviso')));
     L.push(pad('Velocidade real', fmt(r.vel,2)+' m/min'));
   } else {
     L.push(pad('Rotação requerida do motor', fmt(r.nmot,1)+' rpm'));
@@ -2570,7 +2599,7 @@ function renderFicha(){
   }
   L.push(line);
   L.push('PREMISSAS');
-  L.push('- fS\' pela tabela A4: '+['uniforme','choque moderado','choque pesado'][G.carga]+', '+['Z<10','10<Z<30','30<Z<100'][G.zb]+', classe T'+G.tcl+' ('+fmt(G.hv,0)+' h), espectro '+({'0.125':'L1','0.25':'L2','0.5':'L3','1':'L4'}[String(G.ks)]||'')+', grupo M'+G.mg);
+  L.push('- fS\' pela tabela A4: '+['uniforme','choque moderado','choque pesado'][G.carga]+', '+['Z<10','10<Z<30','30<Z<100'][G.zb]+', classe T'+G.tcl+' ('+fmt(G.hv,0)+' h), grupo M'+G.mg+' (espectro L3 assumido)');
   L.push('- torque de pico: '+fmt(G.tfr*100,0)+'% (capacidade declarada do equipamento)');
   if(f==='M') L.push('- tração nominal transmitida no Ø primitivo do barbotin (sem camadas)');
   else L.push('- tração nominal vale na camada '+(c.kref||1)+'; torque constante nas demais');
@@ -2619,7 +2648,48 @@ function copyText(btn,t,label){
 }
 
 /* ---------- ciclo ---------- */
-function refresh(){ calcAll(); updateGrid(); renderCand(); renderCable(); renderFicha();
+
+/* ---------- alternativas por classe T (como na elevação) ---------- */
+function renderAltT(){
+  var box=$('altbox'); if(!box) return;
+  var m=M(), c=m.cases[m.act], r=RES[m.act];
+  var t0=(G.tcl==='')?-1:parseInt(G.tcl,10);
+  if(t0<0||!r||r.man||!isFinite(r.n2req)){ box.hidden=true; return; }
+  var lo=Math.max(0,t0-2), hi=Math.min(TCL.length-1,t0+2), cards=[], base=null;
+  for(var t=lo;t<=hi;t++){
+    var G2={}; for(var k in G) G2[k]=G[k]; G2.hv=TCL[t];
+    var r2=isE()?E.calcE(c,G2):E.calcH(c,G2), best=null;
+    for(var j=0;j<r2.list.length;j++){ if(r2.list[j].fail===0){ best=r2.list[j]; break; } }
+    cards.push({t:t,fs:r2.fs,x:best}); if(t===t0) base=best;
+  }
+  $('altgrid').innerHTML=cards.map(function(cd){
+    var on=(cd.t===t0), x=cd.x, d='';
+    if(x&&base&&!on){ var dd=x.si-base.si; d=(dd===0)?'mesmo tamanho':((dd>0?'+':'−')+Math.abs(dd)+(Math.abs(dd)===1?' tamanho':' tamanhos')); }
+    return '<div class="alt-c'+(on?' on':'')+'"><div class="alt-t">T'+cd.t+' <small>'+fmt(TCL[cd.t],0)+' h · M'+MGT[cd.t]+'</small></div>'+
+      (x?'<div class="alt-m">'+x.size+' '+x.fam+x.st+' '+fr(x.i)+'</div><div class="alt-s">f<sub>S</sub> '+fmt(x.fS,2)+' · folga '+fmt((x.Mn/x.Mc-1)*100,0)+'%</div>':
+         '<div class="alt-m none">'+(cd.fs&&cd.fs.v?'Sem candidato':'Fora da tabela A4')+'</div><div class="alt-s">&nbsp;</div>')+
+      '<div class="alt-d">'+(on?'Sua escolha':d)+'</div></div>';
+  }).join('');
+  box.hidden=false;
+}
+/* ---------- código do redutor, bloco a bloco ---------- */
+function renderCode(r){
+  var bx=$('gdesig'); if(!bx) return;
+  if(!(r&&r.i>0)||r.man||!r.cand){ bx.hidden=true; return; }
+  bx.hidden=false;
+  var x=r.cand, vo=$('g_ver').options[$('g_ver').selectedIndex], vt=vo?vo.textContent.replace(/^[A-Z]+\s*—\s*/,''):'';
+  var T=[[x.size,'Tamanho do redutor dentro da série 300M: quanto maior o número, maior o torque nominal.'],
+    [x.fam,x.fam==='L'?'Desenho L: linear, coaxial (eixos alinhados).':'Desenho R: ortogonal (saída em ângulo reto).'],
+    [String(x.st),'Número de estágios de redução; define o rendimento na tabela A3.'],
+    [fr(x.i),'Relação de redução real, como está na tabela de seleção.'],
+    [G.ver,'Versão de saída: '+vt+'. Escolhida em Premissas de cálculo.'],
+    [G.pflg||'P___',G.pflg?'Flange de entrada IEC para o motor elétrico. A carcaça vem do motor, não do redutor.':'Flange de entrada a definir: vem da carcaça do motor (P71 a P250 na série 300M). No hidráulico, adaptador a confirmar com a Bonfiglioli.'],
+    [G.pos||'___',G.pos?'Posição de montagem (capítulo 24). Define a quantidade de óleo e os bujões.':'Posição de montagem a definir. '+(x.fam==='L'?'Coaxiais: A, E, F, G (eixo horizontal) e O, Q, T, V (eixo vertical).':'Ortogonais: B, I, J, M, P, R, U, W, com variantes de 0 a 3.')+' A designação só fica completa com ela.']];
+  if(G.opc) T.push([G.opc,'Opções e acessórios. Ex.: C3/C4 proteção de superfície (padrão de fábrica é só primer C2), G0A disco de contração, W0A flange, SLM/SLP estocagem longa.']);
+  $('dcode').innerHTML=T.map(function(t){return esc(t[0]);}).join(' &nbsp; ');
+  $('dlist').innerHTML=T.map(function(t){ return '<div><b>'+esc(t[0])+'</b><span>'+t[1]+'</span></div>'; }).join('');
+}
+function refresh(){ calcAll(); updateGrid(); renderCand(); renderAltT(); renderCable(); renderFicha();
   $('gcap').innerHTML='<b>'+FAML[S.fam]+' '+(isE()?'elétrico':'hidráulico')+'</b> · caso ativo: <b>Caso '+(M().act+1)+'</b> — clique no cabeçalho de outro caso para trocar. '+M().cases.length+' de '+MAXC+' casos.';
   var mb=$('man-warn'); if(mb) mb.hidden=(G.variant!=='manrider');
 }
@@ -2639,7 +2709,7 @@ $('grid').addEventListener('click',function(ev){
   var b=ev.target.closest('th.cs button'); if(!b) return;
   M().act=parseInt(b.getAttribute('data-ci'),10); refresh();
 });
-['g_carga','g_zb','g_tcl','g_espec','g_tfr','g_tol','g_leit','g_n1lib','g_etar','g_ver','g_pflg','g_pos','g_opc','g_app','g_var'].forEach(function(k){
+['g_carga','g_zb','g_tcl','g_tfr','g_tol','g_leit','g_n1lib','g_etar','g_ver','g_pflg','g_pos','g_opc','g_app','g_var'].forEach(function(k){
   var e=$(k); e.addEventListener('input',refresh); e.addEventListener('change',refresh); });
 
 function paintModes(){
