@@ -1317,12 +1317,20 @@ function vfFix(q){
   q.fix={lin:t,tam:s,i:i}; q.serie=t; q.n2req=q.n1/i; q.Mr=(q.P>0)?q.P*9550/q.n2req:NaN; q.tol=1;
   q.ok=(q.P>0&&q.n1>0&&isFinite(q.fsr)&&q.n1<=3600);
 }
+var N1HOME=null;
+function n1Place(){
+  var mod=(MODO==='mod'), f=$('n1').closest('.fld'), adv=document.querySelector('details.grp.adv'), pf=$('polos').closest('.fld');
+  if(!N1HOME) N1HOME=f.parentNode;
+  if(mod){ if(f.parentNode!==pf.parentNode) pf.parentNode.insertBefore(f,pf.nextSibling); f.hidden=($('polos').value!=='0'); if(adv) adv.hidden=true; }
+  else { if(f.parentNode!==N1HOME) N1HOME.insertBefore(f,N1HOME.firstChild); f.hidden=false; if(adv) adv.hidden=false; }
+}
 function setModo(m,quiet){
   MODO=m; FOCUS=null;
   Array.prototype.forEach.call(document.querySelectorAll('#modos2 .m2'),function(b){ var on=b.dataset.m===m; b.classList.toggle('on',on); b.setAttribute('aria-checked',on?'true':'false'); });
   var mod=(m==='mod');
   $('mbox').hidden=!mod; $('tipos').closest('.fld').hidden=mod;
   ['ent','val','tol'].forEach(function(id){ var f=$(id)&&$(id).closest('.fld'); if(f) f.hidden=mod; });
+  n1Place();
   if(mod) mFill(true);
   if(!quiet) render();
 }
@@ -1333,6 +1341,7 @@ function setModo(m,quiet){
   $('mtam').addEventListener('change',function(){ mFill(true); render(); });
   $('mrel').addEventListener('change',function(){ render(); });
   ['n1','polos'].forEach(function(id){ $(id).addEventListener('change',function(){ if(MODO==='mod'){ mFill(true); render(); } }); });
+  $('polos').addEventListener('change',n1Place);
   setModo('mod',true);
 })();
 
