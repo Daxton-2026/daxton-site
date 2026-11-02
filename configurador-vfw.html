@@ -552,7 +552,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 <div class="backbar noprint"><div class="wrap"><a href="/bonfiglioli"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M20 12H5M11 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Retornar</a></div></div>
 
 <style>
-.tipos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.tipos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .tipo.all{grid-column:1/-1;flex-direction:row;align-items:center;gap:16px;padding:10px 16px}
 .tipo.all .tipo-img{width:132px;height:72px;flex:none;margin:0}
 .tipo.all .tx{display:flex;flex-direction:column;gap:3px}
@@ -568,6 +568,19 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 @media (max-width:560px){.tipos{grid-template-columns:repeat(2,minmax(0,1fr))}.tipo.all .tipo-img{width:96px;height:60px}}
 .sum-bl{margin:12px 0 0;font-size:12.5px;line-height:1.45;color:var(--muted)}.sum-bl b{color:var(--ink2)}
 .alt-c.pick{cursor:pointer}.alt-c.pick:hover{border-color:var(--accent)}
+.mec-g{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:24px 0 10px;font-weight:700}
+.mec{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(290px,100%),1fr));gap:14px 18px}
+.mec .fld{min-width:0}
+.mec .fld select{width:100%}
+.mec .fld.off{opacity:.62}
+.mec .tip.why{color:var(--crit)}
+.mc-ck{display:flex;gap:9px;align-items:flex-start;font-weight:400;cursor:pointer;line-height:1.4;white-space:normal;text-transform:none;letter-spacing:normal}
+.mc-ck span{min-width:0;overflow-wrap:anywhere}
+.mc-ck input{margin-top:3px;flex:none;width:18px !important;height:18px;min-width:0;padding:0;accent-color:var(--accent)}
+.mc-ck span{flex:1}
+.mc-lb{font-weight:600}
+#mec .desig-code{white-space:normal;overflow-wrap:anywhere;line-height:1.45}
+@media (max-width:900px){.tipos{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 <header class="top">
   <div class="wrap">
@@ -586,7 +599,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
   <li><a href="#entrada"><span>IN</span>Dados de entrada</a></li>
   <li><a href="#req"><span>Σ</span>Requisito calculado</a></li>
   <li><a href="#cand"><span>10</span>Candidatos</a></li>
-  <li><a href="#ficha"><span>ID</span>Ficha</a></li>
+  <li><a href="#mec"><span>4</span>Configuração</a></li><li><a href="#ficha"><span>ID</span>Ficha</a></li>
   <li><a href="#limites"><span>!</span>O que ele não faz</a></li>
 </ul></div></nav>
 
@@ -686,9 +699,18 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
   </div>
 </section>
 
+<section id="mec">
+  <div class="sec-h">
+    <div class="eyebrow">Passo 4 · opcional</div>
+    <h2>Configuração mecânica</h2>
+    <p>Só o redutor: motor e freio ficam fora. Escolha o que já sabe; o que ficar em branco sai como padrão de fábrica ou "a definir" na ficha. Só aparecem as opções que o catálogo VF-W oferece para o modelo selecionado, e o que tiver restrição vem explicado.</p>
+  </div>
+  <div id="mecbox"></div>
+</section>
+
 <section id="ficha">
   <div class="sec-h">
-    <div class="eyebrow">Passo 4</div>
+    <div class="eyebrow">Passo 5</div>
     <h2>Ficha</h2>
     <p>Do candidato selecionado acima. O bloco sai formatado para colar no pedido.</p>
   </div>
@@ -704,8 +726,8 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
     <h2>O que esta ferramenta não faz</h2>
   </div>
   <div class="note warn"><i></i><div>
-    <h4>Cargas radiais e axiais, lubrificação e forma construtiva</h4>
-    <p>A ficha mostra a carga radial admissível no eixo de saída (R<sub>n2</sub>) do catálogo, mas não a compara com a sua aplicação. Forma construtiva, posição de montagem, sentido de giro e lubrificação ficam para o projetista.</p>
+    <h4>Cargas radiais e axiais</h4>
+    <p>A ficha mostra a carga radial admissível no eixo de saída (R<sub>n2</sub>) do catálogo, mas não a compara com a sua aplicação. A configuração mecânica do passo 4 cobre só o redutor; motor, freio e acessórios do motor não entram.</p>
   </div></div>
   <div class="note warn"><i></i><div>
     <h4>Rotação de entrada de 60 Hz</h4>
@@ -735,6 +757,7 @@ var ACF={"rows":[],"pt":{},"fl":{}};
 var VFW={"rows":[["VF",27,7,67,[[71,11,0.11,90,600,79],[129,10,0.17,90,480,81],[200,9,0.23,35,410,83],[400,7,0.34,null,330,86]]],["VF",27,10,62,[[50,12,0.08,90,600,76],[90,11,0.13,20,570,78],[140,9,0.16,30,500,80],[280,7,0.24,null,400,84]]],["VF",27,15,54,[[33,12,0.06,90,600,69],[60,11,0.09,null,600,72],[93,9,0.12,null,600,75],[187,7,0.17,null,480,79]]],["VF",27,20,49,[[25,12,0.05,90,600,65],[45,11,0.08,null,600,68],[70,9,0.09,null,600,71],[140,7,0.14,null,540,76]]],["VF",27,30,38,[[16.7,13,0.04,null,600,55],[30,11,0.06,null,600,59],[47,9,0.07,null,600,62],[93,7,0.1,null,600,69]]],["VF",27,40,33,[[12.5,13,0.04,null,600,50],[22.5,11,0.05,null,600,54],[35,9,0.06,null,600,57],[70,7,0.08,null,600,64]]],["VF",27,60,26,[[8.3,12,0.02,null,600,41],[15,11,0.04,null,600,45],[23.3,9,0.04,null,600,49],[47,7,0.06,null,600,56]]],["VF",27,70,24,[[7.1,11,0.02,null,600,38],[12.9,10,0.03,null,600,42],[20,9,0.04,null,600,45],[40,7,0.06,null,600,53]]],["VF",30,7,69,[[71,20,0.19,150,920,81],[129,18,0.3,150,730,82],[200,16,0.41,140,630,84],[400,12,0.58,120,510,87]]],["VF",30,10,64,[[50,20,0.14,150,1120,77],[90,18,0.22,150,900,79],[140,16,0.3,80,770,81],[280,12,0.41,70,620,85]]],["VF",30,15,56,[[33,22,0.11,150,1320,71],[60,20,0.17,null,1060,74],[93,18,0.24,null,910,76],[187,14,0.34,null,720,81]]],["VF",30,20,51,[[25,22,0.09,150,1490,67],[45,20,0.14,null,1200,70],[70,18,0.19,null,1030,73],[140,14,0.26,null,820,78]]],["VF",30,30,41,[[16.7,24,0.07,null,1700,58],[30,22,0.12,null,1400,61],[47,20,0.15,null,1200,65],[93,15,0.21,null,960,71]]],["VF",30,40,36,[[12.5,22,0.06,null,1700,53],[23,20,0.09,null,1590,56],[35,19,0.12,null,1360,60],[70,14,0.16,null,1090,66]]],["VF",30,60,29,[[8.3,22,0.05,null,1700,44],[15,20,0.07,null,1650,48],[23.3,19,0.09,null,1590,51],[47,14,0.12,null,1270,59]]],["VF",30,70,26,[[7,19,0.04,null,1700,41],[13,17,0.05,null,1700,45],[20,15,0.07,null,1600,48],[40,11,0.08,null,1380,55]]],["VF",44,7,71,[[71,45,0.41,220,1610,83],[129,39,0.63,220,1300,85],[200,29,0.71,220,1180,86],[400,22,1.1,220,950,88]]],["VF",44,10,66,[[50,45,0.29,220,1980,80],[90,39,0.45,220,1610,82],[140,29,0.51,220,1430,84],[280,22,0.74,220,1150,87]]],["VF",44,14,60,[[36,50,0.25,220,2280,76],[64,39,0.34,220,1890,78],[100,29,0.37,220,1680,81],[200,22,0.55,220,1340,84]]],["VF",44,20,55,[[25,50,0.18,220,2500,72],[45,45,0.29,220,2160,74],[70,39,0.37,220,1860,77],[140,29,0.52,220,1490,81]]],["VF",44,28,45,[[17.9,55,0.16,220,2500,64],[32,49,0.24,220,2300,67],[50,39,0.29,220,2140,71],[100,29,0.4,220,1710,76]]],["VF",44,35,42,[[14.3,55,0.14,220,2500,60],[25.7,49,0.2,220,2300,64],[40,39,0.25,220,2300,68],[80,29,0.33,220,1870,73]]],["VF",44,46,37,[[10.9,50,0.1,220,2500,55],[19.6,49,0.17,220,2300,59],[30,39,0.19,220,2300,63],[61,29,0.27,220,2080,69]]],["VF",44,60,32,[[8.3,50,0.09,220,2500,50],[15,45,0.13,200,2300,54],[23.3,39,0.16,220,2300,58],[47,29,0.22,220,2290,65]]],["VF",44,70,30,[[7.1,45,0.07,220,2500,47],[12.9,39,0.1,220,2300,51],[20,29,0.11,220,2300,55],[40,22,0.15,220,2300,62]]],["VF",44,100,24,[[5,32,0.04,220,2500,39],[9,30,0.06,220,2300,43],[14,28,0.09,220,2300,47],[28,21,0.11,220,2300,55]]],["VF",49,7,70,[[71,74,0.67,400,1670,83],[129,61,0.97,400,1370,85],[200,54,1.3,400,1170,86],[400,41,2,400,950,88]]],["VF",49,10,65,[[50,74,0.49,400,2060,80],[90,64,0.75,400,1670,82],[140,59,1,400,1410,84],[280,44,1.5,400,1140,86]]],["VF",49,14,59,[[36,78,0.39,400,2400,75],[64,71,0.61,400,1920,78],[100,65,0.9,400,1630,81],[200,49,1.2,400,1310,84]]],["VF",49,18,55,[[27.8,74,0.3,400,2730,72],[50,68,0.47,400,2190,75],[78,59,0.6,400,1890,78],[156,44,0.87,400,1520,82]]],["VF",49,24,50,[[20.8,74,0.24,400,3090,68],[38,68,0.36,400,2480,71],[58,63,0.5,400,2110,75],[117,47,0.73,400,1670,79]]],["VF",49,28,43,[[17.9,88,0.26,400,3180,63],[32,82,0.41,400,2540,67],[50,74,0.55,400,2170,71],[100,56,0.78,400,1740,75]]],["VF",49,36,39,[[13.9,80,0.2,400,3450,59],[25,75,0.31,400,2880,63],[39,69,0.42,400,2460,67],[78,52,0.59,400,1970,72]]],["VF",49,45,35,[[11.1,78,0.17,400,3450,55],[20,71,0.25,400,3190,59],[31,65,0.33,400,2725,63],[62,49,0.46,400,2180,69]]],["VF",49,60,30,[[8.3,69,0.12,400,3450,49],[15,64,0.19,400,3300,53],[23.3,59,0.25,400,3100,58],[47,44,0.34,400,2480,64]]],["VF",49,70,28,[[7.1,69,0.11,400,3450,46],[12.9,60,0.16,400,3300,50],[20,55,0.21,400,3150,54],[40,41,0.28,400,2650,61]]],["VF",49,80,25,[[6.3,59,0.09,400,3450,43],[11.3,58,0.14,400,3300,47],[17.5,54,0.19,400,3150,52],[35,41,0.25,400,2780,59]]],["VF",49,100,22,[[5,59,0.08,400,3450,38],[9,52,0.11,400,3300,42],[14,49,0.13,400,3150,47],[28,37,0.2,400,3050,54]]],["W",63,7,70,[[71,140,1.2,480,2420,84],[129,130,2,480,1870,87],[200,120,2.9,480,1550,88],[400,105,4.9,480,1010,90]]],["W",63,10,66,[[50,165,1.1,480,2830,81],[90,150,1.7,480,2220,84],[140,140,2.4,480,1840,86],[280,125,4.2,370,1360,88]]],["W",63,12,63,[[42,165,0.92,480,3140,79],[75,150,1.4,480,2480,82],[117,140,2,480,2070,85],[233,125,3.5,435,1540,87]]],["W",63,15,59,[[33,180,0.83,480,3430,76],[60,160,1.3,480,2740,80],[93,150,1.8,480,2280,83],[187,125,2.8,410,1770,86]]],["W",63,19,55,[[26.3,180,0.68,480,3860,73],[47,160,1,480,3100,78],[74,150,1.4,480,2600,81],[147,130,2.4,310,1990,84]]],["W",63,24,52,[[20.8,185,0.58,480,4280,70],[38,165,0.86,480,3440,75],[58,155,1.2,480,2890,78],[117,130,1.9,370,2250,82]]],["W",63,30,44,[[16.7,190,0.52,480,4690,64],[30,170,0.76,480,3770,70],[47,160,1.1,460,3170,74],[93,125,1.6,440,2540,78]]],["W",63,38,40,[[13.2,185,0.42,480,5000,61],[23.7,165,0.62,480,4240,66],[37,155,0.85,480,3580,70],[74,130,1.3,330,2800,75]]],["W",63,45,37,[[11.1,170,0.34,480,5000,58],[20,155,0.52,480,4630,63],[31,145,0.71,480,3920,67],[62,130,1.2,380,3020,73]]],["W",63,64,31,[[7.8,150,0.24,480,5000,51],[14.1,135,0.35,480,5000,56],[21.9,125,0.47,480,4680,61],[44,110,0.75,480,3650,67]]],["W",63,80,27,[[6.3,135,0.19,480,5000,46],[11.3,125,0.28,480,5000,52],[17.5,115,0.38,480,5000,56],[35,100,0.59,480,4050,62]]],["W",63,100,23,[[5,130,0.17,480,5000,41],[9,120,0.25,480,5000,46],[14,115,0.33,480,5000,51],[28,100,0.51,480,4420,58]]],["W",75,7,71,[[71,225,2,750,2940,86],[129,205,3.1,750,2120,88],[200,190,4.4,750,1530,90],[400,170,7.8,750,700,91]]],["W",75,10,67,[[50,275,1.7,750,3480,84],[90,250,2.7,750,2700,86],[140,230,3.8,750,2240,88],[280,205,6.7,750,1610,90]]],["W",75,15,60,[[33,295,1.3,750,4380,80],[60,270,2,750,3440,83],[93,250,2.9,750,2870,85],[187,225,5,750,2120,88]]],["W",75,20,56,[[25,295,1,750,5120,77],[45,270,1.6,750,4050,80],[70,250,2.2,750,3410,83],[140,225,3.8,750,2550,86]]],["W",75,25,52,[[20,295,0.85,750,5720,73],[36,270,1.3,750,4550,77],[56,250,1.8,750,3840,80],[112,225,3.2,750,2900,83]]],["W",75,30,45,[[16.7,320,0.81,750,6080,69],[30,290,1.2,750,4860,74],[47,270,1.7,750,4090,77],[93,240,2.9,750,3100,81]]],["W",75,40,40,[[12.5,305,0.63,750,6200,63],[22.5,275,1,750,5630,68],[35,255,1.3,750,4770,72],[70,225,2.1,750,3660,77]]],["W",75,50,36,[[10,260,0.47,750,6200,58],[18,235,0.7,750,6200,63],[28,220,0.95,750,5410,68],[56,195,1.6,750,4180,73]]],["W",75,60,33,[[8.3,235,0.37,750,6200,55],[15,215,0.56,750,6200,60],[23.3,200,0.75,750,5960,65],[47,180,1.3,750,4610,70]]],["W",75,80,28,[[6.3,215,0.29,750,6200,49],[11.3,195,0.43,750,6200,54],[17.5,180,0.56,750,6200,59],[35,160,0.9,750,5310,65]]],["W",75,100,25,[[5,180,0.21,750,6200,44],[9,160,0.3,750,6200,50],[14,150,0.4,750,6200,55],[28,135,0.65,750,5960,61]]],["W",86,7,71,[[71,295,2.6,850,5890,85],[129,270,4.1,850,4670,88],[200,250,5.9,850,3920,89],[400,225,10.4,850,2930,91]]],["W",86,10,67,[[50,345,2.2,850,6860,82],[90,310,3.4,850,5500,86],[140,290,4.8,850,4620,88],[280,260,8.5,850,3490,90]]],["W",86,15,60,[[33,390,1.7,850,7000,78],[60,355,2.7,850,6520,82],[93,330,3.8,850,5510,85],[187,295,6.6,850,4200,87]]],["W",86,20,60,[[25,380,1.3,850,7000,77],[45,345,2,850,7000,81],[70,320,2.8,850,6380,84],[140,285,4.9,850,4900,86]]],["W",86,23,58,[[21.7,380,1.2,850,7000,75],[39,345,1.8,850,7000,80],[61,320,2.5,850,6800,82],[122,285,4.3,850,5250,85]]],["W",86,30,45,[[16.7,440,1.1,850,7000,67],[30,400,1.7,850,7000,73],[47,370,2.4,850,7000,76],[93,320,3.9,850,5740,81]]],["W",86,40,45,[[12.5,390,0.77,850,7000,66],[22.5,355,1.2,850,7000,71],[35,330,1.6,850,7000,75],[70,295,2.7,850,6670,79]]],["W",86,46,43,[[10.9,405,0.73,850,7000,63],[19.6,365,1.1,850,7000,69],[30,340,1.5,850,7000,73],[61,305,2.5,850,7000,77]]],["W",86,56,39,[[8.9,355,0.55,850,7000,60],[16.1,325,0.83,850,7000,66],[25,300,1.1,850,7000,70],[50,265,1.8,850,7000,75]]],["W",86,64,37,[[7.8,330,0.47,850,7000,58],[14.1,300,0.7,850,7000,63],[21.9,280,0.94,850,7000,68],[44,250,1.6,850,7000,73]]],["W",86,80,33,[[6.3,305,0.38,850,7000,53],[11.3,275,0.55,850,7000,59],[17.5,255,0.73,850,7000,64],[35,225,1.2,850,7000,69]]],["W",86,100,29,[[5,275,0.29,850,7000,49],[9,250,0.43,850,7000,55],[14,230,0.57,850,7000,59],[28,205,0.92,850,7000,65]]],["W",110,7,71,[[71,595,5.2,1200,7680,86],[129,540,8.3,1200,6040,88],[200,500,11.8,1200,5020,89],[400,445,20.7,1200,3710,90]]],["W",110,10,67,[[50,655,4.1,1200,8000,84],[90,590,6.5,1200,7410,86],[140,550,9.3,1200,6190,87],[280,490,16.1,1200,4650,89]]],["W",110,15,60,[[33,710,3.1,1200,8000,80],[60,645,4.9,1200,8000,83],[93,600,7,1200,7590,84],[187,535,12,1200,5770,87]]],["W",110,20,61,[[25,675,2.2,1200,8000,79],[45,615,3.5,1200,8000,82],[70,570,5,1200,8000,84],[140,510,8.7,1200,6790,86]]],["W",110,23,59,[[21.7,640,1.9,1200,8000,77],[39,580,2.9,1200,8000,81],[61,540,4.1,1200,8000,83],[122,480,7.1,1200,7430,86]]],["W",110,30,45,[[16.7,830,2.1,1200,8000,70],[30,755,3.2,1200,8000,74],[47,700,4.4,1200,8000,77],[93,625,7.5,1200,7780,81]]],["W",110,40,46,[[12.5,795,1.5,1200,8000,68],[22.5,720,2.3,1200,8000,73],[35,670,3.2,1200,8000,76],[70,595,5.5,1200,8000,80]]],["W",110,46,44,[[10.9,710,1.2,1200,8000,66],[19.6,645,1.9,1200,8000,71],[30,600,2.6,1200,8000,74],[61,535,4.3,1200,8000,79]]],["W",110,56,41,[[8.9,710,1.1,1200,8000,63],[16.1,645,1.6,1200,8000,68],[25,600,2.2,1200,8000,72],[50,535,3.7,1200,8000,76]]],["W",110,64,38,[[7.8,630,0.86,1200,8000,60],[14.1,570,1.3,1200,8000,65],[21.9,530,1.7,1200,8000,70],[44,470,2.9,1200,8000,74]]],["W",110,80,34,[[6.3,560,0.65,1200,8000,56],[11.3,505,0.98,1200,8000,61],[17.5,470,1.3,1200,8000,66],[35,420,2.2,1200,8000,71]]],["W",110,100,30,[[5,545,0.56,1200,8000,51],[9,495,0.82,1200,8000,57],[14,460,1.1,1200,8000,62],[28,410,1.8,1200,8000,67]]],["VF",130,7,71,[[71,1000,8.8,1500,8670,86],[129,850,13,1500,6980,88],[200,740,17.4,1500,5990,89],[400,555,25,1500,4930,91]]],["VF",130,10,67,[[50,1100,6.9,1500,10800,84],[90,900,9.9,1500,8900,87],[140,790,13.3,1500,7620,88],[280,593,19.3,1500,6210,90]]],["VF",130,15,63,[[33,1350,5.9,1500,12600,81],[60,1080,8.1,1500,10490,84],[93,920,10.6,1500,9100,86],[187,690,15.3,1500,7390,88]]],["VF",130,20,59,[[25,1350,4.6,1500,13800,79],[45,1050,6.1,1500,12400,82],[70,900,8,1500,10700,84],[140,675,11.4,1500,8670,87]]],["VF",130,23,57,[[21.7,1300,3.9,1500,13800,77],[39,1050,5.4,1500,13200,81],[61,890,6.9,1500,11500,83],[122,668,9.9,1500,9300,86]]],["VF",130,30,49,[[16.7,1500,3.7,null,13800,72],[30,1250,5.2,null,13200,77],[47,1050,6.6,null,12500,79],[93,788,9.3,1040,10100,83]]],["VF",130,40,44,[[12.5,1400,2.8,null,13800,68],[22.5,1200,3.9,null,13200,73],[35,1100,5.4,null,12600,76],[70,825,7.6,null,11400,80]]],["VF",130,46,45,[[10.9,1350,2.3,1270,13800,68],[19.6,1150,3.3,490,13200,73],[30,1050,4.5,null,12600,76],[61,788,6.3,1290,12200,80]]],["VF",130,56,42,[[8.9,1200,1.8,1500,13800,65],[16.1,1080,2.7,1500,13200,70],[25,960,3.4,940,12600,73],[50,720,4.8,1500,12600,78]]],["VF",130,64,39,[[7.8,1200,1.6,1500,13800,62],[14.1,1050,2.4,1500,13200,68],[21.9,930,3,1220,12600,71],[44,698,4.2,1500,12600,76]]],["VF",130,80,35,[[6.3,1150,1.3,1500,13800,58],[11.3,950,1.8,1500,13200,64],[17.5,880,2.4,1500,12600,68],[35,660,3.3,1500,12600,73]]],["VF",130,100,31,[[5,900,0.91,1500,13800,54],[9,800,1.3,1500,13200,59],[14,780,1.8,1500,12600,64],[28,585,2.5,1500,12600,70]]],["VF",150,7,72,[[71,1400,12.2,2200,8560,87],[129,1150,17.6,2200,7040,89],[200,1000,24,2200,6040,90],[400,750,35,2200,5010,91]]],["VF",150,10,68,[[50,1500,9.4,2200,11400,85],[90,1200,13,2200,9480,87],[140,1050,17.5,2200,8120,88],[280,788,25,2200,6630,90]]],["VF",150,15,64,[[33,1700,7.3,2200,13800,83],[60,1350,10,2200,11500,85],[93,1150,13.1,2200,9990,87],[187,863,19,2200,8110,89]]],["VF",150,20,59,[[25,1900,6.4,2200,15700,80],[45,1500,8.6,2200,13100,83],[70,1300,11.3,2200,11300,84],[140,975,16.4,2200,9170,87]]],["VF",150,23,57,[[21.7,1850,5.5,2200,16000,78],[39,1500,7.6,2200,14200,82],[61,1270,9.8,2200,12300,83],[122,953,14.1,2200,9940,86]]],["VF",150,30,48,[[16.7,1950,4.8,2200,16000,73],[30,1600,6.5,2200,15500,77],[47,1370,8.5,2200,13700,80],[93,1028,12.1,2200,11100,83]]],["VF",150,40,44,[[12.5,2000,3.9,2200,16000,69],[22.5,1750,5.6,1150,15500,74],[35,1540,7.4,830,14700,77],[70,1155,10.5,2200,12300,81]]],["VF",150,46,45,[[10.9,2000,3.4,2200,16000,69],[19.6,1750,4.9,2100,15500,74],[30,1550,6.5,1400,14700,77],[61,1163,9.2,2200,13100,81]]],["VF",150,56,42,[[8.9,1750,2.6,2200,16000,66],[16.1,1500,3.7,2200,15500,71],[25,1370,4.9,2200,14700,74],[50,1028,6.8,2200,14600,79]]],["VF",150,64,39,[[7.8,1700,2.3,2200,16000,63],[14.1,1450,3.2,2200,15500,69],[21.9,1330,4.2,2200,14700,72],[44,998,5.9,2200,14700,77]]],["VF",150,80,35,[[6.3,1550,1.8,2200,16000,59],[11.3,1350,2.5,2200,15500,65],[17.5,1250,3.4,2200,14700,69],[35,938,4.6,2200,14700,74]]],["VF",150,100,31,[[5,1300,1.3,2200,16000,55],[9,1150,1.8,2200,15500,61],[14,1150,2.6,2200,14700,65],[28,863,3.6,2200,14700,71]]],["VF",185,7,72,[[71,2450,21,2800,8730,88],[129,2000,30,2800,7120,89],[200,1750,41,2800,5570,90],[400,1313,60,2800,4670,91]]],["VF",185,10,68,[[50,2600,16,2800,12500,86],[90,2150,23,2800,10200,88],[140,1820,30,2800,8960,89],[280,1365,44,2800,7390,90]]],["VF",185,15,66,[[33,2800,11.8,2800,15700,84],[60,2250,16.4,2800,13100,86],[93,1850,21,2800,11600,88],[187,1388,30,2800,9460,89]]],["VF",185,20,59,[[25,3300,10.9,2800,17900,81],[45,2750,15.6,2800,14600,84],[70,2270,19.6,2800,12900,85],[140,1703,28,2800,10500,88]]],["VF",185,30,54,[[16.7,2800,6.5,2800,19500,77],[30,2400,9.4,2800,19000,81],[47,1980,11.8,2800,16900,83],[93,1485,16.9,2800,13700,86]]],["VF",185,40,44,[[12.5,3600,6.8,null,19500,71],[22.5,3100,9.7,null,19000,76],[35,2630,12.4,null,17900,78],[70,1973,17.6,null,14500,82]]],["VF",185,50,41,[[10,3300,5.2,null,19500,68],[18,2900,7.6,null,19000,73],[28,2500,9.8,null,18000,76],[56,1875,13.7,null,16300,80]]],["VF",185,60,39,[[8.3,3000,4.2,2800,19500,66],[15,2600,5.8,700,19000,71],[23.3,2270,7.6,770,18000,74],[47,1703,10.7,2800,18000,78]]],["VF",185,80,33,[[6.3,2800,3.2,2800,19500,60],[11.3,2400,4.3,1770,19000,66],[17.5,2120,5.6,1140,18000,69],[35,1590,7.8,2800,18000,75]]],["VF",185,100,30,[[5,2300,2.1,2800,19500,56],[9,2000,3,2800,19000,62],[14,1900,4.3,2800,18000,65],[28,1425,5.8,2800,18000,72]]],["VF",210,7,71,[[71,3400,29,5300,21800,88],[129,2700,41,5300,18800,89],[200,2300,54,5300,16700,90],[400,1725,79,5300,14000,91]]],["VF",210,10,69,[[50,3800,23,5300,26000,87],[90,3150,34,5300,21900,88],[140,2650,44,5300,19500,89],[280,1988,65,5300,16300,90]]],["VF",210,15,63,[[33,4100,17.2,5300,31800,84],[60,3300,24,5300,27000,86],[93,2850,32,5300,23700,88],[187,2138,47,5300,19700,89]]],["VF",210,20,57,[[25,4700,15.4,null,34500,81],[45,3800,22,null,29900,83],[70,3100,27,1100,26600,85],[140,2325,39,4970,22000,87]]],["VF",210,30,51,[[16.7,4000,9.3,5300,34500,77],[30,3400,13.4,3750,33000,80],[47,3050,18.5,1760,31500,83],[93,2288,26,5300,25900,85]]],["VF",210,40,42,[[12.5,5000,9.4,null,34500,71],[22.5,4300,13.5,null,33000,75],[35,3500,17,null,31500,78],[70,2625,23,null,28300,81]]],["VF",210,50,39,[[10,4500,7.1,null,34500,68],[18,4000,10.5,null,33000,72],[28,3300,13,null,31500,76],[56,2475,18.4,null,31000,79]]],["VF",210,60,36,[[8.3,4300,6,null,34500,65],[15,3720,8.5,null,33000,70],[23.3,3015,10,null,31500,73],[47,2363,15,null,31500,77]]],["VF",210,80,31,[[6.3,3900,4.4,null,34500,60],[11.3,3300,6,null,33000,65],[17.5,2900,7.7,null,31500,69],[35,2175,10.9,null,31500,73]]],["VF",210,100,27,[[5,3400,3.4,1470,34500,56],[9,3000,4.6,null,33000,61],[14,2700,6,null,31500,65],[28,2025,8.5,950,31500,70]]],["VF",250,7,71,[[71,5200,44,7000,27600,88],[129,4150,63,7000,23700,90],[200,3200,75,7000,21900,91],[400,2400,109,7000,18300,92]]],["VF",250,10,69,[[50,6000,36,7000,32300,87],[90,4800,51,7000,27600,89],[140,3700,61,7000,25300,90],[280,2775,89,7000,21100,91]]],["VF",250,15,64,[[33,6400,27,7000,39500,85],[60,5300,39,7000,33200,87],[93,4000,45,7000,30300,88],[187,3000,65,7000,25100,90]]],["VF",250,20,59,[[25,7100,24,1910,44400,82],[45,5950,33,1640,37200,85],[70,4450,38,7000,33900,86],[140,3338,56,7000,28000,88]]],["VF",250,30,53,[[16.7,6000,14.7,7000,52000,79],[30,5500,21,7000,44900,81],[47,4000,23,7000,40600,84],[93,3000,34,7000,33400,86]]],["VF",250,40,41,[[12.5,7000,13.6,null,52000,72],[22.5,6500,20,null,48800,76],[35,4800,22,null,44000,79],[70,3600,32,4680,36200,82]]],["VF",250,50,36,[[10,6500,11.1,null,52000,68],[18,6200,16.2,null,50000,73],[28,4500,17,null,47000,76],[56,3375,25,6370,39500,79]]],["VF",250,60,38,[[8.3,6300,8.6,4350,52000,68],[15,5600,12.2,null,50000,72],[23.3,4500,15,null,47000,76],[47,3375,20.6,7000,42100,80]]],["VF",250,80,32,[[6.3,5400,6.8,7000,52000,62],[11.3,5200,9.3,null,50000,67],[17.5,3900,10,null,47000,71],[35,2925,14.1,7000,47000,76]]],["VF",250,100,29,[[5,5000,5.3,4160,52000,58],[9,4800,7.2,3010,50000,63],[14,3650,7.8,3010,47000,68],[28,2738,11,7000,47000,73]]]],"ordem":[500,900,1400,2800]};
 var FLV={"30":[[56,"B14",7,70],[63,"B14",7,60],[56,"B5",7,70],[63,"B5",7,60]],"44":[[63,"B14",7,100],[71,"B14",7,35],[63,"B5",7,100],[71,"B5",7,35]],"49":[[63,"B14",7,100],[71,"B14",7,60],[80,"B14",7,28],[63,"B5",7,100],[71,"B5",7,60],[80,"B5",7,28]],"63":[[71,"B14",7,100],[80,"B14",7,100],[90,"B14",7,30],[71,"B5",7,100],[80,"B5",7,100],[90,"B5",7,30]],"75":[[80,"B14",7,100],[90,"B14",7,100],[100,"B14",7,100],[71,"B5",7,100],[80,"B5",7,100],[90,"B5",7,100],[100,"B5",7,100]],"86":[[80,"B14",7,100],[90,"B14",7,100],[100,"B14",7,100],[112,"B14",7,100],[71,"B5",7,100],[80,"B5",7,100],[90,"B5",7,100],[100,"B5",7,100],[112,"B5",7,100]],"110":[[80,"B14",7,100],[90,"B14",7,100],[100,"B14",7,100],[112,"B14",7,100],[80,"B5",7,100],[90,"B5",7,100],[100,"B5",7,100],[112,"B5",7,100],[132,"B5",7,100]],"130":[[90,"B5",46,100],[100,"B5",7,80],[112,"B5",7,40],[132,"B5",7,40]],"150":[[100,"B5",23,100],[112,"B5",23,100],[132,"B5",7,46],[160,"B5",7,20]],"185":[[100,"B5",50,100],[112,"B5",50,100],[132,"B5",30,80],[160,"B5",15,40],[180,"B5",7,20]],"210":[[132,"B5",7,100],[160,"B5",7,100],[180,"B5",7,100],[200,"B5",7,100],[225,"B5",7,100]],"250":[[132,"B5",7,100],[160,"B5",7,100],[180,"B5",7,100],[200,"B5",7,100],[225,"B5",7,100]]};
 var FSG={"Z":[0,10,25,50,75,100,125,150,175,200,250,300],"fs":{"K3_8":[1.54,1.56,1.59,1.63,1.66,1.68,1.69,1.7,1.7,1.71,1.72,1.73],"K2_8":[1.35,1.37,1.4,1.43,1.46,1.49,1.51,1.53,1.54,1.54,1.56,1.57],"K1_8":[1.0,1.02,1.05,1.09,1.13,1.16,1.18,1.19,1.2,1.21,1.22,1.23],"K3_16":[1.67,1.69,1.71,1.75,1.77,1.79,1.8,1.81,1.81,1.82,1.83,1.84],"K2_16":[1.5,1.51,1.54,1.57,1.6,1.62,1.64,1.66,1.66,1.67,1.68,1.69],"K1_16":[1.18,1.2,1.23,1.27,1.3,1.32,1.34,1.35,1.36,1.37,1.38,1.39],"K3_24":[1.8,1.81,1.83,1.86,1.89,1.9,1.91,1.92,1.92,1.93,1.94,1.94],"K2_24":[1.64,1.66,1.68,1.71,1.73,1.75,1.77,1.78,1.79,1.8,1.81,1.82],"K1_24":[1.36,1.38,1.4,1.44,1.46,1.49,1.5,1.52,1.52,1.53,1.54,1.55]}};
+var ACO={"forma":{},"flange":{},"ved":{},"cr":{}};
 var IECF={
   2:[[0.12,'63'],[0.18,'63'],[0.25,'63'],[0.37,'63'],[0.55,'71'],[0.75,'71'],[1.1,'80'],[1.5,'L80'],[2.2,'90S/L'],[3,'L90L'],[3.7,'100L'],[4.5,'112M'],[5.5,'112M'],[7.5,'132S'],[9.2,'132S/M'],[11,'132M/L'],[15,'160M'],[18.5,'160M'],[22,'160L'],[30,'200M'],[37,'200L'],[45,'225S/M'],[55,'225S/M'],[75,'250S/M']],
   4:[[0.12,'63'],[0.18,'63'],[0.25,'63'],[0.37,'71'],[0.55,'71'],[0.75,'80'],[1.1,'L80'],[1.5,'L90S'],[2.2,'L90S/L'],[3,'100L'],[3.7,'L100L'],[4.5,'112M'],[5.5,'L112M'],[7.5,'132S/M'],[9.2,'132S/M'],[11,'132M/L'],[15,'160M'],[18.5,'160L'],[22,'180M'],[30,'200M'],[37,'200L'],[45,'225S/M'],[55,'225S/M'],[75,'250S/M']],
@@ -928,15 +951,329 @@ function renderSum(){
     '<div class="sum-pm"><span>Carga radial admissível R<sub>n2</sub></span><b>'+(x.Rn2>0?fmt(x.Rn2,0)+' N':'—')+'</b></div>'+(abaixoTxt(x,q)?'<p class="sum-bl"><b>Tamanho abaixo:</b> '+abaixoTxt(x,q)+'.</p>':'')+
     '<a class="sum-btn" href="#ficha">Ver folha de dados <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>'+foot;
 }
+/* ---------- configuração mecânica (só o redutor) ----------
+   Fontes: catálogo ACF R14 (versões, designação, opções do redutor) e listas do SAP da Bonfiglioli
+   (versão, flange e vedação por tamanho; contra-recuo por modelo e relação). */
+var MC={}, MCKEY='';
+var MEC_FORMA={
+  A:{UH:'Eixo oco com rasgo de chaveta',UR:'Eixo de saída simples (saliente)',UD:'Eixo de saída duplo (passante)',US:'Eixo oco com disco de contração',UV:'Eixo oco estriado DIN 5480',QF:'Quick-fit: eixo oco com buchas adaptadoras e disco de contração'},
+  F:{H:'Eixo oco com rasgo de chaveta',S:'Eixo oco com disco de contração',R:'Eixo de saída maciço',QF:'Quick-fit: eixo oco com buchas adaptadoras e disco de contração'},
+  C:{P:'Montagem por pés',F:'Montagem por flange',U:'UNIBOX: carcaça universal',UFA:'UNIBOX com flange parafusado, flange A',UFB:'UNIBOX com flange parafusado, flange B',UFC:'UNIBOX com flange parafusado, flange C'},
+  S:{P:'Montagem por pés',F:'Montagem por flange'}
+};
+var MEC_VED={VV:'VV: retentor de entrada em elastômero fluorado',PV:'PV: todos os retentores em elastômero fluorado',DL:'DL: retentor duplo no eixo de saída','PV TKL':'TKL: vedação taconite no eixo de saída, com retentores em elastômero fluorado em todos os eixos (ambiente com pó abrasivo)'};
+var MEC_OIL=[
+  ['PAO — sintético polialfaolefina (Omala S4 GX)',[['LU','150'],['LY','220'],['LV','320'],['LW','460']],'PAO Omala S4 GX '],
+  ['PAG — sintético poliglicol (Omala S4 WE)',[['LH','150'],['LS','220'],['LO','320'],['LK','460']],'PAG Omala S4 WE '],
+  ['Mineral EP (Omala S2 G)',[['LN','150'],['LZ','220'],['LI','320'],['LJ','460']],'Mineral EP Omala S2 G '],
+  ['Grau alimentício (Klübersynth UH1 6)',[['LA','150'],['LB','220'],['LC','320'],['LD','460']],'Grau alimentício Klübersynth UH1 6-']
+];
+var MEC_RAL=[['RAL7042','Cinza Traffik A (padrão)'],['RAL5010','Azul genciana'],['RAL9005','Preto'],['RAL9006','Alumínio branco'],['RAL9010','Branco puro'],['RAL7035','Cinza claro'],['RAL7001','Cinza prata'],['RAL5015','Azul céu'],['RAL7037','Cinza pó'],['RAL5024','Azul pastel']];
+var MEC_HDB={10:5500,20:6200,30:9600,35:12000,41:15000,50:20000};
+function sz2(t){ return t<10?'0'+t:String(t); }
+function ratioPt(x){ return x.i%1?x.i.toFixed(1):String(x.i); }
+function formaTxt(lin,c){
+  var m=/^([A-Z]+?)(\d*)$/.exec(c), b=m?m[1]:c, d=m?m[2]:'', tx=(MEC_FORMA[lin]&&MEC_FORMA[lin][b])||'';
+  if(lin==='C'||lin==='S'){ tx=MEC_FORMA[lin][c]||''; d=''; }
+  return c+(tx?' — '+tx:'')+(d?', Ø'+d+' mm':'');
+}
+function mecPos(x,forma){
+  if(x.lin==='A') return ['B3','B6','B7','B8','VA','VB'];
+  if(x.lin==='F') return ['H1','H2','H3','H4','H5','H6'];
+  if(!forma) return null;
+  return forma==='P'?['B3','B6','B7','B8','V5','V6']:['B5','B51','B52','B53','V1','V3'];
+}
+function mecCR(x){
+  if(x.lin!=='A'&&x.lin!=='F') return null;
+  var r=ACO.cr[x.lin+' '+x.tam+' '+x.est];
+  if(!r) return {ok:false,why:'O catálogo não oferece contra-recuo neste tamanho e número de estágios.'};
+  var ok=r.some(function(v){ return Math.abs(v-x.i)<0.051; });
+  return {ok:ok,why:ok?'':'Não disponível nesta relação (restrição do catálogo/SAP). Escolha outra relação na pré-seleção.'};
+}
+function mecSpec(x){
+  if(x.lin==='VF'||x.lin==='W') return vfSpec(x);
+  var F=[], sz=sz2(x.tam), small=(x.lin==='S')?x.tam<=40:x.tam<=41, fo=MC.forma||'';
+  var forms=(ACO.forma[x.lin]||{})[sz]||[], flgs=(ACO.flange[x.lin]||{})[sz]||[], veds=(ACO.ved[x.lin]||{})[sz]||[];
+  F.push({id:'forma',g:'Construção',label:'Versão do eixo de saída / forma construtiva',blank:'— a definir —',opts:forms.map(function(c){return {v:c,t:formaTxt(x.lin,c)};}),
+    hint:(x.lin==='A'||x.lin==='F')?'Ø é o diâmetro do furo do eixo oco, em mm. Séries '+x.lin+': diâmetro padrão e alternativo conforme o catálogo.':''});
+  if((x.lin==='A'||x.lin==='F')&&flgs.length){
+    var qf=/^QF/.test(fo);
+    F.push({id:'flange',g:'Construção',label:'Flange de saída',blank:'— sem flange (versão básica) —',dis:qf,reason:qf?'A versão Quick-fit não tem flange parafusado de saída.':'',
+      opts:flgs.map(function(c){ return {v:c,t:c+(x.lin==='A'?' — posição '+c.charAt(1)+', tamanho '+c.charAt(2):' — tamanho '+c.charAt(1))}; }),
+      hint:x.lin==='A'?'Posição 1 ou 2 do flange (lado do eixo de saída) e tamanho A, B ou C, como nos croquis do catálogo.':'Tamanho A, B ou C conforme o catálogo.'});
+  }
+  var pl=mecPos(x,fo);
+  F.push({id:'pos',g:'Construção',label:'Posição de montagem',blank:'— a definir —',dis:!pl,reason:!pl?'Escolha antes a forma construtiva.':'',
+    opts:(pl||[]).map(function(c,k){ return {v:c,t:c+(k===0?' (padrão)':'')}; }),hint:'Posições do catálogo para '+x.lin+(x.lin==='C'||x.lin==='S'?(fo?(fo==='P'?' com pés':' com flange'):''):'')+'.'});
+  F.push({id:'ent',g:'Construção',label:'Entrada (lado do motor)',blank:'— a definir —',
+    opts:[{v:'IEC',t:'Flange IEC para motor'+(x.flp?' — P'+x.flp+' pela carcaça escolhida':' (P63 ou maior, conforme o motor)')}].concat((x.lin==='C'&&x.tam<12)?[]:[{v:'HS',t:'HS — eixo de entrada maciço'}]).concat([{v:'SERVO',t:'Adaptador para servomotor (S_, SK_, SC_) — o código depende do servomotor'}]),
+    hint:'Só o redutor: o motor e o freio não entram nesta ficha.'});
+  F.push({id:'ved',g:'Vedação e lubrificação',label:'Vedação',blank:'— padrão de fábrica —',opts:veds.map(function(c){return {v:c,t:MEC_VED[c]||c};}),
+    hint:'O catálogo também lista DV (retentor duplo na entrada), disponível só para motorredutores integrais; fica fora desta ficha.'});
+  var oo=[{v:'SO',t:'SO — fornecido sem óleo',dis:!small}];
+  F.push({id:'lub',g:'Vedação e lubrificação',label:'Lubrificação',blank:small?'— padrão: com óleo PAG 320 (LO) —':'— padrão: fornecido sem óleo —',
+    groups:[{l:'Sem óleo',o:small?[{v:'SO',t:'SO — fornecido sem óleo'}]:[]}].concat(MEC_OIL.map(function(g){ var hide=(g[0].indexOf('PAO')===0&&x.lin==='A'&&x.tam<=60);
+      return {l:g[0],o:hide?[]:g[1].map(function(o){ return {v:o[0],t:o[0]+' — '+g[2]+o[1]+(o[0]==='LO'?' (óleo padrão quando fornecido com óleo)':'')}; })}; })),
+    hint:small?'Tamanho fornecido com óleo de fábrica no padrão. Com SO vai sem óleo.':'Tamanho fornecido sem óleo no padrão. Escolher um óleo L.. pede o fornecimento com óleo.'});
+  var lv=MC.lub||'', ltsOk=small?(lv==='SO'):(lv==='');
+  F.push({id:'lts',g:'Vedação e lubrificação',label:'Estoque prolongado (Long Term Stock)',blank:'— não —',dis:!ltsOk,
+    reason:!ltsOk?(small?'Só com a lubrificação SO (sem óleo) ativa.':'Só sem opção de óleo L.. ativa.'):'',
+    opts:[{v:'SLM',t:'SLM — óleo protetor anticorrosivo compatível com óleos minerais'},{v:'SLP',t:'SLP — óleo protetor anticorrosivo compatível com óleos poliglicol'}],
+    hint:'Para unidades que ficam estocadas mais de 6 meses antes da instalação. SLM e SLP não coexistem.'});
+  var cr=mecCR(x);
+  if(cr){
+    var rb=(MC.rb==='1');
+    F.push({id:'cr',g:'Opções do redutor',label:'Contra-recuo (anti-retorno)',blank:'— sem contra-recuo —',dis:(!cr.ok||rb),reason:!cr.ok?cr.why:(rb?'Não combina com folga angular reduzida (RB).':''),
+      opts:[{v:'CW',t:'Rotação livre no sentido horário na saída → '+(x.lin==='A'?'AL':'AR')},{v:'CCW',t:'Rotação livre no sentido anti-horário na saída → '+(x.lin==='A'?'AR':'AL')}],
+      hint:'Sentido visto no eixo de saída, na posição '+(x.lin==='A'?'B3, lado esquerdo visto do lado do motor':'H1')+' (tabela do catálogo). Em outra posição de montagem, confirme o código com a fábrica. Com contra-recuo muito acionado, o torque de retorno não deve passar de 70% de Mn2.'});
+  }
+  var rbOk=(x.lin==='A'&&x.tam>=10&&x.tam<=60)||(x.lin==='C'&&x.tam>=12&&x.tam<=61);
+  if(rbOk) F.push({id:'rb',g:'Opções do redutor',type:'check',label:'Folga angular reduzida (RB)',txt:'RB — folga angular reduzida',dis:!!MC.cr,reason:MC.cr?'Não combina com contra-recuo (AL/AR).':'',
+    hint:'Os valores de folga padrão e RB por relação estão nas tabelas do catálogo ('+(x.lin==='A'?'C30':'B13')+'). Consulte o prazo de entrega com a rede comercial Bonfiglioli.'});
+  F.push({id:'bp',g:'Opções do redutor',type:'check',label:'Respiro com válvula',txt:'BP — respiro com válvula (abre entre 0,10 e 0,15 bar)',hint:'Disponibilidade por posição de montagem no manual de instalação. Se precisar, consulte a assistência técnica.'});
+  if(x.lin!=='S'){
+    var iec=(MC.ent==='IEC')&&[160,180,200].indexOf(x.flp)>=0, ihOk=iec&&x.fS<=1.5+1e-9;
+    F.push({id:'ihb',g:'Opções do redutor',type:'check',label:'Rolamentos reforçados (IHB)',txt:'IHB — rolamentos com maior capacidade de carga',dis:!ihOk,
+      reason:ihOk?'':'Pede flange IEC P160, P180 ou P200 e Mn2/Mr2 de até 1,5 (aqui '+fmt(x.fS,2)+(x.flp?'; flange P'+x.flp:'')+'; entrada '+(MC.ent==='IEC'?'IEC':'não marcada como IEC')+').',hint:'Confirme a aplicação com o Serviço Técnico Bonfiglioli.'});
+  }
+  if(x.lin==='A'&&x.tam>=10&&x.tam<=50){
+    var ok=(fo==='UR'||fo==='UD');
+    F.push({id:'hdb',g:'Opções do redutor',type:'check',label:'Carga radial reforçada (HDB)',txt:'HDB — rolamentos reforçados no eixo de saída'+(ok?' (Rn2 com HDB: '+fmt(MEC_HDB[x.tam],0)+' N)':''),dis:!ok,
+      reason:ok?'':'Só com eixo de saída maciço, simples ou passante (UR ou UD).',hint:'Aumenta também a carga axial. Em n₁ = 2800 rpm alguns valores de Rn2 são menores em certas relações: veja a tabela C29 do catálogo.'});
+  }
+  if(x.lin==='A'&&(/^UH/.test(fo)||fo==='UV')){
+    var f1=/^F1/.test(MC.flange||''), f2=/^F2/.test(MC.flange||''), so=[];
+    if(!f1) so.push({v:'SC1',t:'SC1'}); if(!f2) so.push({v:'SC2',t:'SC2'});
+    F.push({id:'sc',g:'Opções do redutor',label:'Braço de torque e tampa de proteção: posição',blank:'— padrão —',opts:so,
+      hint:'A05 a A60 saem com o braço de torque montado como no catálogo; SC1 e SC2 são as posições alternativas. Com flange F1 só vale SC2; com F2, só SC1.'});
+  }
+  if(x.lin==='F'){
+    if(x.tam<=41) F.push({id:'fl',g:'Opções do redutor',type:'check',label:'Furação lateral (FL)',txt:'FL — usinada e roscada na lateral (F51 a F90 já saem assim)',hint:'Cotas de fixação na tabela D47 do catálogo.'});
+    F.push({id:'kav',g:'Opções do redutor',type:'check',label:'Kit antivibração',txt:'Kit antivibração para montagem pendular (o braço de torque não está incluso)',hint:'Acessório do capítulo 66 do catálogo F.'});
+  }
+  mecPintura(F);
+  return F;
+}
+function mecPintura(F){
+  var pr=MC.prot||'';
+  F.push({id:'prot',g:'Pintura e certificados',label:'Proteção superficial',blank:'— padrão (no mínimo C2) —',
+    opts:[{v:'C3',t:'C3 — ambiente urbano e industrial, até 100% de umidade (poluição média), até 120 °C'},{v:'C4',t:'C4 — área industrial, costeira, planta química, até 100% de umidade (poluição alta), até 120 °C'},{v:'C5',t:'C5 — consultar o Serviço Técnico Bonfiglioli'}]});
+  var cor=(pr==='C3'||pr==='C4');
+  F.push({id:'cor',g:'Pintura e certificados',label:'Cor',blank:'— RAL7042 (padrão) —',dis:!cor,reason:cor?'':'A cor só pode ser pedida junto com a proteção C3 ou C4.',
+    opts:MEC_RAL.map(function(r){ return {v:r[0],t:r[0]+' — '+r[1]}; })});
+  F.push({id:'cert',g:'Pintura e certificados',label:'Certificados',blank:'— nenhum —',
+    opts:[{v:'AC',t:'AC — certificado de conformidade com o pedido'},{v:'CC',t:'CC — certificado de inspeção (amostragem do lote)'},{v:'CC AC',t:'CC AC — inspeção e conformidade'}]});
+}
+function mecAvisos(x){
+  if(x.lin==='VF'||x.lin==='W') return vfAvisos(x);
+  var A=[], lub=MC.lub||'', pos=MC.pos||'', oil=(lub&&lub!=='SO');
+  if(oil){
+    if(x.lin==='A'&&x.tam>=50&&(pos==='B6'||pos==='B7')) A.push('O catálogo não oferece opção de óleo L.. nas posições B6 e B7 para A50 a A90.');
+    if(x.lin==='A'&&x.tam===60&&x.est===2&&pos==='VB') A.push('O catálogo não oferece opção de óleo L.. para A60 de 2 estágios na posição VB.');
+    if(x.lin==='C'&&x.tam>=70&&(pos==='V6'||pos==='V3')) A.push('O catálogo não oferece opção de óleo L.. para C70 a C100 nas posições V6 e V3.');
+    if(x.lin==='F'&&x.tam>=51&&pos==='H6') A.push('O catálogo não oferece opção de óleo L.. para F51 a F90 na posição H6.');
+    if(['LN','LZ','LI','LJ'].indexOf(lub)>=0&&x.fS<1.30) A.push('Óleo mineral: o catálogo só permite em motorredutores com fator de serviço de 1,30 ou mais (aqui '+fmt(x.fS,2)+').');
+  }
+  if((MC.ved==='PV TKL')&&pos==='B6') A.push('TKL na posição B6: consultar o Serviço Técnico Bonfiglioli.');
+  if(MC.cr&&MC.ent==='SERVO'&&((x.lin==='A'&&x.tam<=35&&x.est===2&&x.tam>=30)||(x.lin==='F'&&x.tam===31))) A.push('Contra-recuo não é compatível com os adaptadores de servomotor S_60A, S_60B e S_80A neste modelo.');
+  if(MC.prot==='C5') A.push('C5: o catálogo manda consultar o Serviço Técnico Bonfiglioli.');
+  return A;
+}
+function mecClean(x){
+  for(var p=0;p<4;p++){
+    var F=mecSpec(x), ch=false;
+    F.forEach(function(f){
+      var v=MC[f.id]; if(v===undefined||v==='') return;
+      var vals=[]; if(f.type==='check') vals=['1']; else if(f.groups) f.groups.forEach(function(g){ g.o.forEach(function(o){ vals.push(o.v); }); }); else (f.opts||[]).forEach(function(o){ vals.push(o.v); });
+      if(f.dis||vals.indexOf(v)<0){ delete MC[f.id]; ch=true; }
+    });
+    if(!ch) return F;
+  }
+  return mecSpec(x);
+}
+function mecHtml(F,x){
+  var g='', h='';
+  F.forEach(function(f){
+    if(f.g!==g){ if(g) h+='</div>'; g=f.g; h+='<h3 class="mec-g">'+g+'</h3><div class="mec">'; }
+    var id='mc_'+f.id, v=MC[f.id]||'', c='<div class="fld'+(f.type==='check'?' chk':'')+(f.dis?' off':'')+'">';
+    if(f.type==='check'){ c+='<label class="mc-lb">'+f.label+'</label><label class="mc-ck"><input type="checkbox" id="'+id+'" data-k="'+f.id+'"'+(v==='1'?' checked':'')+(f.dis?' disabled':'')+'> <span>'+f.txt+'</span></label>'; }
+    else {
+      c+='<label for="'+id+'">'+f.label+'</label><select id="'+id+'" data-k="'+f.id+'"'+(f.dis?' disabled':'')+'><option value="">'+f.blank+'</option>';
+      if(f.groups){ f.groups.forEach(function(gr){ if(!gr.o.length) return; c+='<optgroup label="'+gr.l+'">'+gr.o.map(function(o){ return '<option value="'+o.v+'"'+(v===o.v?' selected':'')+'>'+o.t+'</option>'; }).join('')+'</optgroup>'; }); }
+      else c+=(f.opts||[]).map(function(o){ return '<option value="'+o.v+'"'+(v===o.v?' selected':'')+'>'+o.t+'</option>'; }).join('');
+      c+='</select>';
+    }
+    c+=(f.reason?'<span class="tip why">'+f.reason+'</span>':(f.hint?'<span class="tip">'+f.hint+'</span>':''))+'</div>';
+    h+=c;
+  });
+  if(g) h+='</div>';
+  var av=mecAvisos(x);
+  if(av.length) h+='<div class="note warn" style="margin-top:14px"><i></i><div><h4>Confira antes de pedir</h4><p>'+av.join('<br>')+'</p></div></div>';
+  return h;
+}
+function mecRebuild(){
+  var box=$('mecbox'); if(!box) return;
+  var x=SEL;
+  if(!x){ box.innerHTML='<p class="cap">Selecione um candidato acima.</p>'; MCKEY=''; return; }
+  var F=mecClean(x); box.innerHTML=mecHtml(F,x);
+  var cb=document.createElement('div'); cb.innerHTML=mecCodeHtml(x); var nw=box.querySelector('.note.warn'); if(nw) box.insertBefore(cb,nw); else box.appendChild(cb);
+  Array.prototype.forEach.call(box.querySelectorAll('[data-k]'),function(el){
+    el.addEventListener('change',function(){ var k=el.getAttribute('data-k'); if(el.type==='checkbox'){ if(el.checked) MC[k]='1'; else delete MC[k]; } else { if(el.value) MC[k]=el.value; else delete MC[k]; } mecRebuild(); ficha(); });
+  });
+}
+function mecSync(){
+  var x=SEL, k=x?[x.lin,x.tam,x.est,x.i,x.flp,Math.round(x.fS*100)].join('|'):'';
+  if(k!==MCKEY){ MCKEY=k; mecRebuild(); }
+}
+function mecLab(F,id){ var f=F.filter(function(a){return a.id===id;})[0]; if(!f||!MC[id]) return ''; if(f.type==='check') return f.txt;
+  var all=[]; if(f.groups) f.groups.forEach(function(g){ all=all.concat(g.o); }); else all=f.opts||[]; var m=all.filter(function(o){return o.v===MC[id];})[0]; return m?m.t:MC[id]; }
+function mecTokens(x){
+  var F=mecSpec(x), T=[], vw=(x.lin==='VF'||x.lin==='W');
+  function L(id){ return mecLab(F,id).replace(/^[^—:]*[—:]\s*/,''); }
+  var SER={A:'Série A — redutor ortogonal helicoidal-cônico (saída a 90° do motor).',C:'Série C — redutor coaxial helicoidal (saída em linha com o motor).',F:'Série F — redutor de eixos paralelos, para montagem pendular ou com flange.',S:'Série S — redutor de um estágio só.',
+    VF:'Linha VF — redutor de coroa e rosca sem-fim.',W:'Linha W — redutor de coroa e rosca sem-fim com carcaça universal.'};
+  T.push([x.lin,SER[x.lin]]);
+  T.push([vw?String(x.tam):sz2(x.tam),'Tamanho dentro da '+(vw?'linha':'série')+': quanto maior o número, maior o torque.']);
+  if(!vw) T.push([String(x.est),'Número de estágios de redução.']);
+  if(vw&&MC.lim) T.push([MC.lim,'Limitador de torque: '+L('lim')+'.']);
+  T.push(MC.forma?[MC.forma,(vw?'Versão: ':'Versão do eixo de saída: ')+L('forma')+'.']:['..',(vw?'Versão':'Versão do eixo de saída')+' a definir: escolha no campo acima.']);
+  if(MC.flange) T.push([MC.flange,'Flange de saída: '+L('flange')+'.']);
+  if(x.lin==='W'&&x.tam===75) T.push([MC.bore||'D30',MC.bore?'Furo do eixo de saída Ø28 mm, sob consulta.':'Furo do eixo de saída Ø30 mm (padrão do W 75).']);
+  T.push([ratioPt(x),'Relação de redução exata, como na tabela do catálogo.']);
+  if(MC.ent==='HS') T.push(['HS','Entrada por eixo maciço, sem flange de motor.']);
+  else if(MC.ent==='SERVO') T.push(['S_..','Adaptador para servomotor: o código completo depende do servomotor.']);
+  else { T.push([x.flp?'P'+x.flp:'P..',x.flp?'Flange de entrada IEC para o motor. A carcaça vem do motor, não do redutor'+(x.mf&&x.mf.fr?' (aqui, carcaça '+x.mf.fr+')':'')+'.':'Flange de entrada IEC: a definir pela carcaça do motor.']);
+    if(vw&&(MC.ent==='IEC B5'||MC.ent==='IEC B14')) T.push([MC.ent.slice(4),'Montagem do motor '+MC.ent.slice(4)+'.']); }
+  T.push(MC.pos?[MC.pos,'Posição de montagem.']:['..','Posição de montagem a definir: escolha no campo acima. A designação só fica completa com ela.']);
+  if(MC.ved) T.push([MC.ved,'Vedação: '+L('ved')+'.']);
+  if(MC.lub) T.push([MC.lub,'Lubrificação: '+L('lub')+'.']);
+  if(MC.lts) T.push([MC.lts,'Estoque prolongado: '+L('lts')+'.']);
+  if(MC.cr){ var c=x.lin==='A'?(MC.cr==='CW'?'AL':'AR'):(MC.cr==='CW'?'AR':'AL'); T.push([c,'Contra-recuo: rotação livre no sentido '+(MC.cr==='CW'?'horário':'anti-horário')+' na saída.']); }
+  [['rb','RB','Folga angular reduzida.'],['rbi','RB','Eixo de entrada duplo, saindo também do lado oposto ao motor.'],['ihb','IHB','Rolamentos com maior capacidade de carga.'],['hdb','HDB','Rolamentos reforçados no eixo de saída (carga radial maior).'],['fl','FL','Furação lateral usinada e roscada.'],['kav','KAV','Kit antivibração para montagem pendular.'],['bp','BP','Respiro com válvula.']].forEach(function(o){ if(MC[o[0]]) T.push([o[1],o[2]]); });
+  if(MC.out) T.push([MC.out,'Eixo de saída: '+L('out')+'.']);
+  if(MC.pes) T.push([MC.pes,L('pes')+'.']);
+  if(MC.sc) T.push([MC.sc,'Posição alternativa do braço de torque e da tampa de proteção.']);
+  if(MC.ta) T.push([MC.ta,'Posição do braço de torque.']);
+  if(MC.scw) T.push([MC.scw,'Posição da tampa de proteção do eixo.']);
+  if(MC.prot) T.push([MC.prot,'Proteção superficial: '+L('prot')+'.']);
+  if(MC.cor) T.push([MC.cor,'Cor: '+L('cor')+'.']);
+  if(MC.cert) T.push([MC.cert,'Certificados: '+L('cert')+'.']);
+  return T;
+}
+function mecDsg(x){ return mecTokens(x).map(function(t){return t[0];}).join(' '); }
+function mecCodeHtml(x){
+  var T=mecTokens(x);
+  return '<h3 class="mec-g">Código do redutor</h3><div class="desig-box"><div class="desig-code">'+T.map(function(t){return t[0];}).join(' &nbsp; ')+'</div><div class="desig-list">'+
+    T.map(function(t){ return '<div><b>'+t[0]+'</b><span>'+t[1]+'</span></div>'; }).join('')+'</div><p class="cap" style="margin-top:10px">Mesmo formato da designação do catálogo'+((x.lin==='VF'||x.lin==='W')?' VF-W':' ACF')+'. ".." marca o que ainda falta escolher. É este código que vai na ficha e no pedido.</p></div>';
+}
+function mecLines(x,pad){
+  var F=mecSpec(x), L=[], lab={};
+  function opt(id){ var f=F.filter(function(a){return a.id===id;})[0]; if(!f||!MC[id]) return null; var t=MC[id];
+    if(f.type==='check') return f.label; var all=[]; if(f.groups) f.groups.forEach(function(g){all=all.concat(g.o);}); else all=f.opts||[];
+    var m=all.filter(function(o){return o.v===t;})[0]; return m?m.t:t; }
+  L.push('CONFIGURAÇÃO MECÂNICA (SÓ O REDUTOR)');
+  L.push(pad((x.lin==='VF'||x.lin==='W')?'Versão':'Versão do eixo de saída',opt('forma')||'A DEFINIR'));
+  if(x.lin==='A'||x.lin==='F') L.push(pad('Flange de saída',opt('flange')||(/^QF/.test(MC.forma||'')?'nao se aplica (Quick-fit)':'sem flange / a definir')));
+  L.push(pad('Posição de montagem',opt('pos')||'A DEFINIR'));
+  L.push(pad('Entrada',opt('ent')||'a definir (flange IEC pela carcaça do motor)'));
+  var ex=[['lim','Limitador de torque'],['bore','Furo do eixo de saída'],['ved','Vedação'],['lub','Lubrificação'],['lts','Estoque prolongado'],['cr','Contra-recuo'],['rb','Folga angular reduzida'],['bp','Respiro com válvula'],['ihb','Rolamentos reforçados'],['hdb','Carga radial reforçada'],['sc','Braço de torque: posição'],['rbi','Eixo de entrada duplo'],['out','Eixo de saída'],['pes','Kit de pés'],['ta','Braço de torque: posição'],['scw','Tampa de proteção: posição'],['fl','Furação lateral'],['kav','Kit antivibração'],['prot','Proteção superficial'],['cor','Cor'],['cert','Certificados']], any=false;
+  ex.forEach(function(e){ var v=opt(e[0]); if(v){ any=true; L.push(pad(e[1],MC[e[0]]==='1'?'sim':v)); } });
+  if(!any) L.push('Demais opções ......................... padrão de fábrica');
+  mecAvisos(x).forEach(function(a){ L.push('ATENCAO: '+a); });
+  return L;
+}
+/* ---------- VF / W: catálogo VF-W (BR_CAT_VFW_STD_ENG_R11) e listas do SAP (aba VF - W) ---------- */
+var VFO={
+  forma:{VF27:['A','N','V','F1','F2'],VF30:['A','N','V','P1','F1','F2','U'],VF44:['A','N','V','P1','F1','F2','FA1','FA2','U'],VF49:['A','N','V','P1','F1','F2','FA1','FA2','U'],
+    VF130:['A','N','V','P1','P2','F1','F2','FC1','FC2','FR1','FR2'],VF150:['A','N','V','P1','P2','F1','F2','FC1','FC2','FR1','FR2'],VF185:['A','N','V','P1','P2','F1','F2','FC1','FC2','FR1','FR2'],
+    VF210:['A','N','V','P'],VF250:['A','N','V','P'],W63:['U','UF1','UF2','UFC1','UFC2'],W75:['U','UF1','UF2','UFC1','UFC2','UFCR1','UFCR2'],W86:['U','UF1','UF2','UFC1','UFC2'],W110:['U','UF1','UF2','UFC1','UFC2']},
+  txt:{N:'Pés, rosca sem-fim embaixo',A:'Pés, rosca sem-fim em cima',V:'Pés, rosca sem-fim vertical',F:'Flange padrão',FA:'Flange de saída prolongado',FC:'Flange curto',FR:'Flange curto com rolamentos reforçados',
+    P:'Tampa lateral para montagem pendular',U:'Montagem por pés',UF:'Flange de montagem padrão',UFC:'Flange de montagem reduzido no comprimento',UFCR:'Flange de montagem reduzido no comprimento e no diâmetro'},
+  // LUB.02: posições em que a opção de óleo vale (W 110 e VF 130 a VF 250)
+  lubpos:{'W110':['B3','B6','B7','B8'],'VF130':['B3','B6','B7','B8'],'VF130V':['B6','B7','V5','V6'],'VF130FR':['B3','B8'],'VF150':['B3','B6','B7','B8'],'VF150V':['B6','B7','V5','V6'],'VF150FR':['B3','B8'],
+    'VF185':['B3','B6','B7','B8'],'VF185V':['B6','B7','V5','V6'],'VF185FR':['B3','B8'],'VF210':['B3','B8'],'VF210V':['V5','V6'],'VF250':['B3','B8'],'VF250V':['V5','V6']}
+};
+function vfFormaTxt(c){
+  var m=/^([A-Z]+?)([12]?)$/.exec(c), b=m[1], s=m[2], t=VFO.txt[b]||'';
+  if(c==='P') t=VFO.txt.P+' (P1 = P2)';
+  return c+(t?' — '+t:'')+(s?', lado '+s:'');
+}
+function vfKey(x){ return x.lin+x.tam; }
+function vfSpec(x){
+  var F=[], k=vfKey(x), fo=MC.forma||'', vf=(x.lin==='VF'), small=vf?x.tam<=49:x.tam<=86;
+  F.push({id:'forma',g:'Construção',label:'Versão (forma construtiva)',blank:'— a definir —',opts:(VFO.forma[k]||[]).map(function(c){ return {v:c,t:vfFormaTxt(c)}; }),
+    hint:'Lado 1 ou 2 conforme os croquis de arranjo do catálogo VF-W.'});
+  var six=(!vf||x.tam>=130), pl=six?['B3','B6','B7','B8','V5','V6']:['B3'];
+  F.push({id:'pos',g:'Construção',label:'Posição de montagem',blank:'— a definir —',opts:pl.map(function(c,i){ return {v:c,t:c+(six&&i===0?' (padrão)':'')}; }),
+    hint:six?'Posições do catálogo para '+x.lin+' '+x.tam+'.':'Do VF 27 ao VF 49 o catálogo designa sempre B3.'});
+  var eo=[];
+  if(x.lin==='VF'&&x.tam===27) eo.push({v:'IEC',t:'Flange IEC P27 (só VF 27)'});
+  else { eo.push({v:'IEC B5',t:'Flange IEC, motor B5'+(x.flp?' — P'+x.flp+' pela carcaça escolhida':'')});
+    if(!vf||x.tam<=49) eo.push({v:'IEC B14',t:'Flange IEC, motor B14'+(x.flp?' — P'+x.flp+' pela carcaça escolhida':'')}); }
+  eo.push({v:'HS',t:'HS — eixo de entrada maciço'});
+  F.push({id:'ent',g:'Construção',label:'Entrada (lado do motor)',blank:'— a definir —',opts:eo,hint:'Só o redutor: o motor e o freio não entram nesta ficha.'});
+  if(x.lin==='W'&&x.tam===75) F.push({id:'bore',g:'Construção',label:'Furo do eixo de saída (W 75)',blank:'— D30 (padrão) —',opts:[{v:'D28',t:'D28 — Ø28 mm, sob consulta'}]});
+  var limOk=(vf&&(x.tam===44||x.tam===49))||!vf;
+  if(limOk) F.push({id:'lim',g:'Construção',label:'Limitador de torque (VF…L / W…L)',blank:'— sem limitador —',opts:[{v:'L1',t:'L1 — porca de regulagem à esquerda (padrão)'},{v:'L2',t:'L2 — porca de regulagem à direita'}],
+    hint:'Limitador por atrito dentro do redutor, regulado de fábrica pelo Mn2 a 1400 rpm. O catálogo não recomenda em equipamentos de elevação. Lado visto do motor, com o redutor em B3.'});
+  // vedação: VF e W 110; não em VF 30 com RB nem VF 30 HS
+  var vOk=(vf||x.tam===110), v30=(vf&&x.tam===30&&(MC.rbi==='1'||MC.ent==='HS'));
+  if(vOk) F.push({id:'ved',g:'Vedação e lubrificação',label:'Vedação',blank:'— padrão de fábrica —',dis:v30,reason:v30?'No VF 30 com RB ou com entrada HS o catálogo não oferece VV nem PV.':'',
+    opts:[{v:'VV',t:'VV: retentor de entrada em elastômero fluorado'},{v:'PV',t:'PV: retentores de entrada e saída em elastômero fluorado'}]});
+  var lp=VFO.lubpos[k+(fo==='V'?'V':(/^FR/.test(fo)?'FR':''))], pos=MC.pos||'', lubBlock=(!small&&lp&&pos&&lp.indexOf(pos)<0);
+  F.push({id:'lub',g:'Vedação e lubrificação',label:'Lubrificação',blank:small?'— padrão: com óleo de fábrica'+(vf?' (PAG 320, LO)':'')+' —':'— padrão: fornecido sem óleo —',dis:lubBlock,
+    reason:lubBlock?'Pela tabela LUB.02 do catálogo, a opção de óleo não vale para '+x.lin+' '+x.tam+(fo?' '+fo:'')+' na posição '+pos+'.':'',
+    groups:[{l:'Sem óleo',o:small?[{v:'SO',t:'SO — fornecido sem óleo'}]:[]},
+      {l:'PAG — sintético poliglicol (Omala S4 WE)',o:[['LH','150'],['LS','220'],['LO','320'],['LK','460']].map(function(o){ return {v:o[0],t:o[0]+' — PAG Omala S4 WE '+o[1]+(o[0]==='LK'?' (obrigatório com limitador de torque)':'')}; })},
+      {l:'Grau alimentício (Klübersynth UH1 6)',o:[['LA','150'],['LB','220'],['LC','320'],['LD','460']].map(function(o){ return {v:o[0],t:o[0]+' — Grau alimentício Klübersynth UH1 6-'+o[1]}; })}],
+    hint:small?'Tamanho fornecido com óleo de fábrica no padrão. Com SO vai sem óleo.':'Tamanho fornecido sem óleo no padrão. A opção de óleo depende da versão e da posição (tabela LUB.02).'});
+  if(!(vf&&x.tam===27)) F.push({id:'rbi',g:'Opções do redutor',type:'check',label:'Eixo de entrada duplo (RB)',txt:'RB — eixo de entrada saindo também do lado oposto ao motor',
+    hint:(vf&&x.tam>=210)?'Nas versões A e P do VF 210 e VF 250 a ventilação forçada não é possível com RB.':'Cotas da ponta extra na tabela do catálogo.'});
+  var outs=(vf&&x.tam===27)?[{v:'AO',t:'AO — eixo de saída do lado oposto ao padrão'},{v:'ESL1',t:'ESL1 — eixo de saída encaixável simples (código do SAP)'},{v:'ESL2',t:'ESL2 — eixo de saída encaixável simples (código do SAP)'}]
+    :[{v:'ESL1',t:'ESL1 — eixo de saída encaixável simples (código do SAP)'},{v:'ESL2',t:'ESL2 — eixo de saída encaixável simples (código do SAP)'},{v:'ESD',t:'ESD — eixo de saída encaixável duplo (código do SAP)'}];
+  F.push({id:'out',g:'Opções do redutor',label:'Eixo de saída',blank:'— eixo oco (padrão) —',opts:outs,hint:'Acessório "eixo de saída encaixável" do catálogo (simples ou duplo); o lado de ESL1 e ESL2 segue o SAP.'});
+  if(!vf){ var kvNo=(MC.rbi==='1')||(x.tam===110&&pos==='B6');
+    F.push({id:'pes',g:'Opções do redutor',label:'Kit de pés intercambiável com VF',blank:'— nenhum —',opts:[{v:'KA',t:'KA — kit para intercambiar com VF versão A'}].concat(kvNo?[]:[{v:'KV',t:'KV — kit para intercambiar com VF versão V'}]),
+      hint:kvNo?'KV não vale com RB nem no W 110 em B6.':'Cotas na tabela 30.2 do catálogo.'}); }
+  var ta=vfTA(x,fo);
+  if(ta) F.push({id:'ta',g:'Opções do redutor',label:'Braço de torque: posição',blank:'— padrão de fábrica —',opts:ta.map(function(c){ return {v:c,t:c}; }),
+    hint:'Posições TA1, TA1B, TA1D (lado 1) e TA2, TA2B, TA2D (lado 2) conforme a versão. Não monta do lado do limitador de torque nem do mesmo lado da tampa de proteção.'});
+  if(!vf&&fo){ var sc=/^(UF|UFC|UFCR)1$/.test(fo)?['SC2']:(/^(UF|UFC|UFCR)2$/.test(fo)?['SC1']:['SC1','SC2']);
+    F.push({id:'scw',g:'Opções do redutor',label:'Tampa de proteção do eixo: posição',blank:'— padrão —',opts:sc.map(function(c){ return {v:c,t:c}; }),hint:'O W sai com tampa plástica no eixo de saída. Não pode ficar do mesmo lado do braço de torque.'}); }
+  F.push({id:'bp',g:'Opções do redutor',type:'check',label:'Respiro com válvula',txt:'BP — respiro com válvula (abre entre 0,10 e 0,15 bar)',hint:'Disponibilidade por posição de montagem no manual de instalação.'});
+  mecPintura(F);
+  return F;
+}
+function vfTA(x,fo){
+  if(!fo) return null;
+  var S1=['TA1','TA1B','TA1D'], S2=['TA2','TA2B','TA2D'];
+  if(x.lin==='W'){ if(fo==='U') return S1.concat(S2); if(/1$/.test(fo)) return S2; if(/2$/.test(fo)) return S1; return null; }
+  var t=x.tam;
+  if(t>=30&&t<=49){ if(fo==='F1'||fo==='FA1') return S2; if(fo==='F2'||fo==='FA2') return S1; if(fo==='P1') return S1.concat(S2); }
+  if(t>=130&&t<=185){ if(fo==='P1') return S1; if(fo==='P2') return S2; }
+  if(t>=210&&fo==='P') return S1.concat(S2);
+  return null;
+}
+function vfAvisos(x){
+  var A=[];
+  if(MC.lim&&MC.lub&&MC.lub!=='LK') A.push('Com limitador de torque (VF…L / W…L) o catálogo exige o óleo LK.');
+  if(MC.lim) A.push('Limitador de torque: o catálogo não recomenda em equipamentos de elevação.');
+  if(MC.ta&&MC.scw) A.push('Braço de torque e tampa de proteção não podem ficar do mesmo lado: confira as posições no catálogo.');
+  if(MC.rbi&&x.lin==='VF'&&x.tam>=210&&(MC.forma==='A'||MC.forma==='P')) A.push('VF 210 e VF 250 nas versões A e P: com RB a ventilação forçada não é possível.');
+  if(MC.prot==='C5') A.push('C5: o catálogo manda consultar o Serviço Técnico Bonfiglioli.');
+  return A;
+}
+
 function ficha(){
+  mecSync();
   var o=$('out'), q=lastQ;
   if(!SEL){ o.textContent='—'; $('dsg').textContent='—'; return; }
-  var x=SEL, wm=(x.lin==='VF'||x.lin==='W'); $('dsg').textContent=nmb(x)+' '+ratioTxt(x);
+  var x=SEL, wm=(x.lin==='VF'||x.lin==='W'); $('dsg').textContent=mecDsg(x);
   function pad(l,v){ var n=Math.max(2,36-l.length); return l+' '+Array(n+1).join('.')+' '+v; }
   var L=[], KK={1:'K1 — carga uniforme',2:'K2 — choque moderado',3:'K3 — choque pesado'};
   L.push('FOLHA DE DADOS — REDUTOR BONFIGLIOLI '+(wm?'VF/W (SEM-FIM)':'ACF'));
   L.push('Aplicação: '+($('app').value||'—'));
-  L.push('Modelo: '+nmb(x)+' '+ratioTxt(x)+'   (forma construtiva, flange e posição: a definir)');
+  L.push('Modelo: '+mecDsg(x)); L.push('   (formato da designação do catálogo; .. = a definir)');
   L.push(Array(53).join('='));
   L.push('DADOS DA APLICAÇÃO');
   L.push(pad('Potência do motor',fmt(q.P,q.P%1?2:0)+' kW'));
@@ -959,15 +1296,17 @@ function ficha(){
   else if(x.lin==='A') L.push(pad('Capacidade térmica','verificar pelo item 48 do catálogo (série A)'));
   else if(wm) L.push(pad('Capacidade térmica','nao verificada nesta versao; conferir no catalogo VF-W (regime continuo e temperatura ambiente)'));
   L.push(Array(53).join('='));
+  mecLines(x,pad).forEach(function(s){ L.push(s); });
+  L.push(Array(53).join('='));
   L.push('PREMISSAS ADOTADAS');
   L.push('- bloco do catálogo por faixa de n1 (regra do SAP): ate 600 rpm = 500; ate 1200 = 900; ate 1800 = 1400; acima = 2800');
   L.push(wm?'- Mn2 e etad do catalogo VF-W (bloco por faixa de n1); n2 = n1 / i; Mr2 = P x 9550 x etad / n2 (mesma conta do SAP)':'- Mn2 do catálogo sem alteracao; n2 = n1 / i; Mr2 = P x 9550 / n2, sem rendimento');
   L.push('- fator de servico exigido lido do grafico A4 do catalogo (±0,02): '+q.hd+' h/dia, curva K'+q.K+', '+fmt(q.zr,0)+' partidas/h');
   L.push(Array(53).join('='));
   L.push('A COMPLETAR PELO PROJETISTA');
-  L.push('- forma construtiva, posicao de montagem e sentido de giro');
+  L.push('- sentido de giro e acionamento (motor e freio ficam fora desta ficha)');
   L.push('- carga radial e axial no eixo de saida + distancia de aplicacao');
-  L.push('- temperatura ambiente, grau de protecao, pintura e lubrificacao');
+  L.push('- temperatura ambiente e grau de protecao do motor');
   if(wm) L.push('- VF/W com eixo de entrada macico: aplicar o fator ftp de temperatura ambiente do catalogo (1,00 a 20 C ate 1,17 a 40 C, conforme a carga)');
   var ab=abaixoTxt(x,q); if(ab){ L.push(''); L.push('Tamanho imediatamente abaixo: '+ab.replace(/<[^>]*>/g,'')); }
   L.push('');
