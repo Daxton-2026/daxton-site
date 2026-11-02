@@ -460,6 +460,7 @@ body[data-modo="ger"] .only-elev,body[data-modo="elev"] .only-ger{display:none!i
 .sum-k{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
 .sum-m{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:34px;font-weight:700;color:var(--accent);letter-spacing:-.02em;line-height:1.15;margin-top:2px;overflow-wrap:anywhere}
 .sum-m.sm{font-family:var(--font);font-size:20px;letter-spacing:-.01em;color:var(--ink)}
+.sum-rel{margin:0 0 14px}.sum-rel label{display:block;font-size:11.5px;color:var(--muted);margin-bottom:4px}.sum-rel select{width:100%}#pgerx[hidden]{display:none}
 .sum-sub{font-size:13px;color:var(--ink2);margin-top:4px}
 .sum-p{font-size:14px;color:var(--ink2);margin:10px 0 0}
 .sum-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line2);border:1px solid var(--line2);border-radius:10px;overflow:hidden;margin:18px 0 14px}
@@ -614,8 +615,8 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
           <div class="grp-b">
             <div class="fld full"><label for="app">Identificação do projeto / aplicação</label><input id="app" type="text" value="Elevação principal — carro guincho" placeholder="ex.: Ponte rolante 20 t — Cliente X"></div>
 
-            <div class="fld only-ger"><label for="pger">Potência do motor <em>P</em> — kW</label><input id="pger" type="number" step="0.1" value="75" inputmode="decimal">
-              <span class="tip">Potência nominal de placa. O torque de saída sai dela, pelo método do catálogo 300M.</span></div>
+            <div class="fld only-ger"><label for="pger">Potência do motor <em>P</em> — kW</label><select id="pger"><option value="0.18">0,18 kW (0,25 cv)</option><option value="0.25">0,25 kW (0,33 cv)</option><option value="0.37">0,37 kW (0,5 cv)</option><option value="0.55">0,55 kW (0,75 cv)</option><option value="0.75">0,75 kW (1 cv)</option><option value="1.1">1,1 kW (1,5 cv)</option><option value="1.5">1,5 kW (2 cv)</option><option value="2.2">2,2 kW (3 cv)</option><option value="3">3 kW (4 cv)</option><option value="3.7">3,7 kW (5 cv)</option><option value="4.5">4,5 kW (6 cv)</option><option value="5.5">5,5 kW (7,5 cv)</option><option value="7.5">7,5 kW (10 cv)</option><option value="9.2">9,2 kW (12,5 cv)</option><option value="11">11 kW (15 cv)</option><option value="15">15 kW (20 cv)</option><option value="18.5">18,5 kW (25 cv)</option><option value="22">22 kW (30 cv)</option><option value="30">30 kW (40 cv)</option><option value="37">37 kW (50 cv)</option><option value="45">45 kW (60 cv)</option><option value="55">55 kW (75 cv)</option><option value="75" selected>75 kW (100 cv)</option><option value="90">90 kW (125 cv)</option><option value="110">110 kW (150 cv)</option><option value="132">132 kW (175 cv)</option><option value="150">150 kW (200 cv)</option><option value="185">185 kW (250 cv)</option><option value="220">220 kW (300 cv)</option><option value="260">260 kW (350 cv)</option><option value="300">300 kW (400 cv)</option><option value="330">330 kW (450 cv)</option><option value="370">370 kW (500 cv)</option><option value="x">Outra potência (digitar)</option></select><input id="pgerx" type="number" step="0.01" min="0" value="" inputmode="decimal" placeholder="kW" hidden style="margin-top:8px">
+              <span class="tip">Potência nominal de placa, padrão comercial. O torque de saída sai dela, pelo método do catálogo 300M.</span></div>
             <div class="fld only-ger"><label for="ent">Entro com</label><select id="ent">
               <option value="i" selected>A redução necessária i</option>
               <option value="n">A rotação de saída n₂</option>
@@ -2423,12 +2424,14 @@ function syncN1(){
   if(pl>0){ $('n1').value=RPM[f][pl]; }
   $('n1').readOnly=false; $('n1').style.opacity='';
 }
+function getPger(){ var v=$('pger').value; return v==='x'?V('pgerx'):parseFloat(v); }
+function setPger(pw){ var s=$('pger'), ok=false; for(var k=0;k<s.options.length;k++){ if(s.options[k].value!=='x'&&Math.abs(parseFloat(s.options[k].value)-pw)<1e-9){ s.value=s.options[k].value; ok=true; break; } } $('pgerx').hidden=ok; if(!ok){ s.value='x'; $('pgerx').value=pw; } }
 function requisito(){
   var n1=V('n1'), n1lib=V('n1lib'), h=V('hv'), tfr=V('tfr')/100;
   var n1op=V('n1op'), ne=Math.max(n1,isFinite(n1op)?n1op:0);
   var fsm=V('fsm'); if(!(fsm>=1)||modo!=='elev') fsm=1;
   if(modo==='elev'){ h=($('tcl').value!=='')?TCL[parseInt($('tcl').value,10)]:NaN; }
-  var Pm=(modo==='ger')?V('pger'):V('pelev');
+  var Pm=(modo==='ger')?getPger():V('pelev');
   var famv=$('fam').value, fam=(famv===''?null:parseInt(famv,10));
   var tol=V('tol')/100, leit=parseInt($('leit').value,10);
   var fs=fsLookup(h,parseInt($('carga').value,10),parseInt($('zb').value,10));
@@ -2579,26 +2582,7 @@ function render(){
     $('cnt').textContent='—'; sel=null; renderAlt(q); renderSum(); ficha(); return;
   }
   vis=ok.length?enxuto(ok):list.slice(0,14);
-  tb.innerHTML=vis.map(function(x,k){
-    return '<tr data-k="'+k+'"'+(x.fail===0?(x.warnN?' class="warnrow"':''):' class="failrow"')+'>'+
-      '<td><b>'+x.size+' '+x.fam+x.st+'</b></td>'+
-      '<td class="n">'+fmt(x.i,1)+'</td>'+
-      '<td class="n">'+fmt(x.n2,2)+'</td>'+
-      '<td class="n">'+(x.dev>=0?'+':'')+fmt(x.dev*100,1)+'%</td>'+
-      '<td class="n">'+fmt(x.col,0)+'</td>'+
-      '<td class="n">'+fmt(x.Mn,0)+'</td>'+
-      '<td class="n">'+fmt(x.Mc,0)+'</td>'+
-      '<td class="n">'+(q.fs.v?fmt(q.fs.v,2):'—')+'</td>'+
-      '<td class="n">'+fmt(x.fS,2)+'</td>'+
-      '<td>'+chip(x.ck.T)+'</td>'+
-      '<td>'+chip(x.ck.P,x.ck.P?'':fmt(x.p1,1))+'</td>'+
-      '<td>'+chip(x.warnX?false:(x.warnN?'w':true), (x.warnN||x.warnX)?fmt(x.nn1,0):(x.libN?'lib':''))+'</td>'+
-      '<td>'+chip(x.ck.M,x.ck.M?'':fmt(x.m2max,0))+'</td>'+
-      '<td>'+(x.flp?chip(x.ck.F,'P'+x.flp):'<span style="color:var(--muted)">—</span>')+'</td></tr>';
-  }).join('');
-  Array.prototype.forEach.call(tb.querySelectorAll('tr[data-k]'),function(tr){
-    tr.addEventListener('click',function(){ sel=vis[parseInt(tr.dataset.k,10)]; mark(); ficha(); });
-  });
+  drawRows();
   var wn=ok.filter(function(x){return x.warnN;}).length;
   var lb=ok.filter(function(x){return x.libN;}).length;
   $('cnt').innerHTML=(ok.length
@@ -2616,6 +2600,16 @@ function render(){
 }
 var lastQ=null;
 function ratioTxt(x){ return (x.i%1?fmt(x.i,1):fmt(x.i,0)); }
+function relSel(x){
+  var o=list.filter(function(y){ return y.size===x.size&&y.fam===x.fam&&y.st===x.st; }).sort(function(a,b){ return a.i-b.i; });
+  if(o.length<2) return '';
+  return '<div class="sum-rel"><label for="relsel">Relação deste tamanho</label><select id="relsel">'+o.map(function(y,k){ return '<option value="'+k+'"'+(y===x?' selected':'')+'>i '+ratioTxt(y)+' · n₂ '+fmt(y.n2,1)+' rpm · fS '+fmt(y.fS,2)+(y.fail?' · não atende':'')+'</option>'; }).join('')+'</select></div>';
+}
+function pickRel(k){
+  var x=sel, o=list.filter(function(y){ return y.size===x.size&&y.fam===x.fam&&y.st===x.st; }).sort(function(a,b){ return a.i-b.i; }), y=o[k]; if(!y) return;
+  for(var j=0;j<vis.length;j++){ if(vis[j]===x){ vis[j]=y; break; } }
+  sel=y; drawRows(); mark(); ficha();
+}
 function renderSum(){
   var q=lastQ, el=$('sum'); if(!el||!q) return;
   var foot='<p class="sum-f">Pré-seleção. O tamanho definitivo é confirmado por escrito pela engenharia Bonfiglioli.</p>';
@@ -2630,6 +2624,7 @@ function renderSum(){
     '<div class="sum-k">Redutor selecionado</div>'+
     '<div class="sum-m">'+x.size+' '+x.fam+x.st+' '+ratioTxt(x)+'</div>'+
     '<div class="sum-sub">n₂ '+fmt(x.n2,2)+' rpm · desvio '+(x.dev>=0?'+':'')+fmt(x.dev*100,1)+'%</div>'+
+    relSel(x)+
     '<div class="sum-grid">'+
       '<div><span>f<sub>S</sub>\' exigido</span><b>'+fmt(q.fs.v,2)+'</b></div>'+
       '<div><span>f<sub>S</sub> real</span><b>'+fmt(x.fS,2)+'</b></div>'+
@@ -2683,8 +2678,31 @@ function renderAlt(q){
   }).join('');
   box.hidden=false;
 }
+function drawRows(){
+  var q=lastQ, tb=$('tb');
+  tb.innerHTML=vis.map(function(x,k){
+    return '<tr data-k="'+k+'"'+(x.fail===0?(x.warnN?' class="warnrow"':''):' class="failrow"')+'>'+
+      '<td><b>'+x.size+' '+x.fam+x.st+'</b></td>'+
+      '<td class="n">'+fmt(x.i,1)+'</td>'+
+      '<td class="n">'+fmt(x.n2,2)+'</td>'+
+      '<td class="n">'+(x.dev>=0?'+':'')+fmt(x.dev*100,1)+'%</td>'+
+      '<td class="n">'+fmt(x.col,0)+'</td>'+
+      '<td class="n">'+fmt(x.Mn,0)+'</td>'+
+      '<td class="n">'+fmt(x.Mc,0)+'</td>'+
+      '<td class="n">'+(q.fs.v?fmt(q.fs.v,2):'—')+'</td>'+
+      '<td class="n">'+fmt(x.fS,2)+'</td>'+
+      '<td>'+chip(x.ck.T)+'</td>'+
+      '<td>'+chip(x.ck.P,x.ck.P?'':fmt(x.p1,1))+'</td>'+
+      '<td>'+chip(x.warnX?false:(x.warnN?'w':true), (x.warnN||x.warnX)?fmt(x.nn1,0):(x.libN?'lib':''))+'</td>'+
+      '<td>'+chip(x.ck.M,x.ck.M?'':fmt(x.m2max,0))+'</td>'+
+      '<td>'+(x.flp?chip(x.ck.F,'P'+x.flp):'<span style="color:var(--muted)">—</span>')+'</td></tr>';
+  }).join('');
+  Array.prototype.forEach.call(tb.querySelectorAll('tr[data-k]'),function(tr){
+    tr.addEventListener('click',function(){ sel=vis[parseInt(tr.dataset.k,10)]; mark(); ficha(); });
+  });
+}
 function mark(){
-  renderSum();
+  renderSum(); var rs=$('relsel'); if(rs) rs.addEventListener('change',function(){ pickRel(parseInt(rs.value,10)); });
   Array.prototype.forEach.call($('tb').querySelectorAll('tr[data-k]'),function(tr){
     tr.classList.toggle('sel', vis[parseInt(tr.dataset.k,10)]===sel);
   });
@@ -2920,7 +2938,8 @@ $('n1').addEventListener('input',function(){
 });
 $('freq').addEventListener('change',function(){syncN1();render()});
 $('polos').addEventListener('change',function(){syncN1();render()});
-['app','q','dt','vel','ram','pta','pol','pelev','fsm','qunit','base','tcl','n1op','pger','val','n1','n1lib','carga','zb','hv','tfr','fam','tol','ver','pflg','pos','opc','leit']
+$('pger').addEventListener('change',function(){ var x=$('pger').value==='x'; $('pgerx').hidden=!x; if(x) $('pgerx').focus(); });
+['app','q','dt','vel','ram','pta','pol','pelev','fsm','qunit','base','tcl','n1op','pger','pgerx','val','n1','n1lib','carga','zb','hv','tfr','fam','tol','ver','pflg','pos','opc','leit']
  .forEach(function(k){ var e=$(k); e.addEventListener('input',render); e.addEventListener('change',render); });
 
 $('cp').addEventListener('click',function(){
@@ -2955,7 +2974,7 @@ setModo(/[?&]modo=ger/.test(location.search)?'ger':'elev');
     if(tcl!==null&&Math.floor(tcl)===tcl){ $('tcl').value=String(tcl); mudou=true; }
     if(modo==='ger'){
       var pw=num('p',0.01,5000), ii=num('i',1,5000), nn=num('n2',0.01,5000), hh=num('h',100,200000);
-      if(pw!==null){ $('pger').value=pw; mudou=true; }
+      if(pw!==null){ setPger(pw); mudou=true; }
       if(ii!==null){ $('ent').value='i'; setEnt(); $('val').value=ii; mudou=true; }
       else if(nn!==null){ $('ent').value='n'; setEnt(); $('val').value=nn; mudou=true; }
       if(hh!==null){ $('hv').value=hh; mudou=true; }
