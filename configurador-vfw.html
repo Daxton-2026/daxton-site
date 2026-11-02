@@ -1,0 +1,996 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Configurador VF · W — Redutores Sem-fim Bonfiglioli — Daxton</title>
+<meta name="description" content="Ferramenta de apoio à especificação de redutores de coroa e rosca sem-fim Bonfiglioli VF e W. Informe potência, rotação e regime e veja os tamanhos que atendem.">
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:title" content="Configurador VF · W — Daxton">
+<meta property="og:description" content="Ferramenta de apoio à especificação de redutores de coroa e rosca sem-fim Bonfiglioli VF e W. Informe potência, rotação e regime e veja os tamanhos que atendem.">
+<meta property="og:type" content="website">
+
+<!-- TAG DO GOOGLE ADS (AW-17062055869) — inserir aqui se esta pagina entrar no rastreamento,
+     no mesmo padrao de index.html / bonfiglioli.html. Fechar sempre com </script> puro. -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+:root{color-scheme:light dark}
+html,body{margin:0;padding:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+
+/* ---------- folha de dados: botoes e impressao em PDF ---------- */
+.sheet-btns{display:flex;gap:8px;flex-wrap:wrap}
+@media print{
+  @page{size:A4;margin:14mm}
+  body.print-ficha>*:not(main){display:none!important}
+  body.print-ficha main>*:not(#ficha){display:none!important}
+  body.print-ficha{background:#fff!important;color:#111!important}
+  body.print-ficha #ficha{margin:0;padding:0}
+  body.print-ficha #ficha .sec-h p,body.print-ficha .sheet-btns{display:none!important}
+  body.print-ficha .sheet{border:1px solid #999;overflow:visible;background:#fff!important}
+  body.print-ficha .sheet-h{background:#003869!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body.print-ficha .sheet-h h3{color:#fff!important}
+  body.print-ficha .sheet pre{white-space:pre-wrap;font-size:10px;line-height:1.38;padding:12px 16px;background:#fff!important;color:#111!important}
+  body.print-ficha h2,body.print-ficha .eyebrow{color:#003869!important}
+}
+
+/* ---------- voltar para a pagina de configuradores ---------- */
+.backbar{background:var(--surface2);border-bottom:1px solid var(--line)}
+.backbar a{display:inline-flex;align-items:center;gap:10px;margin:10px 0;padding:9px 18px 9px 14px;border-radius:var(--radius);background:#F5A623;color:#081A45;
+  font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;text-decoration:none;
+  box-shadow:0 2px 6px rgba(8,26,69,.22);transition:background .2s ease,transform .1s ease}
+.backbar a svg{display:block;transition:transform .2s ease}
+@media (hover:hover){.backbar a:hover{background:#D4891A}}
+@media (hover:hover){.backbar a:hover svg{transform:translateX(-4px)}}
+.backbar a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.backbar a,.backbar a svg{transition:none}}
+@media print{.backbar{display:none!important}}
+</style>
+<style>
+:root{
+  --ground:#EBEEF1; --surface:#FFFFFF; --surface2:#F4F6F8; --inset:#E6EBEF;
+  --ink:#14181C; --ink2:#3D4952; --muted:#657079;
+  --line:#CBD3DA; --line2:#E0E6EB;
+  --accent:#003869; --accent2:#0A5A9E; --accent-soft:#D9E5F0;
+  --ok:#256B47; --warn:#8C5F07; --crit:#98352C;
+  --crit-soft:#F7E2DF; --warn-soft:#F8EFDA; --ok-soft:#DFF0E6;
+  --radius:4px;
+  --shadow:0 1px 2px rgba(14,40,64,.07), 0 8px 22px rgba(14,40,64,.05);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0C1116; --surface:#141C23; --surface2:#19232B; --inset:#101820;
+    --ink:#E4EAEF; --ink2:#B4C0C9; --muted:#7F8D97;
+    --line:#27333C; --line2:#1E2932;
+    --accent:#6BA9DA; --accent2:#8FC1E6; --accent-soft:#13314A;
+    --ok:#5AA97F; --warn:#D2A140; --crit:#DE7A6E;
+    --crit-soft:#3A211E; --warn-soft:#352B15; --ok-soft:#1A3226;
+    --shadow:0 1px 2px rgba(0,0,0,.45), 0 8px 24px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0C1116; --surface:#141C23; --surface2:#19232B; --inset:#101820;
+  --ink:#E4EAEF; --ink2:#B4C0C9; --muted:#7F8D97;
+  --line:#27333C; --line2:#1E2932;
+  --accent:#6BA9DA; --accent2:#8FC1E6; --accent-soft:#13314A;
+  --ok:#5AA97F; --warn:#D2A140; --crit:#DE7A6E;
+  --crit-soft:#3A211E; --warn-soft:#352B15; --ok-soft:#1A3226;
+  --shadow:0 1px 2px rgba(0,0,0,.45), 0 8px 24px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1000px;margin:0 auto;padding:0 24px}
+h1,h2,h3,h4{font-family:"Barlow Condensed","Source Sans 3",system-ui,sans-serif;
+  text-wrap:balance;margin:0;letter-spacing:.005em;line-height:1.12}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.eyebrow{font-family:"Barlow Condensed",sans-serif;font-size:14px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--accent);font-weight:600}
+
+/* ---------- header ---------- */
+header.top{background:var(--surface);border-bottom:3px solid var(--accent)}
+.mast{padding:38px 0 28px;display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:flex-end}
+.mast h1{font-size:clamp(34px,6vw,52px);font-weight:700;text-transform:uppercase;letter-spacing:.01em}
+.mast .lead{color:var(--ink2);font-size:17px;max-width:56ch;margin-top:12px}
+.plate{font-family:"JetBrains Mono",monospace;font-size:11.5px;line-height:1.9;color:var(--muted);
+  border-left:2px solid var(--line);padding-left:14px}
+.plate b{color:var(--ink2);font-weight:500}
+
+nav.steps{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--line);
+  max-width:100%}
+nav.steps>.wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+nav.steps ul{display:flex;gap:0;list-style:none;margin:0;padding:0;min-width:max-content}
+nav.steps a{display:flex;align-items:baseline;gap:7px;padding:12px 15px;text-decoration:none;
+  font-size:13.5px;color:var(--ink2);border-bottom:2px solid transparent;white-space:nowrap}
+nav.steps a span{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--accent);font-weight:700}
+@media (hover:hover){nav.steps a:hover{color:var(--accent);border-bottom-color:var(--line)}}
+nav.steps a:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+
+section{padding:46px 0}
+section+section{border-top:1px solid var(--line2)}
+.sec-h{margin-bottom:24px}
+.sec-h h2{font-size:30px;font-weight:700;margin-top:8px;text-transform:uppercase}
+.sec-h p{color:var(--ink2);margin:12px 0 0;max-width:66ch}
+
+/* ---------- step blocks ---------- */
+.step{display:grid;grid-template-columns:52px minmax(0,1fr);gap:20px;padding:22px 0;border-top:1px solid var(--line2)}
+.step:first-of-type{border-top:none}
+.step .n{font-family:"Barlow Condensed",sans-serif;font-size:40px;font-weight:700;
+  color:var(--accent);line-height:1;opacity:.85}
+.step h3{font-size:21px;font-weight:600;margin-bottom:6px}
+.step p{margin:0 0 10px;color:var(--ink2)}
+.step p:last-child{margin-bottom:0}
+
+.formula{background:var(--inset);border:1px solid var(--line);border-left:3px solid var(--accent);
+  border-radius:var(--radius);padding:14px 18px;margin:12px 0;overflow-x:auto}
+.formula code{font-family:"JetBrains Mono",monospace;font-size:16px;font-weight:500;color:var(--ink);white-space:nowrap}
+.formula .why{display:block;font-family:"Source Sans 3",sans-serif;font-size:13.5px;
+  color:var(--muted);margin-top:8px;white-space:normal}
+
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:4px 18px;
+  font-size:14px;color:var(--ink2);margin-top:10px}
+.legend div{display:flex;gap:8px}
+.legend b{font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);flex:none;min-width:34px}
+
+/* ---------- tables ---------- */
+.tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{padding:9px 13px;text-align:left;border-bottom:1px solid var(--line2)}
+thead th{background:var(--surface2);font-family:"Barlow Condensed",sans-serif;font-size:14px;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);font-weight:600;
+  border-bottom:1px solid var(--line);white-space:nowrap}
+tbody tr:last-child td{border-bottom:none}
+td.n,th.n{text-align:right;font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;white-space:nowrap}
+td.hl{background:var(--accent-soft);font-weight:600}
+tbody th{font-weight:600;background:var(--surface2);font-size:14px}
+
+.cap{font-size:13px;color:var(--muted);margin-top:9px}
+
+/* ---------- callouts ---------- */
+.note{border:1px solid var(--line);border-radius:var(--radius);padding:15px 18px;margin:18px 0;
+  background:var(--surface);display:grid;grid-template-columns:3px minmax(0,1fr);gap:15px}
+.note i{border-radius:2px;background:var(--accent)}
+.note.crit i{background:var(--crit)} .note.warn i{background:var(--warn)}
+.note h4{font-size:16px;font-weight:600;margin-bottom:5px;font-family:"Source Sans 3",sans-serif}
+.note p{margin:0;font-size:14.5px;color:var(--ink2)}
+.note p+p{margin-top:8px}
+.note.crit h4{color:var(--crit)} .note.warn h4{color:var(--warn)}
+
+/* ---------- calculator ---------- */
+.calc{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);overflow:hidden}
+.calc-head{padding:16px 20px;background:var(--surface2);border-bottom:1px solid var(--line)}
+.calc-head h3{font-size:20px;font-weight:600;text-transform:uppercase}
+.calc-head p{margin:5px 0 0;font-size:13.5px;color:var(--muted)}
+.calc-body{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:0}
+.calc-in{padding:20px;border-right:1px solid var(--line2)}
+.calc-out{padding:20px;background:var(--inset)}
+.fld{display:flex;flex-direction:column;gap:4px;margin-bottom:13px}
+.fld label{font-size:12.5px;font-weight:600;color:var(--ink2);letter-spacing:.02em}
+.fld label em{font-family:"JetBrains Mono",monospace;font-style:normal;color:var(--accent);font-weight:700}
+.fld input,.fld select{font-family:"JetBrains Mono",monospace;font-size:15px;padding:8px 10px;
+  border:1px solid var(--line);border-radius:3px;background:var(--surface);color:var(--ink);width:100%}
+.fld input:focus-visible,.fld select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.res{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+  padding:9px 0;border-bottom:1px solid var(--line2)}
+.res:last-of-type{border-bottom:none}
+.res span{font-size:13.5px;color:var(--ink2)}
+.res b{font-family:"JetBrains Mono",monospace;font-size:17px;font-weight:700;color:var(--ink);
+  font-variant-numeric:tabular-nums}
+.res.key b{color:var(--accent);font-size:20px}
+.calc-foot{padding:14px 20px;border-top:1px solid var(--line);font-size:13.5px;color:var(--ink2);
+  background:var(--surface)}
+
+/* ---------- worked examples ---------- */
+.ex{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.exc{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.exc header{padding:14px 18px;background:var(--accent);color:#fff}
+.exc header h3{font-size:20px;font-weight:600;text-transform:uppercase;color:#fff}
+.exc header .desig{font-family:"JetBrains Mono",monospace;font-size:13px;margin-top:4px;opacity:.9}
+.exc .rows{padding:6px 18px 16px}
+.exc .r{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--line2);font-size:14.5px}
+.exc .r:last-child{border-bottom:none}
+.exc .r span{color:var(--ink2)}
+.exc .r b{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;white-space:nowrap}
+.exc .r.sep{border-top:2px solid var(--line);margin-top:6px;padding-top:11px}
+.exc .r.fin b{color:var(--ok);font-weight:700}
+
+/* ---------- designation ---------- */
+.desig-box{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+.desig-code{font-family:"JetBrains Mono",monospace;font-size:clamp(17px,3.4vw,26px);font-weight:700;
+  letter-spacing:.06em;color:var(--accent);margin-bottom:16px;overflow-x:auto;white-space:nowrap;padding-bottom:4px}
+.desig-list{display:grid;gap:1px;background:var(--line2);border:1px solid var(--line2);border-radius:3px;overflow:hidden}
+.desig-list div{background:var(--surface);padding:9px 14px;display:grid;grid-template-columns:78px minmax(0,1fr);gap:14px;font-size:14.5px}
+.desig-list b{font-family:"JetBrains Mono",monospace;color:var(--accent);font-weight:700}
+.desig-list span{color:var(--ink2)}
+
+ul.plain{margin:10px 0 0;padding-left:20px;color:var(--ink2)}
+ul.plain li{margin-bottom:7px}
+ul.plain li::marker{color:var(--accent)}
+
+footer{border-top:3px solid var(--accent);background:var(--surface);padding:26px 0 44px;
+  font-size:13.5px;color:var(--muted)}
+footer b{color:var(--ink2);font-weight:600}
+
+@media (max-width:640px){
+  .step{grid-template-columns:38px minmax(0,1fr);gap:14px}
+  .step .n{font-size:30px}
+  .calc-in{border-right:none;border-bottom:1px solid var(--line2)}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<style>
+.modes{display:flex;gap:0;border:1px solid var(--line);border-radius:3px;overflow:hidden;margin-bottom:16px}
+.modes button{flex:1;font-family:"Barlow Condensed",sans-serif;font-size:15px;letter-spacing:.06em;
+  text-transform:uppercase;font-weight:600;padding:10px 8px;border:none;cursor:pointer;
+  background:var(--surface);color:var(--ink2);border-right:1px solid var(--line)}
+.modes button:last-child{border-right:none}
+.modes button[aria-pressed="true"]{background:var(--accent);color:#fff}
+.modes button:focus-visible{outline:2px solid var(--accent);outline-offset:-4px}
+
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1px;
+  background:var(--line2);border:1px solid var(--line2);border-radius:var(--radius);overflow:hidden}
+.kpi{background:var(--surface);padding:13px 16px}
+.kpi span{display:block;font-size:12.5px;color:var(--muted);letter-spacing:.02em;margin-bottom:3px}
+.kpi b{font-family:"JetBrains Mono",monospace;font-size:20px;font-weight:700;color:var(--accent);
+  font-variant-numeric:tabular-nums}
+
+.tip{display:block;font-size:12px;line-height:1.45;color:var(--muted);margin-top:2px}
+.tip b{color:var(--accent2)}
+.hint{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--muted);font-weight:400}
+#tbl tbody tr{cursor:pointer}
+@media (hover:hover){#tbl tbody tr:hover td{background:var(--surface2)}}
+#tbl tbody tr.sel td{background:var(--accent-soft)}
+#tbl tbody tr.warnrow td:first-child{box-shadow:inset 3px 0 0 var(--warn)}
+.ck{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:11.5px;font-weight:700;
+  padding:2px 6px;border-radius:3px;white-space:nowrap}
+.ck.y{background:var(--ok-soft);color:var(--ok)}
+.ck.n{background:var(--crit-soft);color:var(--crit)}
+.ck.w{background:var(--warn-soft);color:var(--warn)}
+#tbl tbody tr.failrow td:first-child{box-shadow:inset 3px 0 0 var(--crit)}
+
+.sheet{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);overflow:hidden}
+.sheet-h{padding:13px 18px;background:var(--accent);color:#fff;display:flex;flex-wrap:wrap;gap:10px;
+  justify-content:space-between;align-items:center}
+.sheet-h h3{font-size:19px;font-weight:700;color:#fff;font-family:"JetBrains Mono",monospace;letter-spacing:.05em}
+.sheet-h button{font-family:"Barlow Condensed",sans-serif;font-size:14px;letter-spacing:.08em;text-transform:uppercase;
+  font-weight:600;padding:7px 16px;border:1px solid rgba(255,255,255,.55);background:transparent;color:#fff;
+  border-radius:3px;cursor:pointer}
+@media (hover:hover){.sheet-h button:hover{background:rgba(255,255,255,.15)}}
+.sheet-h button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.sheet pre{margin:0;padding:18px;font-family:"JetBrains Mono",monospace;font-size:12.5px;line-height:1.75;
+  color:var(--ink);background:var(--inset);overflow-x:auto;white-space:pre;font-variant-numeric:tabular-nums}
+</style>
+<style>
+.where{display:block;font-family:"JetBrains Mono",monospace;font-size:11.5px;font-weight:400;
+  color:var(--muted);letter-spacing:.02em;margin-top:4px;text-transform:none}
+.where b{color:var(--accent2);font-weight:700}
+.sub2{font-weight:400;text-transform:none;letter-spacing:0;font-size:11.5px}
+#ta3 tr.hl td,#ta3 tr.hl th{background:var(--accent-soft);font-weight:600}
+#ta4 td.hl,#tclas td.hl{background:var(--accent-soft);font-weight:700;color:var(--accent);
+  box-shadow:inset 0 0 0 2px var(--accent)}
+</style>
+<style>
+.btn{font-family:"Barlow Condensed",sans-serif;font-size:14px;letter-spacing:.06em;text-transform:uppercase;
+  font-weight:600;padding:9px 14px;border:1px solid var(--line);background:var(--surface2);color:var(--ink2);
+  border-radius:3px;cursor:pointer;width:100%}
+@media (hover:hover){.btn:hover{border-color:var(--accent);color:var(--accent)}}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+</style>
+<style>
+/* ---------- marca Daxton ---------- */
+.brandbar{background:#003869;color:#fff;border-bottom:3px solid #FABC43}
+.bb{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:20px 34px;align-items:center;padding:20px 0}
+.logo{display:block;line-height:0;text-decoration:none}
+.logo img{height:96px;width:auto;display:block}
+.logo:focus-visible{outline:2px solid #FABC43;outline-offset:6px}
+
+.bbmid{min-width:0}
+.bbrole{font-family:"Barlow Condensed",sans-serif;font-size:19px;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,.8);line-height:1.2}
+.bbrole b{color:#FABC43;font-weight:700}
+.bbterr{font-size:14px;color:rgba(255,255,255,.62);margin-top:4px;line-height:1.35}
+
+.bbcard{border-left:2px solid rgba(250,188,67,.5);padding-left:18px;min-width:0}
+.bbname{font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:700;letter-spacing:.05em;
+  text-transform:uppercase;color:#fff;line-height:1.15;margin-bottom:5px}
+.bbline{font-size:13.5px;color:rgba(255,255,255,.9);line-height:1.65;white-space:nowrap;
+  font-variant-numeric:tabular-nums}
+.bbline span{font-family:"Barlow Condensed",sans-serif;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:#FABC43;display:inline-block;min-width:78px;font-weight:600}
+
+@media (max-width:900px){
+  .bb{grid-template-columns:auto minmax(0,1fr);gap:16px 24px}
+  .bbcard{grid-column:1 / -1;border-left:none;border-top:1px solid rgba(255,255,255,.16);padding-left:0;padding-top:14px}
+  .bbline{white-space:normal}
+}
+@media (max-width:560px){
+  .bb{grid-template-columns:1fr}
+  .logo img{height:72px}
+  .bbrole{font-size:17px}
+}
+
+/* ---------- boas-vindas ---------- */
+.welcome{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:0;border:1px solid var(--line);
+  border-radius:var(--radius);overflow:hidden;background:var(--surface);margin:36px 0 4px}
+.wtxt{padding:22px 24px}
+.wtxt h2{font-size:24px;font-weight:700;text-transform:uppercase;margin-bottom:8px}
+.wtxt p{margin:0 0 9px;color:var(--ink2);font-size:15px}
+.wtxt p:last-child{margin-bottom:0}
+.wsteps{list-style:none;margin:0;padding:22px 24px;background:var(--inset);border-left:1px solid var(--line2);
+  display:flex;flex-direction:column;gap:14px;justify-content:center}
+.wsteps li{display:flex;gap:12px;align-items:flex-start;font-size:14.5px;color:var(--ink2);line-height:1.4}
+.wsteps span{flex:none;width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;
+  font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+@media (max-width:720px){.welcome{grid-template-columns:1fr}.wsteps{border-left:none;border-top:1px solid var(--line2)}}
+
+/* ---------- contato ---------- */
+.contact{background:var(--surface2);border-top:1px solid var(--line)}
+.cgrid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:28px;padding:32px 0}
+.cgrid h3{font-size:24px;font-weight:700;text-transform:uppercase;margin:6px 0 8px}
+.cgrid p{margin:0;color:var(--ink2);font-size:15px;max-width:52ch}
+.ccard{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);
+  border-radius:var(--radius);padding:18px 20px;align-self:start}
+.cname{font-family:"Barlow Condensed",sans-serif;font-size:22px;font-weight:700;text-transform:uppercase;color:var(--ink)}
+.crole{font-size:13px;color:var(--muted);margin-bottom:12px}
+.cline{font-size:14.5px;color:var(--ink2);padding:4px 0;font-variant-numeric:tabular-nums}
+.cline b{font-family:"Barlow Condensed",sans-serif;font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent);display:inline-block;min-width:96px;font-weight:600}
+@media (max-width:720px){.cgrid{grid-template-columns:1fr;gap:18px}}
+</style>
+<style id="ui2">
+/* ===== UI v2 — visual corporativo (sobrepoe os estilos anteriores; IDs e logica intactos) ===== */
+:root{
+  --ground:#F2F4F7; --surface:#FFFFFF; --surface2:#F7F9FB; --inset:#EEF2F6;
+  --ink:#0B1B2B; --ink2:#34475A; --muted:#66788A;
+  --line:#D6DDE5; --line2:#E6EBF0;
+  --accent:#00396B; --accent2:#0A5A9E; --accent-soft:#E3EDF7;
+  --amber:#F5A623; --amber-d:#D98E10;
+  --radius:10px;
+  --shadow:0 1px 2px rgba(11,27,43,.06),0 10px 28px rgba(11,27,43,.07);
+  --font:"Inter","Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{font-family:var(--font);font-size:15.5px;line-height:1.6;letter-spacing:-.003em}
+h1,h2,h3,h4,.eyebrow,thead th,.step .n,.sheet-h button,.backbar a,.modes button,.exc header h3,.calc-head h3{font-family:var(--font)}
+.wrap{max-width:1180px}
+
+/* faixa da marca */
+.brandbar{border-bottom:2px solid var(--amber)}
+.bb{padding:12px 0;gap:14px 28px}
+.logo img{height:52px}
+.bbrole{font-family:var(--font);font-size:15px}
+.bbterr{font-size:12.5px;opacity:.8}
+.bbcard{border-left-color:rgba(255,255,255,.22);font-size:12.5px}
+@media (max-width:760px){.logo img{height:44px}}
+
+.backbar{background:var(--surface);border-bottom:1px solid var(--line2)}
+.backbar a{margin:8px 0;padding:7px 14px 7px 10px;border-radius:999px;background:transparent;color:var(--accent);
+  border:1px solid var(--line);box-shadow:none;font-size:13.5px;font-weight:600;letter-spacing:0;text-transform:none}
+.backbar a svg{width:16px;height:16px}
+@media (hover:hover){.backbar a:hover{background:var(--accent-soft);border-color:var(--accent)}}
+
+/* cabecalho */
+header.top{background:linear-gradient(120deg,#00223F 0%,#00396B 58%,#0A5A9E 120%);border-bottom:0;color:#fff;position:relative;overflow:hidden}
+header.top::after{content:"";position:absolute;right:-120px;top:-140px;width:460px;height:460px;border-radius:50%;
+  background:radial-gradient(circle,rgba(245,166,35,.22),transparent 65%);pointer-events:none}
+.mast{padding:44px 0 40px;align-items:flex-end;position:relative;z-index:1}
+.mast .eyebrow{color:#F9C25E;letter-spacing:.14em;font-size:12.5px}
+.mast h1{font-size:clamp(32px,5vw,48px);font-weight:700;text-transform:none;letter-spacing:-.025em;color:#fff;margin-top:8px}
+.mast .lead{color:#D5E3F1;font-size:16.5px;max-width:60ch}
+.plate{display:flex;flex-wrap:wrap;gap:8px;border:0;padding:0;font-family:var(--font);font-size:12.5px;line-height:1.3;color:#C9DAEA;max-width:360px;justify-content:flex-end}
+.plate br{display:none}
+.plate b{display:inline-block;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:5px 12px;font-weight:600}
+
+/* navegacao */
+nav.steps{background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
+nav.steps a{padding:13px 14px;font-size:13px;font-weight:500;border-bottom:2px solid transparent}
+nav.steps a span{font-family:var(--font);font-size:10.5px;background:var(--accent-soft);color:var(--accent);border-radius:5px;padding:1px 6px;font-weight:700}
+@media (hover:hover){nav.steps a:hover{color:var(--accent);border-bottom-color:var(--accent)}}
+
+/* secoes */
+section{padding:40px 0}
+.sec-h{margin-bottom:22px}
+.sec-h .eyebrow{display:inline-block;background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:3px 12px;font-size:11.5px;letter-spacing:.1em;font-weight:700}
+.sec-h h2{font-size:28px;font-weight:700;text-transform:none;letter-spacing:-.02em;margin-top:12px}
+.sec-h p{font-size:15.5px;color:var(--ink2)}
+.welcome{border-radius:14px;box-shadow:var(--shadow);overflow:hidden;margin-top:28px}
+.welcome h2{font-size:22px;letter-spacing:-.015em;text-transform:none}
+.wsteps span{background:var(--accent)}
+
+/* bancada: entrada + resultado */
+.wb{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:24px;align-items:start}
+.wb-in,#g-elev{display:grid;gap:18px;min-width:0}
+body[data-modo="ger"] .only-elev,body[data-modo="elev"] .only-ger{display:none!important}
+.wb-out{position:sticky;top:64px;min-width:0}
+@media (max-width:1020px){.wb{grid-template-columns:1fr}.wb-out{position:static}}
+
+.grp{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+.grp-h,.adv>summary{display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid var(--line2);background:var(--surface2);list-style:none;cursor:default}
+.adv>summary{cursor:pointer;border-bottom:0}
+.adv[open]>summary{border-bottom:1px solid var(--line2)}
+.adv>summary::-webkit-details-marker{display:none}
+.grp-h h3,.adv>summary h3{font-size:17px;font-weight:650;letter-spacing:-.01em}
+.grp-h p,.adv>summary p{margin:2px 0 0;font-size:13px;color:var(--muted);line-height:1.4}
+.grp-h>div,.adv>summary>div{flex:1;min-width:0}
+.gn{flex:none;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;font-size:14px;display:grid;place-items:center}
+.tag-ess,.tag-opt{flex:none;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:4px 10px}
+.tag-ess{background:var(--amber);color:#2A1A00}
+.tag-opt{background:var(--inset);color:var(--muted);border:1px solid var(--line)}
+.chev{flex:none;color:var(--muted);transition:transform .2s ease}
+.adv[open] .chev{transform:rotate(180deg)}
+.grp-b{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px 18px;padding:20px}
+.grp-b .fld{margin:0}
+.fld.full{grid-column:1/-1}
+.fld.span2{grid-row:span 2}
+.grp-b{grid-auto-flow:dense}
+.grp-b{align-items:start}
+@media (min-width:600px){.grp-b .fld>label{min-height:2.7em;line-height:1.35;display:flex;align-items:flex-end;flex-wrap:wrap;column-gap:.3em}}
+.fld label{font-size:12.5px;font-weight:600;color:var(--ink2);letter-spacing:0}
+.fld label em{font-family:var(--font);font-weight:700}
+.fld input,.fld select{height:42px;padding:0 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);
+  font-size:15px;transition:border-color .15s,box-shadow .15s}
+.fld select{font-family:var(--font)}
+.fld input[type=number]{font-family:"JetBrains Mono",ui-monospace,monospace}
+.fld input:hover,.fld select:hover{border-color:#9FB1C3}
+.fld input:focus-visible,.fld select:focus-visible{outline:none;border-color:var(--accent2);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent2) 22%,transparent)}
+.fld .tip{font-size:12px;color:var(--muted);line-height:1.45}
+.inl{display:flex;gap:8px}.inl input{flex:1;min-width:0}.inl select{width:84px;flex:none}
+.grp-key{border-color:color-mix(in srgb,var(--accent) 35%,var(--line));box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 7%,transparent),var(--shadow)}
+.grp-key .grp-h{background:linear-gradient(90deg,var(--accent-soft),var(--surface2))}
+.grp-key .fld input,.grp-key .fld select{border:1.5px solid color-mix(in srgb,var(--accent) 65%,var(--line));background:color-mix(in srgb,var(--accent-soft) 85%,var(--surface))}
+.grp-key .fld input:focus-visible,.grp-key .fld select:focus-visible{border-color:var(--accent2)}
+.grp-key .fld label{color:var(--accent)}
+.grp-key .fld label::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--amber);margin:0 0 4px 0;align-self:flex-end;flex:none}
+.grp-key .grp-b{background:color-mix(in srgb,var(--accent-soft) 22%,var(--surface))}
+
+/* painel de resultado */
+.sum{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:22px;overflow:hidden;position:relative}
+.sum::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.sum-st{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:4px 11px;margin-bottom:14px}
+.sum-st.ok{background:var(--ok-soft);color:var(--ok)}.sum-st.bad{background:var(--crit-soft);color:var(--crit)}.sum-st.wait{background:var(--inset);color:var(--muted)}
+.sum-k{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.sum-m{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:34px;font-weight:700;color:var(--accent);letter-spacing:-.02em;line-height:1.15;margin-top:2px;overflow-wrap:anywhere}
+.sum-m.sm{font-family:var(--font);font-size:20px;letter-spacing:-.01em;color:var(--ink)}
+.sum-rel{margin:0 0 14px}.sum-rel label{display:block;font-size:11.5px;color:var(--muted);margin-bottom:4px}.sum-rel select{width:100%}#pgerx[hidden]{display:none}
+.sum-sub{font-size:13px;color:var(--ink2);margin-top:4px}
+.sum-p{font-size:14px;color:var(--ink2);margin:10px 0 0}
+.sum-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line2);border:1px solid var(--line2);border-radius:10px;overflow:hidden;margin:18px 0 14px}
+.sum-grid>div{background:var(--surface);padding:11px 13px}
+.sum-grid span{display:block;font-size:11.5px;color:var(--muted);line-height:1.3}
+.sum-grid b{font-family:"JetBrains Mono",monospace;font-size:17px;font-weight:700;color:var(--ink)}
+.sum-ck{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.sum-pm{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:11px 0;border-top:1px solid var(--line2);border-bottom:1px solid var(--line2);font-size:13.5px;color:var(--ink2)}
+.sum-pm b{font-family:"JetBrains Mono",monospace;color:var(--ink)}
+.sum-btn{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;padding:12px 16px;border-radius:10px;background:var(--amber);color:#1F1400;
+  font-weight:700;font-size:14.5px;text-decoration:none;transition:background .15s,transform .1s}
+@media (hover:hover){.sum-btn:hover{background:var(--amber-d)}}
+.sum-btn:active{transform:translateY(1px)}
+.sum-btn:focus-visible{outline:3px solid var(--accent2);outline-offset:2px}
+.sum-f{font-size:11.5px;color:var(--muted);margin:14px 0 0;line-height:1.45}
+.ck{font-family:var(--font);font-size:11.5px;border-radius:999px;padding:3px 9px}
+
+/* KPIs, tabela, avisos */
+.grid4{gap:12px;background:none;border:0;border-radius:0;box-shadow:none;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:15px 17px;box-shadow:var(--shadow)}
+.kpi span{font-size:12px;font-weight:500}
+.kpi b{font-size:21px}
+.tblwrap{border-radius:12px;box-shadow:var(--shadow)}
+table{font-size:14px}
+thead th{font-size:12px;letter-spacing:.02em;text-transform:none;font-weight:650;color:var(--ink2);padding:11px 13px}
+tbody tr{transition:background .12s}
+@media (hover:hover){#tbl tbody tr[data-k]:hover td{background:var(--surface2)}}
+#tbl tbody tr[data-k]{cursor:pointer}
+#tbl tbody tr.sel td{background:var(--accent-soft)}
+.note{border-radius:12px;box-shadow:none}
+.note h4{font-family:var(--font);font-weight:650}
+.formula,.desig-box,.exc,.sheet{border-radius:12px}
+.sheet{box-shadow:var(--shadow)}
+.sheet-h{background:linear-gradient(120deg,#00223F,#00396B)}
+.sheet-h button{border-radius:999px;padding:7px 15px;font-size:13px;font-weight:600;letter-spacing:0;text-transform:none}
+.step .n{opacity:1;font-weight:700}
+
+/* alternativas por classe T */
+.alt{margin-top:26px}
+.alt-h h3{font-size:19px;font-weight:650;letter-spacing:-.01em}
+.alt-h p{margin:5px 0 14px;font-size:14px;color:var(--ink2);max-width:72ch}
+.alt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.alt-c{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:15px 16px;display:flex;flex-direction:column;gap:3px}
+.alt-c.on{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 14%,transparent),var(--shadow)}
+.alt-t{font-weight:700;font-size:14px;color:var(--ink)}.alt-t small{font-weight:500;color:var(--muted);font-size:12px;margin-left:4px}
+.alt-m{font-family:"JetBrains Mono",monospace;font-size:20px;font-weight:700;color:var(--accent);margin-top:6px;overflow-wrap:anywhere}
+.alt-m.none{font-family:var(--font);font-size:14px;color:var(--crit);font-weight:600}
+.alt-s{font-size:12px;color:var(--muted)}
+.alt-d{margin-top:8px;font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2)}
+.alt-c.on .alt-d{display:inline-block;background:var(--amber);color:#2A1A00;border-radius:999px;padding:3px 10px;margin-top:6px}
+
+footer{border-top:1px solid var(--line);background:var(--surface)}
+@media (max-width:640px){
+  .wrap{padding:0 16px}.grp-b{padding:16px;grid-template-columns:1fr}.sum{padding:18px}.sum-m{font-size:28px}
+  .mast{padding:30px 0 28px}.plate{justify-content:flex-start;max-width:none}
+}
+/* o <i> do aviso e a barra lateral; italico dentro do texto nao herda o fundo */
+.note p i,.note h4 i,.note li i{background:none;border-radius:0;font-style:italic;color:inherit}
+.wsteps li{align-items:center}
+@media print{.wb-out,.alt{display:none!important}}
+</style>
+</head>
+<body>
+<div class="brandbar">
+  <div class="wrap">
+    <div class="bb">
+      <!-- Logo Daxton embutido em base64 de proposito: o arquivo tem que funcionar
+           sozinho, aberto por duplo clique ou enviado por e-mail, sem depender de
+           nenhum outro arquivo. A linha do <img> abaixo e longa por isso - editar
+           por PowerShell/linha, nao pelo Edit tool (ver CLAUDE.md, gotchas tecnicos). -->
+      <a class="logo" href="https://www.daxton.com.br" target="_blank" rel="noopener">
+        <img src="data:image/png;base64,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" alt="Daxton — Força de Vendas" width="359" height="210">
+      </a>
+      <div class="bbmid">
+        <div class="bbrole">Representante <b>Bonfiglioli</b></div>
+        <div class="bbterr">Santa Catarina e Região Metropolitana de Curitiba</div>
+      </div>
+      <div class="bbcard">
+        <div class="bbname">Carlos Sguario</div>
+        <div class="bbline"><span>WhatsApp</span> +55 47 99964-0526</div>
+        <div class="bbline"><span>Bonfiglioli</span> sguario@bonfiglioli.com</div>
+        <div class="bbline"><span>Daxton</span> carlos@daxton.com.br</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="backbar noprint"><div class="wrap"><a href="/bonfiglioli"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M20 12H5M11 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Retornar</a></div></div>
+
+<style>
+.tipos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.tipo.all{grid-column:1/-1;flex-direction:row;align-items:center;gap:16px;padding:10px 16px}
+.tipo.all .tipo-img{width:132px;height:72px;flex:none;margin:0}
+.tipo.all .tx{display:flex;flex-direction:column;gap:3px}
+.tipo{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;padding:12px 12px 11px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink2);cursor:pointer;font:inherit;transition:border-color .15s,background .15s,box-shadow .15s}
+.tipo-img{width:100%;height:84px;object-fit:contain;background:transparent;mix-blend-mode:multiply;margin-bottom:4px;display:block}
+.tipo b{font-size:14px;color:var(--ink);line-height:1.2}
+.tipo span{font-size:12px;color:var(--muted);line-height:1.35}
+@media (hover:hover){.tipo:hover{border-color:var(--accent)}}
+.tipo:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.tipo.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent-soft) 70%,var(--surface));box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 16%,transparent)}
+#potx[hidden]{display:none}
+.sum-rel{margin:0 0 14px}.sum-rel label{display:block;font-size:11.5px;color:var(--muted);margin-bottom:4px}.sum-rel select{width:100%}
+@media (max-width:560px){.tipos{grid-template-columns:repeat(2,minmax(0,1fr))}.tipo.all .tipo-img{width:96px;height:60px}}
+.sum-bl{margin:12px 0 0;font-size:12.5px;line-height:1.45;color:var(--muted)}.sum-bl b{color:var(--ink2)}
+.alt-c.pick{cursor:pointer}.alt-c.pick:hover{border-color:var(--accent)}
+</style>
+<header class="top">
+  <div class="wrap">
+    <div class="mast">
+      <div>
+        <div class="eyebrow">Bonfiglioli VF · W</div>
+        <h1>Configurador VF · W</h1>
+        <div class="lead">Dimensione redutores e motorredutores de coroa e rosca sem-fim das linhas VF e W a partir da potência do motor, da rotação de saída e do regime de trabalho. A página usa as tabelas de capacidade do catálogo VF-W, no mesmo método do SAP da Bonfiglioli.</div>
+      </div>
+      <div class="plate"><b>Linhas VF · W</b><b>139 modelos</b><b>60 Hz · 2, 4, 6 e 8 polos</b><b>Preparado pela Daxton</b></div>
+    </div>
+  </div>
+</header>
+
+<nav class="steps"><div class="wrap"><ul>
+  <li><a href="#entrada"><span>IN</span>Dados de entrada</a></li>
+  <li><a href="#req"><span>Σ</span>Requisito calculado</a></li>
+  <li><a href="#cand"><span>10</span>Candidatos</a></li>
+  <li><a href="#ficha"><span>ID</span>Ficha</a></li>
+  <li><a href="#limites"><span>!</span>O que ele não faz</a></li>
+</ul></div></nav>
+
+<main class="wrap">
+
+<div class="welcome">
+  <div class="wtxt">
+    <h2>Como usar</h2>
+    <p>Informe a potência do motor, a rotação de saída (ou a redução) e o regime: horas por dia, partidas por hora e tipo de carga. A página lê o fator de serviço exigido no catálogo e mostra os tamanhos que atendem, com o fator de serviço real de cada um.</p>
+    <p>No fim sai a <b>folha de dados</b> para colar no pedido. Nada é enviado para lugar nenhum: tudo roda no seu navegador.</p>
+  </div>
+  <ol class="wsteps">
+    <li><span>1</span>Preencha potência, rotação e regime</li>
+    <li><span>2</span>Escolha um candidato na tabela</li>
+    <li><span>3</span>Copie a folha e mande para cotação</li>
+  </ol>
+</div>
+
+<section id="entrada">
+  <div class="sec-h">
+    <div class="eyebrow">Passo 1</div>
+    <h2>Dados de entrada</h2>
+    <p>Na ordem em que o projeto é decidido: primeiro o tipo de redutor, que a máquina impõe; depois o acionamento, a saída e o regime de trabalho.</p>
+  </div>
+  <div class="wb">
+    <div class="wb-in">
+      <div class="grp grp-key">
+        <div class="grp-h"><span class="gn">1</span><div><h3>Aplicação e tipo de redutor</h3><p>Se a geometria da máquina já está definida, escolha o tipo. Sem certeza, deixe "Comparar todos".</p></div><span class="tag-ess">Essencial</span></div>
+        <div class="grp-b">
+          <div class="fld full"><label for="app">Identificação do projeto / aplicação</label><input id="app" type="text" value="" placeholder="Ex.: Transportador de correia (digite o nome do projeto ou aplicação)"></div>
+          <div class="fld full"><label id="lserie">Tipo de redutor</label><input type="hidden" id="serie" value=""><div class="tipos" id="tipos" role="radiogroup" aria-labelledby="lserie"><button type="button" class="tipo all on" data-v="" role="radio" aria-checked="true"><img class="tipo-img" src="marcas/bonfiglioli-linha-produtos.jpg" alt="Linha de redutores Bonfiglioli" loading="lazy" width="120" height="80"><span class="tx"><b>Comparar todos</b><span>VF e W lado a lado: o menor modelo que atende em cada tipo</span></span></button><button type="button" class="tipo" data-v="VF" role="radio" aria-checked="false"><img class="tipo-img" src="marcas/bonfiglioli-motorredutor-sem-fim-vf.jpg" alt="Redutor sem-fim série VF" loading="lazy" width="120" height="80"><b>VF · Sem-fim</b><span>Parafuso sem-fim e coroa, 90°, tamanhos 27 a 250</span></button><button type="button" class="tipo" data-v="W" role="radio" aria-checked="false"><img class="tipo-img" src="marcas/bonfiglioli-motorredutor-sem-fim-w.jpg" alt="Redutor sem-fim série W" loading="lazy" width="120" height="80"><b>W · Sem-fim</b><span>Monobloco em alumínio, 90°, tamanhos 63 a 110</span></button></div></div>
+        </div>
+      </div>
+      <div class="grp grp-key">
+        <div class="grp-h"><span class="gn">2</span><div><h3>Acionamento e saída</h3><p>Motor e o que a máquina pede no eixo de saída.</p></div><span class="tag-ess">Essencial</span></div>
+        <div class="grp-b">
+          <div class="fld"><label for="pot">Potência do motor <em>P</em></label><select id="pot"><option value="0.12">0,12 kW (1/6 cv)</option><option value="0.18">0,18 kW (1/4 cv)</option><option value="0.25">0,25 kW (1/3 cv)</option><option value="0.37">0,37 kW (1/2 cv)</option><option value="0.55">0,55 kW (3/4 cv)</option><option value="0.75">0,75 kW (1 cv)</option><option value="1.1">1,1 kW (1,5 cv)</option><option value="1.5">1,5 kW (2 cv)</option><option value="2.2">2,2 kW (3 cv)</option><option value="3">3 kW (4 cv)</option><option value="3.7">3,7 kW (5 cv)</option><option value="4.5">4,5 kW (6 cv)</option><option value="5.5" selected>5,5 kW (7,5 cv)</option><option value="7.5">7,5 kW (10 cv)</option><option value="9.2">9,2 kW (12,5 cv)</option><option value="11">11 kW (15 cv)</option><option value="15">15 kW (20 cv)</option><option value="18.5">18,5 kW (25 cv)</option><option value="22">22 kW (30 cv)</option><option value="30">30 kW (40 cv)</option><option value="37">37 kW (50 cv)</option><option value="45">45 kW (60 cv)</option><option value="55">55 kW (75 cv)</option><option value="75">75 kW (100 cv)</option><option value="90">90 kW (125 cv)</option><option value="110">110 kW (150 cv)</option><option value="132">132 kW (175 cv)</option><option value="160">160 kW (200 cv)</option><option value="200">200 kW (250 cv)</option><option value="x">Outra potência (digitar)</option></select><input id="potx" type="number" step="0.01" min="0" value="" inputmode="decimal" placeholder="kW" hidden style="margin-top:8px"><span class="tip">Potência nominal de placa, padrão comercial. Com ela a ferramenta indica a carcaça IEC e confere o flange.</span></div>
+          <div class="fld"><label for="polos">Polos do motor &rarr; <em>n₁</em></label><select id="polos"><option value="2">2 polos · 3500 rpm</option><option value="4" selected>4 polos · 1750 rpm</option><option value="6">6 polos · 1170 rpm</option><option value="8">8 polos · 870 rpm</option><option value="0">Informar n₁ (inversor)</option></select><span class="tip">60 Hz. Com inversor, escolha "Informar n₁" em Opções avançadas.</span></div>
+          <div class="fld"><label for="ent">Entro com</label><select id="ent"><option value="n" selected>A rotação de saída n₂</option><option value="i">A redução necessária i</option></select></div>
+          <div class="fld"><label id="lval" for="val"></label><input id="val" type="number" step="any" value="60" inputmode="decimal"><span class="tip" id="tipent"></span></div>
+        </div>
+      </div>
+      <div class="grp grp-key">
+        <div class="grp-h"><span class="gn">3</span><div><h3>Regime de trabalho</h3><p>Define o fator de serviço exigido pelo catálogo.</p></div><span class="tag-ess">Essencial</span></div>
+        <div class="grp-b">
+          <div class="fld"><label for="hd">Turnos de trabalho</label><select id="hd"><option value="8">1 turno · até 8 h/dia</option><option value="16" selected>2 turnos · 16 h/dia</option><option value="24">3 turnos · 24 h/dia</option></select></div>
+          <div class="fld"><label for="zr">Partidas por hora <em>Z<sub>r</sub></em></label><input id="zr" type="number" step="1" min="0" max="300" value="10" inputmode="numeric"><span class="tip">De 0 a 300. Acima disso, consulte o Serviço Técnico.</span></div>
+          <div class="fld"><label for="kk">Tipo de carga</label><select id="kk"><option value="1">Uniforme</option><option value="2" selected>Choque moderado</option><option value="3">Choque pesado</option></select><span class="tip"><b>Uniforme:</b> correia, ventilador, bomba. <b>Moderado:</b> elevador de canecas, misturador. <b>Pesado:</b> britador, prensa. Equivale às curvas K1, K2 e K3 do catálogo (K = inércia da carga ÷ inércia do motor). Exemplos orientativos; acima de K = 10, consulte o Serviço Técnico.</span></div>
+          <div class="fld"><label for="fr">Carga radial no eixo de saída <em>opcional</em> — N</label><input id="fr" type="number" step="10" min="0" value="" inputmode="numeric" placeholder="ex.: 3000"><span class="tip">Se informada, a ferramenta compara com R<sub>n2</sub> do catálogo. Confira a posição de aplicação da carga no catálogo.</span></div>
+        </div>
+      </div>
+      <details class="grp adv">
+        <summary><span class="gn">4</span><div><h3>Opções avançadas</h3><p>Rotação de entrada manual (inversor) e desvio de rotação aceito.</p></div><svg class="chev" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+        <div class="grp-b">
+          <div class="fld"><label for="n1">Rotação de entrada <em>n₁</em> — rpm</label><input id="n1" type="number" step="10" value="1750" inputmode="numeric"><span class="tip">Com inversor, informe a rotação com carga. Digitar um valor diferente dos polos escolhidos muda o seletor para "Informar n₁".</span></div>
+          <div class="fld"><label for="tol">Desvio de rotação aceito — ±%</label><input id="tol" type="number" step="1" value="10" inputmode="numeric"></div>
+        </div>
+      </details>
+    </div>
+    <aside class="wb-out" aria-live="polite" aria-label="Resultado"><div class="sum" id="sum"></div></aside>
+  </div>
+</section>
+
+<section id="req">
+  <div class="sec-h">
+    <div class="eyebrow">Passo 2</div>
+    <h2>Requisito calculado</h2>
+    <p>O que a aplicação exige, antes de olhar qualquer tamanho.</p>
+  </div>
+  <div class="grid4" id="reqbox"></div>
+  <div class="note" id="fsnote"><i></i><div><h4>Fator de serviço e faixa de rotação</h4><p id="fstxt">—</p></div></div>
+</section>
+
+<section id="cand">
+  <div class="sec-h">
+    <div class="eyebrow">Passo 3</div>
+    <h2>Candidatos</h2>
+    <p>Só aparecem os que atendem, do menor tamanho para o maior. Clique em uma linha para ver a ficha. Uma linha por tamanho (relação com menor desvio).</p>
+  </div>
+  <div class="alt" id="bestbox" hidden>
+    <div class="alt-h"><h3>Melhor opção por tipo</h3><p>O menor modelo que atende em cada tipo de redutor. Escolha pelo espaço de instalação e pela geometria da máquina: clique em um cartão para ver os candidatos daquele tipo e a ficha.</p></div>
+    <div class="alt-grid" id="bestgrid"></div>
+  </div>
+  <div class="tblwrap"><table id="tbl">
+    <thead><tr>
+      <th>Modelo</th><th class="n">i</th><th class="n">n₂</th><th class="n">desvio</th><th class="n">M<sub>n2</sub></th><th class="n">M<sub>r2</sub></th><th class="n" title="Fator de serviço exigido pelo regime (gráfico A4)">f<sub>S</sub> exigido</th><th class="n" title="Fator de serviço real: Mn2 ÷ Mr2">f<sub>S</sub> real</th><th>torque</th><th>térmica</th><th title="Flange IEC de entrada da carcaça do motor">flange</th>
+    </tr></thead>
+    <tbody id="tb"></tbody>
+  </table></div>
+  <p class="cap" id="cnt">—</p>
+  <p class="cap" id="wnote" hidden><b>Sem-fim (VF e W):</b> o torque exigido M<sub>r2</sub> usa o rendimento dinâmico η<sub>d</sub> da tabela do catálogo, que varia com o tamanho e a relação. Por isso a mesma potência de motor entrega menos torque no eixo de saída do que nas séries helicoidais.</p>
+  <div class="note warn" id="nobl" hidden><i></i><div><h4>Rotação fora das faixas do catálogo</h4><p id="noblt">—</p></div></div>
+  <div class="alt" id="altbox" hidden>
+    <div class="alt-h"><h3>Alternativas por horas de trabalho</h3>
+      <p>O mesmo projeto com 8, 16 e 24 horas por dia. Mais horas aumentam o fator de serviço exigido e podem subir o tamanho. A ferramenta não tem preço: peça a cotação de cada alternativa.</p></div>
+    <div class="alt-grid" id="altgrid"></div>
+  </div>
+</section>
+
+<section id="ficha">
+  <div class="sec-h">
+    <div class="eyebrow">Passo 4</div>
+    <h2>Ficha</h2>
+    <p>Do candidato selecionado acima. O bloco sai formatado para colar no pedido.</p>
+  </div>
+  <div class="sheet">
+    <div class="sheet-h"><h3 id="dsg">—</h3><span class="sheet-btns"><button type="button" id="cp">Copiar</button><button type="button" id="pp">Imprimir em PDF</button></span></div>
+    <pre id="out">—</pre>
+  </div>
+</section>
+
+<section id="limites">
+  <div class="sec-h">
+    <div class="eyebrow">Antes de pedir</div>
+    <h2>O que esta ferramenta não faz</h2>
+  </div>
+  <div class="note warn"><i></i><div>
+    <h4>Cargas radiais e axiais, lubrificação e forma construtiva</h4>
+    <p>A ficha mostra a carga radial admissível no eixo de saída (R<sub>n2</sub>) do catálogo, mas não a compara com a sua aplicação. Forma construtiva, posição de montagem, sentido de giro e lubrificação ficam para o projetista.</p>
+  </div></div>
+  <div class="note warn"><i></i><div>
+    <h4>Rotação de entrada de 60 Hz</h4>
+    <p>O catálogo tabela a capacidade a 500, 900, 1400 e 2800 rpm. A ferramenta segue a regra do SAP da Bonfiglioli: o motor de 4 polos a 60 Hz (1750 rpm) usa o bloco de 1400 rpm, com n₂ recalculada a partir de n₁ e o torque admissível do catálogo. A fábrica confirma a seleção definitiva.</p>
+  </div></div>
+  <div class="note warn"><i></i><div>
+    <h4>Sem-fim VF e W: térmica e temperatura ambiente</h4>
+    <p>Esta versão não faz verificação térmica dos sem-fim nem aplica o fator ftp de temperatura ambiente do catálogo (relevante com eixo de entrada maciço, acima de 20 °C). Para regime contínuo ou ambiente quente, confirme no catálogo VF-W. Os redutores combinados (VF/VF, VF/W, W/VF) e as versões de folga reduzida (VFR, WR) não estão nesta página.</p>
+  </div></div>
+  <div class="note"><i></i><div>
+    <h4>Fator de serviço lido de um gráfico</h4>
+    <p>O catálogo traz o fator de serviço exigido apenas como gráfico (A4). Os valores usados aqui foram lidos da imagem, com precisão de cerca de ±0,02. Em caso de margem apertada, confirme no catálogo. Em aplicações de elevação de partes ou com risco a pessoas, consulte o Serviço Técnico.</p>
+  </div></div>
+</section>
+
+</main>
+
+<footer><div class="wrap">
+  Dados das tabelas de capacidade do catálogo <b>VF-W</b> (sem-fim VF 27 a 250 e W 63 a 110), nos blocos de rotação de entrada 500, 900, 1400 e 2800 rpm; fator de serviço lido do gráfico <b>A4</b> do catálogo ACF (item 10).
+  Método de seleção igual ao do SAP da Bonfiglioli: a faixa de rotação do motor escolhe o bloco do catálogo, o torque admissível Mn2 é o do catálogo e o torque exigido considera o rendimento dinâmico do catálogo.
+  Preparado pela <b>Daxton</b>, representante Bonfiglioli para Santa Catarina e Região Metropolitana de Curitiba.
+  <br><br>
+  <b>Ferramenta de apoio à especificação. A seleção definitiva é da engenharia Bonfiglioli.</b>
+</div></footer>
+<script>
+var ACF={"rows":[],"pt":{},"fl":{}};
+var VFW={"rows":[["VF",27,7,67,[[71,11,0.11,90,600,79],[129,10,0.17,90,480,81],[200,9,0.23,35,410,83],[400,7,0.34,null,330,86]]],["VF",27,10,62,[[50,12,0.08,90,600,76],[90,11,0.13,20,570,78],[140,9,0.16,30,500,80],[280,7,0.24,null,400,84]]],["VF",27,15,54,[[33,12,0.06,90,600,69],[60,11,0.09,null,600,72],[93,9,0.12,null,600,75],[187,7,0.17,null,480,79]]],["VF",27,20,49,[[25,12,0.05,90,600,65],[45,11,0.08,null,600,68],[70,9,0.09,null,600,71],[140,7,0.14,null,540,76]]],["VF",27,30,38,[[16.7,13,0.04,null,600,55],[30,11,0.06,null,600,59],[47,9,0.07,null,600,62],[93,7,0.1,null,600,69]]],["VF",27,40,33,[[12.5,13,0.04,null,600,50],[22.5,11,0.05,null,600,54],[35,9,0.06,null,600,57],[70,7,0.08,null,600,64]]],["VF",27,60,26,[[8.3,12,0.02,null,600,41],[15,11,0.04,null,600,45],[23.3,9,0.04,null,600,49],[47,7,0.06,null,600,56]]],["VF",27,70,24,[[7.1,11,0.02,null,600,38],[12.9,10,0.03,null,600,42],[20,9,0.04,null,600,45],[40,7,0.06,null,600,53]]],["VF",30,7,69,[[71,20,0.19,150,920,81],[129,18,0.3,150,730,82],[200,16,0.41,140,630,84],[400,12,0.58,120,510,87]]],["VF",30,10,64,[[50,20,0.14,150,1120,77],[90,18,0.22,150,900,79],[140,16,0.3,80,770,81],[280,12,0.41,70,620,85]]],["VF",30,15,56,[[33,22,0.11,150,1320,71],[60,20,0.17,null,1060,74],[93,18,0.24,null,910,76],[187,14,0.34,null,720,81]]],["VF",30,20,51,[[25,22,0.09,150,1490,67],[45,20,0.14,null,1200,70],[70,18,0.19,null,1030,73],[140,14,0.26,null,820,78]]],["VF",30,30,41,[[16.7,24,0.07,null,1700,58],[30,22,0.12,null,1400,61],[47,20,0.15,null,1200,65],[93,15,0.21,null,960,71]]],["VF",30,40,36,[[12.5,22,0.06,null,1700,53],[23,20,0.09,null,1590,56],[35,19,0.12,null,1360,60],[70,14,0.16,null,1090,66]]],["VF",30,60,29,[[8.3,22,0.05,null,1700,44],[15,20,0.07,null,1650,48],[23.3,19,0.09,null,1590,51],[47,14,0.12,null,1270,59]]],["VF",30,70,26,[[7,19,0.04,null,1700,41],[13,17,0.05,null,1700,45],[20,15,0.07,null,1600,48],[40,11,0.08,null,1380,55]]],["VF",44,7,71,[[71,45,0.41,220,1610,83],[129,39,0.63,220,1300,85],[200,29,0.71,220,1180,86],[400,22,1.1,220,950,88]]],["VF",44,10,66,[[50,45,0.29,220,1980,80],[90,39,0.45,220,1610,82],[140,29,0.51,220,1430,84],[280,22,0.74,220,1150,87]]],["VF",44,14,60,[[36,50,0.25,220,2280,76],[64,39,0.34,220,1890,78],[100,29,0.37,220,1680,81],[200,22,0.55,220,1340,84]]],["VF",44,20,55,[[25,50,0.18,220,2500,72],[45,45,0.29,220,2160,74],[70,39,0.37,220,1860,77],[140,29,0.52,220,1490,81]]],["VF",44,28,45,[[17.9,55,0.16,220,2500,64],[32,49,0.24,220,2300,67],[50,39,0.29,220,2140,71],[100,29,0.4,220,1710,76]]],["VF",44,35,42,[[14.3,55,0.14,220,2500,60],[25.7,49,0.2,220,2300,64],[40,39,0.25,220,2300,68],[80,29,0.33,220,1870,73]]],["VF",44,46,37,[[10.9,50,0.1,220,2500,55],[19.6,49,0.17,220,2300,59],[30,39,0.19,220,2300,63],[61,29,0.27,220,2080,69]]],["VF",44,60,32,[[8.3,50,0.09,220,2500,50],[15,45,0.13,200,2300,54],[23.3,39,0.16,220,2300,58],[47,29,0.22,220,2290,65]]],["VF",44,70,30,[[7.1,45,0.07,220,2500,47],[12.9,39,0.1,220,2300,51],[20,29,0.11,220,2300,55],[40,22,0.15,220,2300,62]]],["VF",44,100,24,[[5,32,0.04,220,2500,39],[9,30,0.06,220,2300,43],[14,28,0.09,220,2300,47],[28,21,0.11,220,2300,55]]],["VF",49,7,70,[[71,74,0.67,400,1670,83],[129,61,0.97,400,1370,85],[200,54,1.3,400,1170,86],[400,41,2,400,950,88]]],["VF",49,10,65,[[50,74,0.49,400,2060,80],[90,64,0.75,400,1670,82],[140,59,1,400,1410,84],[280,44,1.5,400,1140,86]]],["VF",49,14,59,[[36,78,0.39,400,2400,75],[64,71,0.61,400,1920,78],[100,65,0.9,400,1630,81],[200,49,1.2,400,1310,84]]],["VF",49,18,55,[[27.8,74,0.3,400,2730,72],[50,68,0.47,400,2190,75],[78,59,0.6,400,1890,78],[156,44,0.87,400,1520,82]]],["VF",49,24,50,[[20.8,74,0.24,400,3090,68],[38,68,0.36,400,2480,71],[58,63,0.5,400,2110,75],[117,47,0.73,400,1670,79]]],["VF",49,28,43,[[17.9,88,0.26,400,3180,63],[32,82,0.41,400,2540,67],[50,74,0.55,400,2170,71],[100,56,0.78,400,1740,75]]],["VF",49,36,39,[[13.9,80,0.2,400,3450,59],[25,75,0.31,400,2880,63],[39,69,0.42,400,2460,67],[78,52,0.59,400,1970,72]]],["VF",49,45,35,[[11.1,78,0.17,400,3450,55],[20,71,0.25,400,3190,59],[31,65,0.33,400,2725,63],[62,49,0.46,400,2180,69]]],["VF",49,60,30,[[8.3,69,0.12,400,3450,49],[15,64,0.19,400,3300,53],[23.3,59,0.25,400,3100,58],[47,44,0.34,400,2480,64]]],["VF",49,70,28,[[7.1,69,0.11,400,3450,46],[12.9,60,0.16,400,3300,50],[20,55,0.21,400,3150,54],[40,41,0.28,400,2650,61]]],["VF",49,80,25,[[6.3,59,0.09,400,3450,43],[11.3,58,0.14,400,3300,47],[17.5,54,0.19,400,3150,52],[35,41,0.25,400,2780,59]]],["VF",49,100,22,[[5,59,0.08,400,3450,38],[9,52,0.11,400,3300,42],[14,49,0.13,400,3150,47],[28,37,0.2,400,3050,54]]],["W",63,7,70,[[71,140,1.2,480,2420,84],[129,130,2,480,1870,87],[200,120,2.9,480,1550,88],[400,105,4.9,480,1010,90]]],["W",63,10,66,[[50,165,1.1,480,2830,81],[90,150,1.7,480,2220,84],[140,140,2.4,480,1840,86],[280,125,4.2,370,1360,88]]],["W",63,12,63,[[42,165,0.92,480,3140,79],[75,150,1.4,480,2480,82],[117,140,2,480,2070,85],[233,125,3.5,435,1540,87]]],["W",63,15,59,[[33,180,0.83,480,3430,76],[60,160,1.3,480,2740,80],[93,150,1.8,480,2280,83],[187,125,2.8,410,1770,86]]],["W",63,19,55,[[26.3,180,0.68,480,3860,73],[47,160,1,480,3100,78],[74,150,1.4,480,2600,81],[147,130,2.4,310,1990,84]]],["W",63,24,52,[[20.8,185,0.58,480,4280,70],[38,165,0.86,480,3440,75],[58,155,1.2,480,2890,78],[117,130,1.9,370,2250,82]]],["W",63,30,44,[[16.7,190,0.52,480,4690,64],[30,170,0.76,480,3770,70],[47,160,1.1,460,3170,74],[93,125,1.6,440,2540,78]]],["W",63,38,40,[[13.2,185,0.42,480,5000,61],[23.7,165,0.62,480,4240,66],[37,155,0.85,480,3580,70],[74,130,1.3,330,2800,75]]],["W",63,45,37,[[11.1,170,0.34,480,5000,58],[20,155,0.52,480,4630,63],[31,145,0.71,480,3920,67],[62,130,1.2,380,3020,73]]],["W",63,64,31,[[7.8,150,0.24,480,5000,51],[14.1,135,0.35,480,5000,56],[21.9,125,0.47,480,4680,61],[44,110,0.75,480,3650,67]]],["W",63,80,27,[[6.3,135,0.19,480,5000,46],[11.3,125,0.28,480,5000,52],[17.5,115,0.38,480,5000,56],[35,100,0.59,480,4050,62]]],["W",63,100,23,[[5,130,0.17,480,5000,41],[9,120,0.25,480,5000,46],[14,115,0.33,480,5000,51],[28,100,0.51,480,4420,58]]],["W",75,7,71,[[71,225,2,750,2940,86],[129,205,3.1,750,2120,88],[200,190,4.4,750,1530,90],[400,170,7.8,750,700,91]]],["W",75,10,67,[[50,275,1.7,750,3480,84],[90,250,2.7,750,2700,86],[140,230,3.8,750,2240,88],[280,205,6.7,750,1610,90]]],["W",75,15,60,[[33,295,1.3,750,4380,80],[60,270,2,750,3440,83],[93,250,2.9,750,2870,85],[187,225,5,750,2120,88]]],["W",75,20,56,[[25,295,1,750,5120,77],[45,270,1.6,750,4050,80],[70,250,2.2,750,3410,83],[140,225,3.8,750,2550,86]]],["W",75,25,52,[[20,295,0.85,750,5720,73],[36,270,1.3,750,4550,77],[56,250,1.8,750,3840,80],[112,225,3.2,750,2900,83]]],["W",75,30,45,[[16.7,320,0.81,750,6080,69],[30,290,1.2,750,4860,74],[47,270,1.7,750,4090,77],[93,240,2.9,750,3100,81]]],["W",75,40,40,[[12.5,305,0.63,750,6200,63],[22.5,275,1,750,5630,68],[35,255,1.3,750,4770,72],[70,225,2.1,750,3660,77]]],["W",75,50,36,[[10,260,0.47,750,6200,58],[18,235,0.7,750,6200,63],[28,220,0.95,750,5410,68],[56,195,1.6,750,4180,73]]],["W",75,60,33,[[8.3,235,0.37,750,6200,55],[15,215,0.56,750,6200,60],[23.3,200,0.75,750,5960,65],[47,180,1.3,750,4610,70]]],["W",75,80,28,[[6.3,215,0.29,750,6200,49],[11.3,195,0.43,750,6200,54],[17.5,180,0.56,750,6200,59],[35,160,0.9,750,5310,65]]],["W",75,100,25,[[5,180,0.21,750,6200,44],[9,160,0.3,750,6200,50],[14,150,0.4,750,6200,55],[28,135,0.65,750,5960,61]]],["W",86,7,71,[[71,295,2.6,850,5890,85],[129,270,4.1,850,4670,88],[200,250,5.9,850,3920,89],[400,225,10.4,850,2930,91]]],["W",86,10,67,[[50,345,2.2,850,6860,82],[90,310,3.4,850,5500,86],[140,290,4.8,850,4620,88],[280,260,8.5,850,3490,90]]],["W",86,15,60,[[33,390,1.7,850,7000,78],[60,355,2.7,850,6520,82],[93,330,3.8,850,5510,85],[187,295,6.6,850,4200,87]]],["W",86,20,60,[[25,380,1.3,850,7000,77],[45,345,2,850,7000,81],[70,320,2.8,850,6380,84],[140,285,4.9,850,4900,86]]],["W",86,23,58,[[21.7,380,1.2,850,7000,75],[39,345,1.8,850,7000,80],[61,320,2.5,850,6800,82],[122,285,4.3,850,5250,85]]],["W",86,30,45,[[16.7,440,1.1,850,7000,67],[30,400,1.7,850,7000,73],[47,370,2.4,850,7000,76],[93,320,3.9,850,5740,81]]],["W",86,40,45,[[12.5,390,0.77,850,7000,66],[22.5,355,1.2,850,7000,71],[35,330,1.6,850,7000,75],[70,295,2.7,850,6670,79]]],["W",86,46,43,[[10.9,405,0.73,850,7000,63],[19.6,365,1.1,850,7000,69],[30,340,1.5,850,7000,73],[61,305,2.5,850,7000,77]]],["W",86,56,39,[[8.9,355,0.55,850,7000,60],[16.1,325,0.83,850,7000,66],[25,300,1.1,850,7000,70],[50,265,1.8,850,7000,75]]],["W",86,64,37,[[7.8,330,0.47,850,7000,58],[14.1,300,0.7,850,7000,63],[21.9,280,0.94,850,7000,68],[44,250,1.6,850,7000,73]]],["W",86,80,33,[[6.3,305,0.38,850,7000,53],[11.3,275,0.55,850,7000,59],[17.5,255,0.73,850,7000,64],[35,225,1.2,850,7000,69]]],["W",86,100,29,[[5,275,0.29,850,7000,49],[9,250,0.43,850,7000,55],[14,230,0.57,850,7000,59],[28,205,0.92,850,7000,65]]],["W",110,7,71,[[71,595,5.2,1200,7680,86],[129,540,8.3,1200,6040,88],[200,500,11.8,1200,5020,89],[400,445,20.7,1200,3710,90]]],["W",110,10,67,[[50,655,4.1,1200,8000,84],[90,590,6.5,1200,7410,86],[140,550,9.3,1200,6190,87],[280,490,16.1,1200,4650,89]]],["W",110,15,60,[[33,710,3.1,1200,8000,80],[60,645,4.9,1200,8000,83],[93,600,7,1200,7590,84],[187,535,12,1200,5770,87]]],["W",110,20,61,[[25,675,2.2,1200,8000,79],[45,615,3.5,1200,8000,82],[70,570,5,1200,8000,84],[140,510,8.7,1200,6790,86]]],["W",110,23,59,[[21.7,640,1.9,1200,8000,77],[39,580,2.9,1200,8000,81],[61,540,4.1,1200,8000,83],[122,480,7.1,1200,7430,86]]],["W",110,30,45,[[16.7,830,2.1,1200,8000,70],[30,755,3.2,1200,8000,74],[47,700,4.4,1200,8000,77],[93,625,7.5,1200,7780,81]]],["W",110,40,46,[[12.5,795,1.5,1200,8000,68],[22.5,720,2.3,1200,8000,73],[35,670,3.2,1200,8000,76],[70,595,5.5,1200,8000,80]]],["W",110,46,44,[[10.9,710,1.2,1200,8000,66],[19.6,645,1.9,1200,8000,71],[30,600,2.6,1200,8000,74],[61,535,4.3,1200,8000,79]]],["W",110,56,41,[[8.9,710,1.1,1200,8000,63],[16.1,645,1.6,1200,8000,68],[25,600,2.2,1200,8000,72],[50,535,3.7,1200,8000,76]]],["W",110,64,38,[[7.8,630,0.86,1200,8000,60],[14.1,570,1.3,1200,8000,65],[21.9,530,1.7,1200,8000,70],[44,470,2.9,1200,8000,74]]],["W",110,80,34,[[6.3,560,0.65,1200,8000,56],[11.3,505,0.98,1200,8000,61],[17.5,470,1.3,1200,8000,66],[35,420,2.2,1200,8000,71]]],["W",110,100,30,[[5,545,0.56,1200,8000,51],[9,495,0.82,1200,8000,57],[14,460,1.1,1200,8000,62],[28,410,1.8,1200,8000,67]]],["VF",130,7,71,[[71,1000,8.8,1500,8670,86],[129,850,13,1500,6980,88],[200,740,17.4,1500,5990,89],[400,555,25,1500,4930,91]]],["VF",130,10,67,[[50,1100,6.9,1500,10800,84],[90,900,9.9,1500,8900,87],[140,790,13.3,1500,7620,88],[280,593,19.3,1500,6210,90]]],["VF",130,15,63,[[33,1350,5.9,1500,12600,81],[60,1080,8.1,1500,10490,84],[93,920,10.6,1500,9100,86],[187,690,15.3,1500,7390,88]]],["VF",130,20,59,[[25,1350,4.6,1500,13800,79],[45,1050,6.1,1500,12400,82],[70,900,8,1500,10700,84],[140,675,11.4,1500,8670,87]]],["VF",130,23,57,[[21.7,1300,3.9,1500,13800,77],[39,1050,5.4,1500,13200,81],[61,890,6.9,1500,11500,83],[122,668,9.9,1500,9300,86]]],["VF",130,30,49,[[16.7,1500,3.7,null,13800,72],[30,1250,5.2,null,13200,77],[47,1050,6.6,null,12500,79],[93,788,9.3,1040,10100,83]]],["VF",130,40,44,[[12.5,1400,2.8,null,13800,68],[22.5,1200,3.9,null,13200,73],[35,1100,5.4,null,12600,76],[70,825,7.6,null,11400,80]]],["VF",130,46,45,[[10.9,1350,2.3,1270,13800,68],[19.6,1150,3.3,490,13200,73],[30,1050,4.5,null,12600,76],[61,788,6.3,1290,12200,80]]],["VF",130,56,42,[[8.9,1200,1.8,1500,13800,65],[16.1,1080,2.7,1500,13200,70],[25,960,3.4,940,12600,73],[50,720,4.8,1500,12600,78]]],["VF",130,64,39,[[7.8,1200,1.6,1500,13800,62],[14.1,1050,2.4,1500,13200,68],[21.9,930,3,1220,12600,71],[44,698,4.2,1500,12600,76]]],["VF",130,80,35,[[6.3,1150,1.3,1500,13800,58],[11.3,950,1.8,1500,13200,64],[17.5,880,2.4,1500,12600,68],[35,660,3.3,1500,12600,73]]],["VF",130,100,31,[[5,900,0.91,1500,13800,54],[9,800,1.3,1500,13200,59],[14,780,1.8,1500,12600,64],[28,585,2.5,1500,12600,70]]],["VF",150,7,72,[[71,1400,12.2,2200,8560,87],[129,1150,17.6,2200,7040,89],[200,1000,24,2200,6040,90],[400,750,35,2200,5010,91]]],["VF",150,10,68,[[50,1500,9.4,2200,11400,85],[90,1200,13,2200,9480,87],[140,1050,17.5,2200,8120,88],[280,788,25,2200,6630,90]]],["VF",150,15,64,[[33,1700,7.3,2200,13800,83],[60,1350,10,2200,11500,85],[93,1150,13.1,2200,9990,87],[187,863,19,2200,8110,89]]],["VF",150,20,59,[[25,1900,6.4,2200,15700,80],[45,1500,8.6,2200,13100,83],[70,1300,11.3,2200,11300,84],[140,975,16.4,2200,9170,87]]],["VF",150,23,57,[[21.7,1850,5.5,2200,16000,78],[39,1500,7.6,2200,14200,82],[61,1270,9.8,2200,12300,83],[122,953,14.1,2200,9940,86]]],["VF",150,30,48,[[16.7,1950,4.8,2200,16000,73],[30,1600,6.5,2200,15500,77],[47,1370,8.5,2200,13700,80],[93,1028,12.1,2200,11100,83]]],["VF",150,40,44,[[12.5,2000,3.9,2200,16000,69],[22.5,1750,5.6,1150,15500,74],[35,1540,7.4,830,14700,77],[70,1155,10.5,2200,12300,81]]],["VF",150,46,45,[[10.9,2000,3.4,2200,16000,69],[19.6,1750,4.9,2100,15500,74],[30,1550,6.5,1400,14700,77],[61,1163,9.2,2200,13100,81]]],["VF",150,56,42,[[8.9,1750,2.6,2200,16000,66],[16.1,1500,3.7,2200,15500,71],[25,1370,4.9,2200,14700,74],[50,1028,6.8,2200,14600,79]]],["VF",150,64,39,[[7.8,1700,2.3,2200,16000,63],[14.1,1450,3.2,2200,15500,69],[21.9,1330,4.2,2200,14700,72],[44,998,5.9,2200,14700,77]]],["VF",150,80,35,[[6.3,1550,1.8,2200,16000,59],[11.3,1350,2.5,2200,15500,65],[17.5,1250,3.4,2200,14700,69],[35,938,4.6,2200,14700,74]]],["VF",150,100,31,[[5,1300,1.3,2200,16000,55],[9,1150,1.8,2200,15500,61],[14,1150,2.6,2200,14700,65],[28,863,3.6,2200,14700,71]]],["VF",185,7,72,[[71,2450,21,2800,8730,88],[129,2000,30,2800,7120,89],[200,1750,41,2800,5570,90],[400,1313,60,2800,4670,91]]],["VF",185,10,68,[[50,2600,16,2800,12500,86],[90,2150,23,2800,10200,88],[140,1820,30,2800,8960,89],[280,1365,44,2800,7390,90]]],["VF",185,15,66,[[33,2800,11.8,2800,15700,84],[60,2250,16.4,2800,13100,86],[93,1850,21,2800,11600,88],[187,1388,30,2800,9460,89]]],["VF",185,20,59,[[25,3300,10.9,2800,17900,81],[45,2750,15.6,2800,14600,84],[70,2270,19.6,2800,12900,85],[140,1703,28,2800,10500,88]]],["VF",185,30,54,[[16.7,2800,6.5,2800,19500,77],[30,2400,9.4,2800,19000,81],[47,1980,11.8,2800,16900,83],[93,1485,16.9,2800,13700,86]]],["VF",185,40,44,[[12.5,3600,6.8,null,19500,71],[22.5,3100,9.7,null,19000,76],[35,2630,12.4,null,17900,78],[70,1973,17.6,null,14500,82]]],["VF",185,50,41,[[10,3300,5.2,null,19500,68],[18,2900,7.6,null,19000,73],[28,2500,9.8,null,18000,76],[56,1875,13.7,null,16300,80]]],["VF",185,60,39,[[8.3,3000,4.2,2800,19500,66],[15,2600,5.8,700,19000,71],[23.3,2270,7.6,770,18000,74],[47,1703,10.7,2800,18000,78]]],["VF",185,80,33,[[6.3,2800,3.2,2800,19500,60],[11.3,2400,4.3,1770,19000,66],[17.5,2120,5.6,1140,18000,69],[35,1590,7.8,2800,18000,75]]],["VF",185,100,30,[[5,2300,2.1,2800,19500,56],[9,2000,3,2800,19000,62],[14,1900,4.3,2800,18000,65],[28,1425,5.8,2800,18000,72]]],["VF",210,7,71,[[71,3400,29,5300,21800,88],[129,2700,41,5300,18800,89],[200,2300,54,5300,16700,90],[400,1725,79,5300,14000,91]]],["VF",210,10,69,[[50,3800,23,5300,26000,87],[90,3150,34,5300,21900,88],[140,2650,44,5300,19500,89],[280,1988,65,5300,16300,90]]],["VF",210,15,63,[[33,4100,17.2,5300,31800,84],[60,3300,24,5300,27000,86],[93,2850,32,5300,23700,88],[187,2138,47,5300,19700,89]]],["VF",210,20,57,[[25,4700,15.4,null,34500,81],[45,3800,22,null,29900,83],[70,3100,27,1100,26600,85],[140,2325,39,4970,22000,87]]],["VF",210,30,51,[[16.7,4000,9.3,5300,34500,77],[30,3400,13.4,3750,33000,80],[47,3050,18.5,1760,31500,83],[93,2288,26,5300,25900,85]]],["VF",210,40,42,[[12.5,5000,9.4,null,34500,71],[22.5,4300,13.5,null,33000,75],[35,3500,17,null,31500,78],[70,2625,23,null,28300,81]]],["VF",210,50,39,[[10,4500,7.1,null,34500,68],[18,4000,10.5,null,33000,72],[28,3300,13,null,31500,76],[56,2475,18.4,null,31000,79]]],["VF",210,60,36,[[8.3,4300,6,null,34500,65],[15,3720,8.5,null,33000,70],[23.3,3015,10,null,31500,73],[47,2363,15,null,31500,77]]],["VF",210,80,31,[[6.3,3900,4.4,null,34500,60],[11.3,3300,6,null,33000,65],[17.5,2900,7.7,null,31500,69],[35,2175,10.9,null,31500,73]]],["VF",210,100,27,[[5,3400,3.4,1470,34500,56],[9,3000,4.6,null,33000,61],[14,2700,6,null,31500,65],[28,2025,8.5,950,31500,70]]],["VF",250,7,71,[[71,5200,44,7000,27600,88],[129,4150,63,7000,23700,90],[200,3200,75,7000,21900,91],[400,2400,109,7000,18300,92]]],["VF",250,10,69,[[50,6000,36,7000,32300,87],[90,4800,51,7000,27600,89],[140,3700,61,7000,25300,90],[280,2775,89,7000,21100,91]]],["VF",250,15,64,[[33,6400,27,7000,39500,85],[60,5300,39,7000,33200,87],[93,4000,45,7000,30300,88],[187,3000,65,7000,25100,90]]],["VF",250,20,59,[[25,7100,24,1910,44400,82],[45,5950,33,1640,37200,85],[70,4450,38,7000,33900,86],[140,3338,56,7000,28000,88]]],["VF",250,30,53,[[16.7,6000,14.7,7000,52000,79],[30,5500,21,7000,44900,81],[47,4000,23,7000,40600,84],[93,3000,34,7000,33400,86]]],["VF",250,40,41,[[12.5,7000,13.6,null,52000,72],[22.5,6500,20,null,48800,76],[35,4800,22,null,44000,79],[70,3600,32,4680,36200,82]]],["VF",250,50,36,[[10,6500,11.1,null,52000,68],[18,6200,16.2,null,50000,73],[28,4500,17,null,47000,76],[56,3375,25,6370,39500,79]]],["VF",250,60,38,[[8.3,6300,8.6,4350,52000,68],[15,5600,12.2,null,50000,72],[23.3,4500,15,null,47000,76],[47,3375,20.6,7000,42100,80]]],["VF",250,80,32,[[6.3,5400,6.8,7000,52000,62],[11.3,5200,9.3,null,50000,67],[17.5,3900,10,null,47000,71],[35,2925,14.1,7000,47000,76]]],["VF",250,100,29,[[5,5000,5.3,4160,52000,58],[9,4800,7.2,3010,50000,63],[14,3650,7.8,3010,47000,68],[28,2738,11,7000,47000,73]]]],"ordem":[500,900,1400,2800]};
+var FLV={"30":[[56,"B14",7,70],[63,"B14",7,60],[56,"B5",7,70],[63,"B5",7,60]],"44":[[63,"B14",7,100],[71,"B14",7,35],[63,"B5",7,100],[71,"B5",7,35]],"49":[[63,"B14",7,100],[71,"B14",7,60],[80,"B14",7,28],[63,"B5",7,100],[71,"B5",7,60],[80,"B5",7,28]],"63":[[71,"B14",7,100],[80,"B14",7,100],[90,"B14",7,30],[71,"B5",7,100],[80,"B5",7,100],[90,"B5",7,30]],"75":[[80,"B14",7,100],[90,"B14",7,100],[100,"B14",7,100],[71,"B5",7,100],[80,"B5",7,100],[90,"B5",7,100],[100,"B5",7,100]],"86":[[80,"B14",7,100],[90,"B14",7,100],[100,"B14",7,100],[112,"B14",7,100],[71,"B5",7,100],[80,"B5",7,100],[90,"B5",7,100],[100,"B5",7,100],[112,"B5",7,100]],"110":[[80,"B14",7,100],[90,"B14",7,100],[100,"B14",7,100],[112,"B14",7,100],[80,"B5",7,100],[90,"B5",7,100],[100,"B5",7,100],[112,"B5",7,100],[132,"B5",7,100]],"130":[[90,"B5",46,100],[100,"B5",7,80],[112,"B5",7,40],[132,"B5",7,40]],"150":[[100,"B5",23,100],[112,"B5",23,100],[132,"B5",7,46],[160,"B5",7,20]],"185":[[100,"B5",50,100],[112,"B5",50,100],[132,"B5",30,80],[160,"B5",15,40],[180,"B5",7,20]],"210":[[132,"B5",7,100],[160,"B5",7,100],[180,"B5",7,100],[200,"B5",7,100],[225,"B5",7,100]],"250":[[132,"B5",7,100],[160,"B5",7,100],[180,"B5",7,100],[200,"B5",7,100],[225,"B5",7,100]]};
+var FSG={"Z":[0,10,25,50,75,100,125,150,175,200,250,300],"fs":{"K3_8":[1.54,1.56,1.59,1.63,1.66,1.68,1.69,1.7,1.7,1.71,1.72,1.73],"K2_8":[1.35,1.37,1.4,1.43,1.46,1.49,1.51,1.53,1.54,1.54,1.56,1.57],"K1_8":[1.0,1.02,1.05,1.09,1.13,1.16,1.18,1.19,1.2,1.21,1.22,1.23],"K3_16":[1.67,1.69,1.71,1.75,1.77,1.79,1.8,1.81,1.81,1.82,1.83,1.84],"K2_16":[1.5,1.51,1.54,1.57,1.6,1.62,1.64,1.66,1.66,1.67,1.68,1.69],"K1_16":[1.18,1.2,1.23,1.27,1.3,1.32,1.34,1.35,1.36,1.37,1.38,1.39],"K3_24":[1.8,1.81,1.83,1.86,1.89,1.9,1.91,1.92,1.92,1.93,1.94,1.94],"K2_24":[1.64,1.66,1.68,1.71,1.73,1.75,1.77,1.78,1.79,1.8,1.81,1.82],"K1_24":[1.36,1.38,1.4,1.44,1.46,1.49,1.5,1.52,1.52,1.53,1.54,1.55]}};
+var IECF={
+  2:[[0.12,'63'],[0.18,'63'],[0.25,'63'],[0.37,'63'],[0.55,'71'],[0.75,'71'],[1.1,'80'],[1.5,'L80'],[2.2,'90S/L'],[3,'L90L'],[3.7,'100L'],[4.5,'112M'],[5.5,'112M'],[7.5,'132S'],[9.2,'132S/M'],[11,'132M/L'],[15,'160M'],[18.5,'160M'],[22,'160L'],[30,'200M'],[37,'200L'],[45,'225S/M'],[55,'225S/M'],[75,'250S/M']],
+  4:[[0.12,'63'],[0.18,'63'],[0.25,'63'],[0.37,'71'],[0.55,'71'],[0.75,'80'],[1.1,'L80'],[1.5,'L90S'],[2.2,'L90S/L'],[3,'100L'],[3.7,'L100L'],[4.5,'112M'],[5.5,'L112M'],[7.5,'132S/M'],[9.2,'132S/M'],[11,'132M/L'],[15,'160M'],[18.5,'160L'],[22,'180M'],[30,'200M'],[37,'200L'],[45,'225S/M'],[55,'225S/M'],[75,'250S/M']],
+  6:[[0.12,'63'],[0.18,'71'],[0.25,'71'],[0.37,'80'],[0.55,'L80'],[0.75,'90S'],[1.1,'100L'],[1.5,'100L'],[2.2,'L100L'],[3,'132S'],[3.7,'132S/M'],[4.5,'132S'],[5.5,'132S/M'],[7.5,'132M/L'],[9.2,'160M'],[11,'160M'],[15,'160L'],[18.5,'180L'],[22,'200L'],[30,'200L'],[37,'225S/M'],[45,'250S/M'],[55,'250S/M']],
+  8:[[0.12,'71'],[0.18,'80'],[0.25,'80'],[0.37,'90S'],[0.55,'90L'],[0.75,'90S/L'],[1.1,'100L'],[1.5,'112M'],[2.2,'132S/M'],[3,'132S/M'],[3.7,'132M/L'],[4.5,'160M'],[5.5,'160M'],[7.5,'160L'],[9.2,'180M'],[11,'180L'],[15,'180L'],[18.5,'200L'],[22,'225S/M'],[30,'225S/M'],[37,'250S/M'],[45,'250S/M']]
+};
+function motorFrame(P,polos){
+  var t=IECF[polos]; if(!t||!(P>0)) return null;
+  for(var k=0;k<t.length;k++){
+    if(t[k][0]>=P-1e-9){
+      var fr=t[k][1], num=fr.replace(/[^0-9]/g,'');
+      return {fr:fr, p:'P'+num, P:t[k][0], polos:polos};
+    }
+  }
+  return {fr:'', p:'', P:P, polos:polos, fora:true};
+}
+(function(){
+var $=function(id){return document.getElementById(id)};
+function V(id){ return parseFloat(String($(id).value).replace(',','.')); }
+function getP(){ var s=$('pot').value; return s==='x'?V('potx'):parseFloat(s); }
+function fmt(n,d){ if(!isFinite(n)) return '—'; return n.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d}); }
+function chip(st,txt){ var c=(st===true?'y':st==='w'?'w':'n'), m=(st===true?'✓':st==='w'?'!':'✕'); return '<span class="ck '+c+'">'+m+(txt?' '+txt:'')+'</span>'; }
+var RPM={2:3500,4:1750,6:1170,8:870};
+var BLK=[500,900,1400,2800];
+function band(n1){ return n1<=600?500:(n1<=1200?900:(n1<=1800?1400:2800)); }
+// fator de serviço exigido: grafico A4 do catalogo (lido da imagem), horas/dia x curva K x partidas/h
+function fsReq(h,K,z){
+  var a=FSG.fs['K'+K+'_'+h], Z=FSG.Z; if(!a||!(z>=0)||z>300) return NaN;
+  for(var k=0;k<Z.length-1;k++){ if(z<=Z[k+1]){ return a[k]+(a[k+1]-a[k])*(z-Z[k])/(Z[k+1]-Z[k]); } }
+  return a[a.length-1];
+}
+var LORD={A:0,C:1,F:2,S:3,VF:4,W:5};
+function nmb(x){ return x.lin+' '+(x.tam<10?'0'+x.tam:x.tam)+(x.est?' '+x.est:''); }
+var FOCUS=null;
+var ROWS=ACF.rows, VR=VFW.rows, PT=ACF.pt, FL=ACF.fl, SEL=null, list=[], vis=[], lastQ=null;
+function requisito(){
+  var P=getP(), n1=V('n1'), val=V('val'), ent=$('ent').value;
+  var n2req=(ent==='i')?n1/val:val, hd=parseInt($('hd').value,10), K=parseInt($('kk').value,10), zr=V('zr');
+  var q={P:P,n1:n1,n2req:n2req,hd:hd,K:K,zr:zr,tol:V('tol')/100,serie:$('serie').value,polos:parseInt($('polos').value,10)||0};
+  q.blk=band(n1); q.bi=BLK.indexOf(q.blk);
+  q.Mr=(P>0&&n2req>0)?P*9550/n2req:NaN;
+  q.fsr=fsReq(hd,K,zr);
+  q.ok=(P>0&&n1>0&&n2req>0&&isFinite(q.fsr)&&n1<=3600);
+  return q;
+}
+function buscar(q){
+  var out=[]; if(!q.ok) return out;
+  for(var j=0;j<ROWS.length;j++){
+    var r=ROWS[j], lin=r[0], tam=r[1], est=r[2], i=r[3];
+    if(q.serie&&lin!==q.serie) continue;
+    var Mn=r[4+3*q.bi]; if(!(Mn>0)) continue;
+    var n2=q.n1/i, dev=n2/q.n2req-1; if(Math.abs(dev)>q.tol) continue;
+    var Mr=q.P*9550/n2, fS=Mn/Mr, key=lin+tam+'_'+est;
+    var ck={T:fS>=q.fsr-1e-9}; var Fr0=V('fr'), Rn2c=r[6+3*q.bi]; if(Fr0>0&&Rn2c>0) ck.R=Rn2c>=Fr0;
+    var pt=PT[key], ptv=null; if(pt){ ptv=(q.blk===1400)?pt[0]:(q.blk===2800?pt[1]:null); }
+    var th=(ptv===null||ptv===undefined)?null:(q.P<=ptv);
+    var mf=motorFrame(q.P,q.polos), fl=FL[key], flp=null, flok=null;
+    if(mf&&mf.p&&fl){ flp=parseInt(mf.p.slice(1),10); flok=fl.indexOf(flp)>=0; }
+    var Pn1=r[5+3*q.bi], Rn2=r[6+3*q.bi];
+    out.push({lin:lin,tam:tam,est:est,i:i,n2:n2,dev:dev,Mn:Mn,Mr:Mr,fS:fS,ck:ck,pt:ptv,th:th,flp:flp,flok:flok,mf:mf,Pn1:Pn1,Rn2:Rn2,fail:(ck.T?0:1)+(ck.R===false?1:0),key:key});
+  }
+  for(var jv=0;jv<VR.length;jv++){
+    var v=VR[jv], vl=v[0], vt=v[1], vi=v[2], bl=v[4][q.bi];
+    if(q.serie&&vl!==q.serie) continue;
+    var vMn=bl[1], eta=bl[5]; if(!(vMn>0&&eta>0)) continue;
+    var vn2=q.n1/vi, vdev=vn2/q.n2req-1; if(Math.abs(vdev)>q.tol) continue;
+    var vMr=q.P*9550*(eta/100)/vn2, vfS=vMn/vMr;
+    var vck={T:vfS>=q.fsr-1e-9}; var vFr=V('fr'), vR2=bl[4]; if(vFr>0&&vR2>0) vck.R=vR2>=vFr;
+    var vmf=motorFrame(q.P,q.polos), vfl=FLV[String(vt)], vflp=null, vflok=null;
+    if(vmf&&vmf.p&&vfl){ vflp=parseInt(vmf.p.slice(1),10); vflok=vfl.some(function(e){ return e[0]===vflp&&vi>=e[2]&&vi<=e[3]; }); }
+    out.push({lin:vl,tam:vt,est:0,i:vi,n2:vn2,dev:vdev,Mn:vMn,Mr:vMr,fS:vfS,ck:vck,pt:null,th:null,flp:vflp,flok:vflok,mf:vmf,Pn1:bl[2],Rn1:bl[3],Rn2:vR2,eta:eta,es:v[3],fail:(vck.T?0:1)+(vck.R===false?1:0),key:vl+vt+'_'+vi});
+  }
+  out.sort(function(a,b){ return a.fail-b.fail || a.tam-b.tam || a.est-b.est || LORD[a.lin]-LORD[b.lin] || Math.abs(a.dev)-Math.abs(b.dev); });
+  return out;
+}
+function enxuto(ok,q){
+  var seen={}, out=[];
+  ok.forEach(function(x){ var k=x.lin+x.tam+'_'+x.est; if(seen[k]) return; seen[k]=1; out.push(x); });
+  var big=out.filter(function(x){return x.fS<=2.5*q.fsr;});
+  var r=big.length?big:out.slice(0,1);
+  if(r[0]!==out[0]) r.unshift(out[0]);
+  return r.slice(0,12);
+}
+function abaixo(x){
+  var c=null; list.forEach(function(y){ if(y.lin===x.lin&&y.tam<x.tam&&(!c||y.tam>c.tam||(y.tam===c.tam&&y.fS>c.fS))) c=y; });
+  return c;
+}
+function abaixoTxt(x,q){
+  var c=abaixo(x); if(!c||c.fS>=q.fsr-1e-9) return '';
+  var m=nmb(c)+' '+ratioTxt(c)+': f<sub>S</sub> '+fmt(c.fS,2)+' (exige '+fmt(q.fsr,2)+')';
+  if(c.Pn1>0&&c.Pn1<q.P) m+='. Potência do motor acima de P<sub>n1</sub> '+fmt(c.Pn1,1)+' kW do catálogo';
+  return m;
+}
+function ratioTxt(x){ return (x.i%1?fmt(x.i,1):fmt(x.i,0)); }
+function setEnt(){
+  var i=$('ent').value==='i';
+  $('lval').innerHTML=i?'Redução necessária <em>i</em>':'Rotação de saída <em>n₂</em> — rpm';
+  $('tipent').innerHTML=i?'Entrando por <b>i</b>, a rotação de saída acompanha n₁: trocar os polos muda o alvo.':'Entrando por <b>n₂</b>, o requisito da máquina fica fixo e trocar os polos só muda a relação necessária.';
+}
+function render(){
+  var q=requisito(); lastQ=q;
+  var b=[];
+  b.push(['Rotação de entrada n₁',fmt(q.n1,0)+' rpm']);
+  b.push(['Rotação de saída n₂',fmt(q.n2req,2)+' rpm']);
+  b.push(['Relação necessária i',fmt(q.n1/q.n2req,1)]);
+  b.push(['Torque exigido M<sub>r2</sub> <span class="hint">P·9550÷n₂</span>',isFinite(q.Mr)?fmt(q.Mr,0)+' Nm':'—']);
+  b.push(['Fator de serviço exigido',isFinite(q.fsr)?fmt(q.fsr,2):'—']);
+  b.push(['Torque de cálculo M<sub>c2</sub>',isFinite(q.Mr*q.fsr)?fmt(q.Mr*q.fsr,0)+' Nm':'—']);
+  $('reqbox').innerHTML=b.map(function(x){return '<div class="kpi"><span>'+x[0]+'</span><b>'+x[1]+'</b></div>';}).join('');
+  if(q.zr>300||!isFinite(q.fsr)){ $('fstxt').innerHTML='<b>Partidas por hora fora do gráfico</b> (0 a 300). Acima disso, consulte o Serviço Técnico Bonfiglioli.'; $('fsnote').className='note crit'; }
+  else { $('fstxt').innerHTML='Gráfico A4 do catálogo: <b>'+q.hd+' h/dia</b> · curva <b>K'+q.K+'</b> · <b>'+fmt(q.zr,0)+' partidas/h</b> &rarr; f<sub>S</sub> exigido = <b>'+fmt(q.fsr,2)+'</b>. Rotação de entrada <b>'+fmt(q.n1,0)+' rpm</b> &rarr; bloco do catálogo de <b>'+q.blk+' rpm</b> (mesma regra do SAP).'; $('fsnote').className='note'; }
+  var nb=$('nobl'); nb.hidden=true;
+  if(q.n1>3600){ nb.hidden=false; $('noblt').innerHTML='n₁ acima de 3600 rpm: o catálogo não tem bloco para esta rotação. Consulte a fábrica.'; }
+  else if(q.polos===0){ nb.hidden=false; $('noblt').innerHTML='Com n₁ manual, a ferramenta usa o bloco de <b>'+q.blk+' rpm</b>. Confirme na SAP se a rotação for incomum.'; }
+  list=buscar(q);
+  var ok=list.filter(function(x){return x.fail===0;});
+  var tb=$('tb');
+  if(!list.length){
+    var msg=!q.ok?'<b style="color:var(--crit)">Dados de entrada incompletos ou fora do gráfico.</b>':'Nenhuma combinação dentro do desvio de rotação de ±'+fmt(q.tol*100,0)+'%. Amplie o desvio ou reveja n₁ e n₂ (relação necessária '+fmt(q.n1/q.n2req,1)+').';
+    tb.innerHTML='<tr><td colspan="12" style="color:var(--muted)">'+msg+'</td></tr>'; $('cnt').textContent='—'; SEL=null; renderAlt(q); renderSum(); ficha(); return;
+  }
+  var lins=[]; ok.forEach(function(x){ if(lins.indexOf(x.lin)<0) lins.push(x.lin); });
+  var focus=q.serie||((FOCUS&&lins.indexOf(FOCUS)>=0)?FOCUS:(ok.length?ok[0].lin:null));
+  q.focus=focus;
+  var bb=$('bestbox'); bb.hidden=true;
+  if(!q.serie&&lins.length>0){
+    var NM={A:'A · Ortogonal',C:'C · Coaxial',F:'F · Eixos paralelos',S:'S · Monoestágio',VF:'VF · Sem-fim',W:'W · Sem-fim'};
+    var bests=[]; ['VF','W'].forEach(function(l){ var b=ok.filter(function(x){return x.lin===l;})[0]; bests.push({l:l,x:b}); });
+    $('bestgrid').innerHTML=bests.map(function(c){ var x=c.x, on=(x&&c.l===focus);
+      return '<div class="alt-c pick'+(on?' on':'')+'" data-l="'+c.l+'"><div class="alt-t">'+NM[c.l]+'</div>'+
+        (x?'<div class="alt-m">'+nmb(x)+' '+ratioTxt(x)+'</div><div class="alt-s">f<sub>S</sub> '+fmt(x.fS,2)+' · folga '+fmt((x.fS/q.fsr-1)*100,0)+'%</div><div class="alt-s">R<sub>n2</sub> '+(x.Rn2>0?fmt(x.Rn2,0)+' N':'—')+(x.th===false?' · térmica!':'')+'</div>':'<div class="alt-m none">Sem candidato</div><div class="alt-s">&nbsp;</div>')+
+        '<div class="alt-d">'+(on?'Em detalhe abaixo':'')+'</div></div>'; }).join('');
+    Array.prototype.forEach.call($('bestgrid').querySelectorAll('.pick'),function(el){ el.addEventListener('click',function(){ if(!el.querySelector('.alt-m.none')){ FOCUS=el.dataset.l; render(); document.getElementById('tbl').scrollIntoView({behavior:'smooth',block:'nearest'}); } }); });
+    bb.hidden=false;
+  }
+  var okf=ok.filter(function(x){return !focus||x.lin===focus;});
+  vis=ok.length?enxuto(okf,q):list.slice(0,10);
+  drawRows();
+  $('cnt').innerHTML=ok.length?('Até <b>12</b> modelos que atendem, sem os superdimensionados (f<sub>S</sub> real acima de 2,5 vezes o exigido; o menor que atende sempre fica).'):'<b style="color:var(--crit)">Nenhuma combinação atende.</b> As linhas mostram o que falha.';
+  renderAlt(q);
+  SEL=vis[0]; mark(); ficha();
+}
+function drawRows(){
+  var q=lastQ, tb=$('tb');
+  $('wnote').hidden=!vis.some(function(x){ return x.lin==='VF'||x.lin==='W'; });
+  tb.innerHTML=vis.map(function(x,k){
+    return '<tr data-k="'+k+'"'+(x.fail===0?'':' class="failrow"')+'>'+
+      '<td><b>'+nmb(x)+'</b></td><td class="n">'+ratioTxt(x)+'</td><td class="n">'+fmt(x.n2,2)+'</td><td class="n">'+(x.dev>=0?'+':'')+fmt(x.dev*100,1)+'%</td>'+
+      '<td class="n">'+fmt(x.Mn,0)+'</td><td class="n">'+fmt(x.Mr,0)+'</td><td class="n">'+fmt(q.fsr,2)+'</td><td class="n">'+fmt(x.fS,2)+'</td>'+
+      '<td class="n">'+(V('fr')>0&&x.ck.R!==undefined?chip(x.ck.R,fmt(x.Rn2,0)):fmt(x.Rn2,0))+'</td>'+
+      '<td>'+chip(x.ck.T)+'</td><td>'+(x.th===null?(x.lin==='A'?'<span style="color:var(--muted)" title="Série A: ver item 48 do catálogo">item 48</span>':'<span style="color:var(--muted)">—</span>'):chip(x.th?true:'w',x.th?'':fmt(x.pt,1)+' kW'))+'</td>'+
+      '<td>'+(x.flp?chip(x.flok?true:'w','P'+x.flp):'<span style="color:var(--muted)">—</span>')+'</td></tr>';
+  }).join('');
+  Array.prototype.forEach.call(tb.querySelectorAll('tr[data-k]'),function(tr){ tr.addEventListener('click',function(){ SEL=vis[parseInt(tr.dataset.k,10)]; mark(); ficha(); }); });
+}
+function pickRel(k){
+  var x=SEL, o=list.filter(function(y){ return y.lin===x.lin&&y.tam===x.tam&&y.est===x.est; }).sort(function(a,b){ return a.i-b.i; }), y=o[k]; if(!y) return;
+  for(var j=0;j<vis.length;j++){ if(vis[j]===x){ vis[j]=y; break; } }
+  SEL=y; drawRows(); mark(); ficha();
+}
+function mark(){ renderSum(); var rs=$('relsel'); if(rs) rs.addEventListener('change',function(){ pickRel(parseInt(rs.value,10)); }); Array.prototype.forEach.call($('tb').querySelectorAll('tr[data-k]'),function(tr){ tr.classList.toggle('sel',vis[parseInt(tr.dataset.k,10)]===SEL); }); }
+function renderAlt(q){
+  var box=$('altbox'); if(!q.ok){ box.hidden=true; return; }
+  var cards=[8,16,24].map(function(h){ var q2={}; for(var k in q) q2[k]=q[k]; q2.hd=h; q2.fsr=fsReq(h,q.K,q.zr);
+    q2.serie=q.focus||q.serie; var l=buscar(q2), best=null; for(var j=0;j<l.length;j++){ if(l[j].fail===0){ best=l[j]; break; } } return {h:h,f:q2.fsr,x:best}; });
+  var base=null; cards.forEach(function(c){ if(c.h===q.hd) base=c.x; });
+  $('altgrid').innerHTML=cards.map(function(c){
+    var on=(c.h===q.hd), x=c.x, d='';
+    if(x&&base&&!on){ var dd=x.tam-base.tam; d=(dd===0&&x.est===base.est)?'mesmo tamanho':(dd>0?'maior':(dd<0?'menor':'outro estágio')); }
+    return '<div class="alt-c'+(on?' on':'')+'"><div class="alt-t">'+c.h+' h/dia <small>f<sub>S</sub> '+fmt(c.f,2)+'</small></div>'+
+      (x?'<div class="alt-m">'+nmb(x)+' '+ratioTxt(x)+'</div><div class="alt-s">f<sub>S</sub> '+fmt(x.fS,2)+' · folga '+fmt((x.fS/c.f-1)*100,0)+'%</div>':'<div class="alt-m none">Sem candidato</div><div class="alt-s">&nbsp;</div>')+
+      '<div class="alt-d">'+(on?'Sua escolha':d)+'</div></div>';
+  }).join('');
+  box.hidden=false;
+}
+function relSel(x,q){
+  var o=list.filter(function(y){ return y.lin===x.lin&&y.tam===x.tam&&y.est===x.est; }).sort(function(a,b){ return a.i-b.i; });
+  if(o.length<2) return '';
+  return '<div class="sum-rel"><label for="relsel">Relação deste tamanho</label><select id="relsel">'+o.map(function(y,k){ return '<option value="'+k+'"'+(y===x?' selected':'')+'>i '+ratioTxt(y)+' · n₂ '+fmt(y.n2,1)+' rpm · f_S '+fmt(y.fS,2)+(y.fail?' · não atende':'')+'</option>'; }).join('')+'</select></div>';
+}
+function renderSum(){
+  var q=lastQ, el=$('sum'); if(!el||!q) return;
+  var foot='<p class="sum-f">Pré-seleção. O tamanho definitivo é confirmado por escrito pela engenharia Bonfiglioli.</p>';
+  if(!q.ok){ el.innerHTML='<div class="sum-st wait">Aguardando</div><div class="sum-k">Próximo passo</div><div class="sum-m sm">Complete os dados</div><p class="sum-p">Potência, rotação e regime de trabalho dentro do gráfico.</p>'+foot; return; }
+  if(!list.length){ el.innerHTML='<div class="sum-st bad">Sem resultado</div><div class="sum-k">Redutor</div><div class="sum-m sm">Nenhuma combinação no desvio de ±'+fmt(q.tol*100,0)+'%</div><p class="sum-p">Amplie o desvio de rotação ou revise n₂ e n₁. Relação necessária: <b>'+fmt(q.n1/q.n2req,1)+'</b>.</p>'+foot; return; }
+  var x=SEL||list[0], pass=(x.fail===0);
+  el.innerHTML='<div class="sum-st '+(pass?'ok':'bad')+'">'+(pass?'Atende':'Não atende')+'</div><div class="sum-k">Redutor selecionado</div>'+
+    '<div class="sum-m">'+nmb(x)+' '+ratioTxt(x)+'</div><div class="sum-sub">n₂ '+fmt(x.n2,2)+' rpm · desvio '+(x.dev>=0?'+':'')+fmt(x.dev*100,1)+'%</div>'+
+    (relSel(x,q))+'<div class="sum-grid"><div><span>f<sub>S</sub> exigido</span><b>'+fmt(q.fsr,2)+'</b></div><div><span>f<sub>S</sub> real</span><b>'+fmt(x.fS,2)+'</b></div><div><span>Torque admissível M<sub>n2</sub></span><b>'+fmt(x.Mn,0)+' Nm</b></div><div><span>Torque exigido M<sub>r2</sub></span><b>'+fmt(x.Mr,0)+' Nm</b></div></div>'+
+    '<div class="sum-ck">'+chip(x.ck.T,'Torque')+(x.ck.R===undefined?'':chip(x.ck.R,'Carga radial'))+(x.th===null?'':chip(x.th?true:'w','Térmica'))+(x.flp?chip(x.flok?true:'w','Flange P'+x.flp):'')+'</div>'+
+    '<div class="sum-pm"><span>Carga radial admissível R<sub>n2</sub></span><b>'+(x.Rn2>0?fmt(x.Rn2,0)+' N':'—')+'</b></div>'+(abaixoTxt(x,q)?'<p class="sum-bl"><b>Tamanho abaixo:</b> '+abaixoTxt(x,q)+'.</p>':'')+
+    '<a class="sum-btn" href="#ficha">Ver folha de dados <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>'+foot;
+}
+function ficha(){
+  var o=$('out'), q=lastQ;
+  if(!SEL){ o.textContent='—'; $('dsg').textContent='—'; return; }
+  var x=SEL, wm=(x.lin==='VF'||x.lin==='W'); $('dsg').textContent=nmb(x)+' '+ratioTxt(x);
+  function pad(l,v){ var n=Math.max(2,36-l.length); return l+' '+Array(n+1).join('.')+' '+v; }
+  var L=[], KK={1:'K1 — carga uniforme',2:'K2 — choque moderado',3:'K3 — choque pesado'};
+  L.push('FOLHA DE DADOS — REDUTOR BONFIGLIOLI '+(wm?'VF/W (SEM-FIM)':'ACF'));
+  L.push('Aplicação: '+($('app').value||'—'));
+  L.push('Modelo: '+nmb(x)+' '+ratioTxt(x)+'   (forma construtiva, flange e posição: a definir)');
+  L.push(Array(53).join('='));
+  L.push('DADOS DA APLICAÇÃO');
+  L.push(pad('Potência do motor',fmt(q.P,q.P%1?2:0)+' kW'));
+  L.push(pad('Polos / Frequência',(q.polos>0?q.polos+' / 60 Hz':'n1 informado manualmente')));
+  L.push(pad('Regime',q.hd+' h/dia, '+fmt(q.zr,0)+' partidas/h, '+KK[q.K]));
+  L.push(Array(53).join('='));
+  L.push(pad('Rotação de entrada    n1',fmt(q.n1,0)+' rpm'));
+  L.push(pad('Rotação de saída      n2',fmt(x.n2,2)+' rpm  (requisito '+fmt(q.n2req,2)+', desvio '+(x.dev>=0?'+':'')+fmt(x.dev*100,1)+'%)'));
+  L.push(pad('Relação               i',ratioTxt(x)));
+  L.push(pad('Torque exigido        Mr2',fmt(x.Mr,0)+' Nm'+(wm?'  (com rendimento dinamico '+fmt(x.eta,0)+'%)':'')));
+  L.push(pad('Torque admissível     Mn2',fmt(x.Mn,0)+' Nm  (catálogo, bloco '+q.blk+' rpm)'));
+  L.push(pad('Fator de serviço exigido',fmt(q.fsr,2)));
+  L.push(pad('Fator de serviço real',fmt(x.fS,2)+'   '+(x.ck.T?'atende':'NAO ATENDE')));
+  L.push(pad('Carga radial adm.     Rn2',(x.Rn2>0?fmt(x.Rn2,0)+' N':'nao tabelada')+(x.ck.R===undefined?'':'   carga informada '+fmt(V('fr'),0)+' N: '+(x.ck.R?'atende':'NAO ATENDE')+' (confira a posicao de aplicacao no catalogo)')));
+  if(wm){ L.push(pad('Rendimento dinamico   etad',fmt(x.eta,0)+' %  (catalogo, tamanho e relacao)')); if(x.es>0) L.push(pad('Rendimento estatico    etas',fmt(x.es,0)+' %  (partida; reversibilidade a confirmar com a fabrica)')); if(x.Rn1>0) L.push(pad('Carga radial adm.     Rn1',fmt(x.Rn1,0)+' N  (eixo de entrada)')); }
+  var fl=FL[x.key];
+  L.push(pad('Flange de entrada IEC',x.flp?('P'+x.flp+(x.flok?'':'  ATENCAO: nao consta para este modelo no catalogo')+(x.mf?'  (carcaça WEG '+x.mf.fr+', '+x.mf.polos+' polos)':'')):'A DEFINIR — vem da carcaça do motor'));
+  if(fl) L.push('   Flanges IEC com motor tabelado neste modelo: P'+fl.join(', P'));
+  if(x.pt!==null&&x.pt!==undefined) L.push(pad('Capacidade térmica Pt',fmt(x.pt,1)+' kW   '+(x.th?'atende':'ATENCAO: potencia acima da termica')));
+  else if(x.lin==='A') L.push(pad('Capacidade térmica','verificar pelo item 48 do catálogo (série A)'));
+  else if(wm) L.push(pad('Capacidade térmica','nao verificada nesta versao; conferir no catalogo VF-W (regime continuo e temperatura ambiente)'));
+  L.push(Array(53).join('='));
+  L.push('PREMISSAS ADOTADAS');
+  L.push('- bloco do catálogo por faixa de n1 (regra do SAP): ate 600 rpm = 500; ate 1200 = 900; ate 1800 = 1400; acima = 2800');
+  L.push(wm?'- Mn2 e etad do catalogo VF-W (bloco por faixa de n1); n2 = n1 / i; Mr2 = P x 9550 x etad / n2 (mesma conta do SAP)':'- Mn2 do catálogo sem alteracao; n2 = n1 / i; Mr2 = P x 9550 / n2, sem rendimento');
+  L.push('- fator de servico exigido lido do grafico A4 do catalogo (±0,02): '+q.hd+' h/dia, curva K'+q.K+', '+fmt(q.zr,0)+' partidas/h');
+  L.push(Array(53).join('='));
+  L.push('A COMPLETAR PELO PROJETISTA');
+  L.push('- forma construtiva, posicao de montagem e sentido de giro');
+  L.push('- carga radial e axial no eixo de saida + distancia de aplicacao');
+  L.push('- temperatura ambiente, grau de protecao, pintura e lubrificacao');
+  if(wm) L.push('- VF/W com eixo de entrada macico: aplicar o fator ftp de temperatura ambiente do catalogo (1,00 a 20 C ate 1,17 a 40 C, conforme a carga)');
+  var ab=abaixoTxt(x,q); if(ab){ L.push(''); L.push('Tamanho imediatamente abaixo: '+ab.replace(/<[^>]*>/g,'')); }
+  L.push('');
+  L.push('Pre-selecao. Tamanho definitivo a confirmar por escrito pela engenharia Bonfiglioli.');
+  o.textContent=L.join('\n');
+}
+$('ent').addEventListener('change',function(){ setEnt(); if($('ent').value==='i'&&V('val')<2) $('val').value=30; render(); });
+$('polos').addEventListener('change',function(){ var p=parseInt($('polos').value,10); if(p>0) $('n1').value=RPM[p]; render(); });
+$('n1').addEventListener('input',function(){ var p=parseInt($('polos').value,10); if(p>0&&Math.abs(V('n1')-RPM[p])>0.5) $('polos').value='0'; });
+$('pot').addEventListener('change',function(){ var x=$('pot').value==='x'; $('potx').hidden=!x; if(x) $('potx').focus(); });
+['app','pot','potx','val','hd','zr','kk','n1','tol','fr'].forEach(function(k){ var e=$(k); e.addEventListener('input',render); e.addEventListener('change',render); });
+$('cp').addEventListener('click',function(){ var btn=this, t=$('out').textContent;
+  function done(){ var o=btn.textContent; btn.textContent='Copiado'; setTimeout(function(){btn.textContent=o;},1400); }
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(done,function(){}); }
+  else { var ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');done();}catch(e){} document.body.removeChild(ta); } });
+Array.prototype.forEach.call(document.querySelectorAll('#tipos .tipo'),function(bt){ bt.addEventListener('click',function(){
+  $('serie').value=bt.dataset.v; FOCUS=null;
+  Array.prototype.forEach.call(document.querySelectorAll('#tipos .tipo'),function(o){ var on=(o===bt); o.classList.toggle('on',on); o.setAttribute('aria-checked',on?'true':'false'); });
+  render(); }); });
+$('pp').addEventListener('click',function(){ window.print(); });
+setEnt(); render();
+})();
+
+</script>
+</body>
+</html>
