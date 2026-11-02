@@ -5,6 +5,7 @@
     { "source": "/csm", "destination": "/csm.html" },
     { "source": "/bonfiglioli", "destination": "/bonfiglioli.html" },
     { "source": "/configurador", "destination": "/configurador-300m.html" },
+    { "source": "/configurador-acf", "destination": "/configurador-acf.html" },
     { "source": "/configuradores", "destination": "/configuradores.html" },
     { "source": "/configurador-guinchos", "destination": "/configurador-guinchos.html" }
   ]
