@@ -562,6 +562,8 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 @media (hover:hover){.tipo:hover{border-color:var(--accent)}}
 .tipo:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
 .tipo.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent-soft) 70%,var(--surface));box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 16%,transparent)}
+#potx[hidden]{display:none}
+.sum-rel{margin:0 0 14px}.sum-rel label{display:block;font-size:11.5px;color:var(--muted);margin-bottom:4px}.sum-rel select{width:100%}
 @media (max-width:560px){.tipos{grid-template-columns:repeat(2,minmax(0,1fr))}.tipo.all .tipo-img{width:96px;height:60px}}
 .sum-bl{margin:12px 0 0;font-size:12.5px;line-height:1.45;color:var(--muted)}.sum-bl b{color:var(--ink2)}
 .alt-c.pick{cursor:pointer}.alt-c.pick:hover{border-color:var(--accent)}
@@ -620,7 +622,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
       <div class="grp grp-key">
         <div class="grp-h"><span class="gn">2</span><div><h3>Acionamento e saída</h3><p>Motor e o que a máquina pede no eixo de saída.</p></div><span class="tag-ess">Essencial</span></div>
         <div class="grp-b">
-          <div class="fld"><label for="pot">Potência do motor <em>P</em> — kW</label><input id="pot" type="number" step="0.01" value="5.5" inputmode="decimal"></div>
+          <div class="fld"><label for="pot">Potência do motor <em>P</em></label><select id="pot"><option value="0.12">0,12 kW (1/6 cv)</option><option value="0.18">0,18 kW (1/4 cv)</option><option value="0.25">0,25 kW (1/3 cv)</option><option value="0.37">0,37 kW (1/2 cv)</option><option value="0.55">0,55 kW (3/4 cv)</option><option value="0.75">0,75 kW (1 cv)</option><option value="1.1">1,1 kW (1,5 cv)</option><option value="1.5">1,5 kW (2 cv)</option><option value="2.2">2,2 kW (3 cv)</option><option value="3">3 kW (4 cv)</option><option value="3.7">3,7 kW (5 cv)</option><option value="4.5">4,5 kW (6 cv)</option><option value="5.5" selected>5,5 kW (7,5 cv)</option><option value="7.5">7,5 kW (10 cv)</option><option value="9.2">9,2 kW (12,5 cv)</option><option value="11">11 kW (15 cv)</option><option value="15">15 kW (20 cv)</option><option value="18.5">18,5 kW (25 cv)</option><option value="22">22 kW (30 cv)</option><option value="30">30 kW (40 cv)</option><option value="37">37 kW (50 cv)</option><option value="45">45 kW (60 cv)</option><option value="55">55 kW (75 cv)</option><option value="75">75 kW (100 cv)</option><option value="90">90 kW (125 cv)</option><option value="110">110 kW (150 cv)</option><option value="132">132 kW (175 cv)</option><option value="160">160 kW (200 cv)</option><option value="200">200 kW (250 cv)</option><option value="x">Outra potência (digitar)</option></select><input id="potx" type="number" step="0.01" min="0" value="" inputmode="decimal" placeholder="kW" hidden style="margin-top:8px"><span class="tip">Potência nominal de placa, padrão comercial. Com ela a ferramenta indica a carcaça IEC e confere o flange.</span></div>
           <div class="fld"><label for="polos">Polos do motor &rarr; <em>n₁</em></label><select id="polos"><option value="2">2 polos · 3500 rpm</option><option value="4" selected>4 polos · 1750 rpm</option><option value="6">6 polos · 1170 rpm</option><option value="8">8 polos · 870 rpm</option><option value="0">Informar n₁ (inversor)</option></select><span class="tip">60 Hz. Com inversor, escolha "Informar n₁" em Opções avançadas.</span></div>
           <div class="fld"><label for="ent">Entro com</label><select id="ent"><option value="n" selected>A rotação de saída n₂</option><option value="i">A redução necessária i</option></select></div>
           <div class="fld"><label id="lval" for="val"></label><input id="val" type="number" step="any" value="60" inputmode="decimal"><span class="tip" id="tipent"></span></div>
@@ -751,6 +753,7 @@ function motorFrame(P,polos){
 (function(){
 var $=function(id){return document.getElementById(id)};
 function V(id){ return parseFloat(String($(id).value).replace(',','.')); }
+function getP(){ var s=$('pot').value; return s==='x'?V('potx'):parseFloat(s); }
 function fmt(n,d){ if(!isFinite(n)) return '—'; return n.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d}); }
 function chip(st,txt){ var c=(st===true?'y':st==='w'?'w':'n'), m=(st===true?'✓':st==='w'?'!':'✕'); return '<span class="ck '+c+'">'+m+(txt?' '+txt:'')+'</span>'; }
 var RPM={2:3500,4:1750,6:1170,8:870};
@@ -767,7 +770,7 @@ function nmb(x){ return x.lin+' '+(x.tam<10?'0'+x.tam:x.tam)+(x.est?' '+x.est:''
 var FOCUS=null;
 var ROWS=ACF.rows, VR=VFW.rows, PT=ACF.pt, FL=ACF.fl, SEL=null, list=[], vis=[], lastQ=null;
 function requisito(){
-  var P=V('pot'), n1=V('n1'), val=V('val'), ent=$('ent').value;
+  var P=getP(), n1=V('n1'), val=V('val'), ent=$('ent').value;
   var n2req=(ent==='i')?n1/val:val, hd=parseInt($('hd').value,10), K=parseInt($('kk').value,10), zr=V('zr');
   var q={P:P,n1:n1,n2req:n2req,hd:hd,K:K,zr:zr,tol:V('tol')/100,serie:$('serie').value,polos:parseInt($('polos').value,10)||0};
   q.blk=band(n1); q.bi=BLK.indexOf(q.blk);
@@ -868,6 +871,13 @@ function render(){
   }
   var okf=ok.filter(function(x){return !focus||x.lin===focus;});
   vis=ok.length?enxuto(okf,q):list.slice(0,10);
+  drawRows();
+  $('cnt').innerHTML=ok.length?('Até <b>12</b> modelos que atendem, sem os superdimensionados (f<sub>S</sub> real acima de 2,5 vezes o exigido; o menor que atende sempre fica).'):'<b style="color:var(--crit)">Nenhuma combinação atende.</b> As linhas mostram o que falha.';
+  renderAlt(q);
+  SEL=vis[0]; mark(); ficha();
+}
+function drawRows(){
+  var q=lastQ, tb=$('tb');
   $('wnote').hidden=!vis.some(function(x){ return x.lin==='VF'||x.lin==='W'; });
   tb.innerHTML=vis.map(function(x,k){
     return '<tr data-k="'+k+'"'+(x.fail===0?'':' class="failrow"')+'>'+
@@ -878,11 +888,13 @@ function render(){
       '<td>'+(x.flp?chip(x.flok?true:'w','P'+x.flp):'<span style="color:var(--muted)">—</span>')+'</td></tr>';
   }).join('');
   Array.prototype.forEach.call(tb.querySelectorAll('tr[data-k]'),function(tr){ tr.addEventListener('click',function(){ SEL=vis[parseInt(tr.dataset.k,10)]; mark(); ficha(); }); });
-  $('cnt').innerHTML=ok.length?('Até <b>12</b> modelos que atendem, sem os superdimensionados (f<sub>S</sub> real acima de 2,5 vezes o exigido; o menor que atende sempre fica).'):'<b style="color:var(--crit)">Nenhuma combinação atende.</b> As linhas mostram o que falha.';
-  renderAlt(q);
-  SEL=vis[0]; mark(); ficha();
 }
-function mark(){ renderSum(); Array.prototype.forEach.call($('tb').querySelectorAll('tr[data-k]'),function(tr){ tr.classList.toggle('sel',vis[parseInt(tr.dataset.k,10)]===SEL); }); }
+function pickRel(k){
+  var x=SEL, o=list.filter(function(y){ return y.lin===x.lin&&y.tam===x.tam&&y.est===x.est; }).sort(function(a,b){ return a.i-b.i; }), y=o[k]; if(!y) return;
+  for(var j=0;j<vis.length;j++){ if(vis[j]===x){ vis[j]=y; break; } }
+  SEL=y; drawRows(); mark(); ficha();
+}
+function mark(){ renderSum(); var rs=$('relsel'); if(rs) rs.addEventListener('change',function(){ pickRel(parseInt(rs.value,10)); }); Array.prototype.forEach.call($('tb').querySelectorAll('tr[data-k]'),function(tr){ tr.classList.toggle('sel',vis[parseInt(tr.dataset.k,10)]===SEL); }); }
 function renderAlt(q){
   var box=$('altbox'); if(!q.ok){ box.hidden=true; return; }
   var cards=[8,16,24].map(function(h){ var q2={}; for(var k in q) q2[k]=q[k]; q2.hd=h; q2.fsr=fsReq(h,q.K,q.zr);
@@ -897,6 +909,11 @@ function renderAlt(q){
   }).join('');
   box.hidden=false;
 }
+function relSel(x,q){
+  var o=list.filter(function(y){ return y.lin===x.lin&&y.tam===x.tam&&y.est===x.est; }).sort(function(a,b){ return a.i-b.i; });
+  if(o.length<2) return '';
+  return '<div class="sum-rel"><label for="relsel">Relação deste tamanho</label><select id="relsel">'+o.map(function(y,k){ return '<option value="'+k+'"'+(y===x?' selected':'')+'>i '+ratioTxt(y)+' · n₂ '+fmt(y.n2,1)+' rpm · f_S '+fmt(y.fS,2)+(y.fail?' · não atende':'')+'</option>'; }).join('')+'</select></div>';
+}
 function renderSum(){
   var q=lastQ, el=$('sum'); if(!el||!q) return;
   var foot='<p class="sum-f">Pré-seleção. O tamanho definitivo é confirmado por escrito pela engenharia Bonfiglioli.</p>';
@@ -905,7 +922,7 @@ function renderSum(){
   var x=SEL||list[0], pass=(x.fail===0);
   el.innerHTML='<div class="sum-st '+(pass?'ok':'bad')+'">'+(pass?'Atende':'Não atende')+'</div><div class="sum-k">Redutor selecionado</div>'+
     '<div class="sum-m">'+nmb(x)+' '+ratioTxt(x)+'</div><div class="sum-sub">n₂ '+fmt(x.n2,2)+' rpm · desvio '+(x.dev>=0?'+':'')+fmt(x.dev*100,1)+'%</div>'+
-    '<div class="sum-grid"><div><span>f<sub>S</sub> exigido</span><b>'+fmt(q.fsr,2)+'</b></div><div><span>f<sub>S</sub> real</span><b>'+fmt(x.fS,2)+'</b></div><div><span>Torque admissível M<sub>n2</sub></span><b>'+fmt(x.Mn,0)+' Nm</b></div><div><span>Torque exigido M<sub>r2</sub></span><b>'+fmt(x.Mr,0)+' Nm</b></div></div>'+
+    (relSel(x,q))+'<div class="sum-grid"><div><span>f<sub>S</sub> exigido</span><b>'+fmt(q.fsr,2)+'</b></div><div><span>f<sub>S</sub> real</span><b>'+fmt(x.fS,2)+'</b></div><div><span>Torque admissível M<sub>n2</sub></span><b>'+fmt(x.Mn,0)+' Nm</b></div><div><span>Torque exigido M<sub>r2</sub></span><b>'+fmt(x.Mr,0)+' Nm</b></div></div>'+
     '<div class="sum-ck">'+chip(x.ck.T,'Torque')+(x.ck.R===undefined?'':chip(x.ck.R,'Carga radial'))+(x.th===null?'':chip(x.th?true:'w','Térmica'))+(x.flp?chip(x.flok?true:'w','Flange P'+x.flp):'')+'</div>'+
     '<div class="sum-pm"><span>Carga radial admissível R<sub>n2</sub></span><b>'+(x.Rn2>0?fmt(x.Rn2,0)+' N':'—')+'</b></div>'+(abaixoTxt(x,q)?'<p class="sum-bl"><b>Tamanho abaixo:</b> '+abaixoTxt(x,q)+'.</p>':'')+
     '<a class="sum-btn" href="#ficha">Ver folha de dados <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>'+foot;
@@ -959,7 +976,8 @@ function ficha(){
 $('ent').addEventListener('change',function(){ setEnt(); if($('ent').value==='i'&&V('val')<2) $('val').value=30; render(); });
 $('polos').addEventListener('change',function(){ var p=parseInt($('polos').value,10); if(p>0) $('n1').value=RPM[p]; render(); });
 $('n1').addEventListener('input',function(){ var p=parseInt($('polos').value,10); if(p>0&&Math.abs(V('n1')-RPM[p])>0.5) $('polos').value='0'; });
-['app','pot','val','hd','zr','kk','n1','tol','fr'].forEach(function(k){ var e=$(k); e.addEventListener('input',render); e.addEventListener('change',render); });
+$('pot').addEventListener('change',function(){ var x=$('pot').value==='x'; $('potx').hidden=!x; if(x) $('potx').focus(); });
+['app','pot','potx','val','hd','zr','kk','n1','tol','fr'].forEach(function(k){ var e=$(k); e.addEventListener('input',render); e.addEventListener('change',render); });
 $('cp').addEventListener('click',function(){ var btn=this, t=$('out').textContent;
   function done(){ var o=btn.textContent; btn.textContent='Copiado'; setTimeout(function(){btn.textContent=o;},1400); }
   if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(done,function(){}); }
