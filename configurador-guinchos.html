@@ -2302,15 +2302,15 @@ var APOIO=[['redutor','No eixo do redutor'],['mancal','Mancais próprios do tamb
 function cabRows(f){
   var bar=(f==='C');
   var R=[{g:bar?'Carretel e barreira':'Tambor e cabo'},
-    {k:'Dn',l:bar?'Ø do núcleo do carretel':'Ø do núcleo do tambor',u:'mm',t:'n'},
+    {k:'Dn',l:bar?'Ø do núcleo do carretel':'Ø do núcleo do tambor (sem o cabo)',u:'mm',t:'n',tip:bar?'':'Medida do tambor; se ranhurado, no fundo da ranhura. Se o projeto só traz o Ø primitivo, use a linha "Ø primitivo — se o projeto já informa".'},
     {k:'dc',l:bar?'Espessura da barreira enrolada':'Ø do cabo',u:'mm',t:'n',tip:bar?'Espessura de uma volta da barreira (camada). Informar conforme o projeto.':''}];
   R.push({k:'Dfl',l:bar?'Ø da flange do carretel':'Ø da flange',u:'mm',t:'n'});
   if(bar) R.push({k:'voltas',l:'Voltas por camada',t:'n',tip:'1 se a barreira ocupa toda a largura do carretel.'});
   else R.push({k:'Lt',l:'Comprimento útil do tambor',u:'mm',t:'n'});
   R.push({k:'kref',l:'Camada de referência da tração',t:'n',tip:'Padrão: 1ª camada.'},
-    {k:'Dpm',l:'Ø primitivo — só para sobrescrever',u:'mm',t:'n',tip:'Vazio = núcleo + (2k−1) × '+(bar?'espessura':'Ø cabo')+'.'},
+    {k:'Dpm',l:'Ø primitivo — se o projeto já informa',u:'mm',t:'n',tip:(bar?'':'No centro do cabo. ')+'Preenchido, vale no lugar do cálculo. Vazio = núcleo + (2k−1) × '+(bar?'espessura':'Ø cabo')+'.'},
     {k:'Lc',l:bar?'Barreira a armazenar (opcional)':'Cabo a armazenar (opcional)',u:'m',t:'n'},
-    {k:'Dp',l:'Ø primitivo usado',u:'mm',t:'c',f:function(r){return fmt(r.Dp,1)}},
+    {k:'Dp',l:'Ø primitivo usado no cálculo',u:'mm',t:'c',f:function(r){return fmt(r.Dp,1)}},
     {k:'cabcap',l:'Camadas · '+(bar?'barreira':'cabo')+' no '+(bar?'carretel':'tambor'),t:'c',f:function(r){
        return r.cab.ok?(r.cab.layers+' cam. · '+fmt(r.cab.total,0)+' m'):'—'}},
     {k:'cabfit',l:(bar?'Barreira':'Cabo')+' a armazenar cabe?',t:'c',f:function(r){
