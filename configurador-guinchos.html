@@ -51,6 +51,7 @@ img{max-width:100%}
 .backbar a svg{width:16px;height:16px}
 @media (hover:hover){.backbar a:hover{background:var(--accent-soft);border-color:var(--accent)}}
 .m3wrap>label{font-weight:700}
+#mecsec .calc{background:var(--surface)}
 .m3g{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));gap:12px 16px;margin-top:6px}
 .m3g .fld{min-width:0}
 .m3g select{width:100%}
@@ -402,6 +403,8 @@ details.prem>summary::-webkit-details-marker{display:none}
 details.prem>summary::before{content:"▸";display:inline-block;margin-right:10px;color:var(--accent);transition:transform .15s}
 details.prem[open]>summary::before{transform:rotate(90deg)}
 details.prem>summary:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+details.prem.adv2{margin:0;border:none;border-top:1px solid var(--line);box-shadow:none;border-radius:0}
+details.prem.adv2>summary{font-size:15px}
 details.prem .calc{border:none;border-top:1px solid var(--line);box-shadow:none;border-radius:0}
 tr.refrow td{background:var(--accent-soft)}
 tr.usedrow td{box-shadow:inset 0 2px 0 var(--accent),inset 0 -2px 0 var(--accent)}
@@ -487,7 +490,8 @@ h3.sub{font-size:21px;font-weight:600;margin:26px 0 8px;text-transform:uppercase
   <li><a href="#casos"><span>1</span>Casos</a></li>
   <li id="nav-cabo"><a href="#cabo"><span>2</span>Camadas</a></li>
   <li><a href="#cand"><span>3</span>Candidatos</a></li>
-  <li><a href="#ficha"><span>4</span>Folha de dados</a></li>
+  <li><a href="#mecsec"><span>4</span>Configuração</a></li>
+  <li><a href="#ficha"><span>5</span>Folha de dados</a></li>
   <li><a href="#metodo"><span>fx</span>Como calcula</a></li>
   <li><a href="#limites"><span>!</span>O que ele não faz</a></li>
 </ul></div></nav>
@@ -525,25 +529,35 @@ h3.sub{font-size:21px;font-weight:600;margin:26px 0 8px;text-transform:uppercase
   </div>
 
   <details class="prem" open>
-    <summary>Premissas de cálculo — valem para todos os casos (carga, vida, pico 150%, tolerância, designação)</summary>
+    <summary>Premissas de cálculo — valem para todos os casos</summary>
     <div class="calc"><div class="calc-body">
       <div class="calc-in">
         <div class="fld"><label for="g_app">Projeto / cliente</label><input id="g_app" type="text" value=""></div>
-        <div class="fld"><label for="g_var">Variante do equipamento</label>
-          <select id="g_var"><option value="padrao" selected>Padrão</option><option value="atracacao">Atracação</option><option value="tracao">Tração constante</option><option value="combinado">Combinado naval</option><option value="manrider">Man-rider (fora do escopo)</option></select>
-          <span class="tip">Registra a variante na folha. <b>Man-rider bloqueia o resultado</b>: exige fatores de segurança próprios.</span></div>
-        <div class="fld"><label for="g_carga">Tipo de carga — tabela A4</label>
-          <select id="g_carga"><option value="0">Uniforme</option><option value="1" selected>Choque moderado</option><option value="2">Choque pesado</option></select></div>
-        <div class="fld"><label for="g_zb">Partidas por hora <em>Z</em></label>
-          <select id="g_zb"><option value="0">Z &lt; 10</option><option value="1">10 &lt; Z &lt; 30</option><option value="2" selected>30 &lt; Z &lt; 100</option></select></div>
         <div class="fld"><label for="g_tcl">Classe de utilização <em>T</em> — horas totais <span class="ess">essencial</span></label>
           <select id="g_tcl"><option value="">— escolha —</option><option value="0">T0 — 200 h</option><option value="1">T1 — 400 h</option><option value="2">T2 — 800 h</option><option value="3">T3 — 1.600 h</option><option value="4">T4 — 3.200 h</option><option value="5">T5 — 6.300 h</option><option value="6">T6 — 12.500 h</option><option value="7">T7 — 25.000 h</option><option value="8">T8 — 50.000 h</option></select>
           <span class="tip">A vida vem da classe do projeto, não de um palpite. Sem ela a ferramenta não calcula.</span><span class="tip" id="g_mgrp">Grupo do mecanismo: —</span></div>
       </div>
       <div class="calc-in">
+        <div class="fld"><label for="g_carga">Tipo de carga — tabela A4</label>
+          <select id="g_carga"><option value="0">Uniforme</option><option value="1" selected>Choque moderado</option><option value="2">Choque pesado</option></select></div>
+        <div class="fld"><label for="g_zb">Partidas por hora <em>Z</em></label>
+          <select id="g_zb"><option value="0">Z &lt; 10</option><option value="1">10 &lt; Z &lt; 30</option><option value="2" selected>30 &lt; Z &lt; 100</option></select></div>
+      </div>
+      <div class="calc-in">
+        <div class="fld"><label for="g_var">Variante do equipamento</label>
+          <select id="g_var"><option value="padrao" selected>Padrão</option><option value="atracacao">Atracação</option><option value="tracao">Tração constante</option><option value="combinado">Combinado naval</option><option value="manrider">Man-rider (fora do escopo)</option></select>
+          <span class="tip">Registra a variante na folha. <b>Man-rider bloqueia o resultado</b>: exige fatores de segurança próprios.</span></div>
+      </div>
+    </div></div>
+    <details class="prem adv2">
+      <summary>Ajustes avançados — pico, desvio de rotação, leitura do M<sub>n2</sub>, n₁ liberada e roldanas</summary>
+      <div class="calc"><div class="calc-body">
+      <div class="calc-in">
         <div class="fld"><label for="g_tfr">Torque de pico — % do nominal</label><input id="g_tfr" type="number" step="5" value="150">
           <span class="tip">Referência: o equipamento suporta <b>150%</b> da capacidade nominal. No elétrico o pico sai da potência instalada; no hidráulico, do torque de projeto.</span></div>
         <div class="fld"><label for="g_tol">Desvio de rotação aceito — ±%</label><input id="g_tol" type="number" step="1" value="15"></div>
+      </div>
+      <div class="calc-in">
         <div class="fld"><label for="g_leit">Leitura do M<sub>n2</sub></label>
           <select id="g_leit"><option value="0" selected>Literal — próxima coluna de n₂·h</option><option value="1">Interpolada na curva do catálogo</option></select></div>
         <div class="fld"><label for="g_n1lib">n₁ liberada pela fábrica — rpm</label><input id="g_n1lib" type="number" step="10" value="1750">
@@ -551,32 +565,9 @@ h3.sub{font-size:21px;font-weight:600;margin:26px 0 8px;text-transform:uppercase
       </div>
       <div class="calc-in">
         <div class="fld"><label for="g_etar">Rendimento por roldana</label><input id="g_etar" type="number" step="0.005" value="0.99"></div>
-        <div class="fld"><label for="g_ver">Versão de saída — designação</label>
-          <select id="g_ver">
-            <option value="MC">MC — eixo cilíndrico chavetado</option>
-            <option value="HC" selected>HC — eixo cilíndrico chavetado reforçado</option>
-            <option value="MZ">MZ — eixo estriado macho</option>
-            <option value="HZ">HZ — eixo estriado reforçado</option>
-            <option value="PC">PC — base com pés e eixo chavetado</option>
-            <option value="PZ">PZ — base com pés e eixo estriado</option>
-            <option value="FZ">FZ — eixo oco estriado</option>
-            <option value="FZP">FZP — eixo oco estriado com bloqueio axial</option>
-            <option value="FP">FP — eixo oco para disco de contração</option>
-            <option value="FDK">FDK — eixo oco com chaveta dupla</option>
-            <option value="VK">VK — saída reforçada</option>
-          </select></div>
-        <div class="fld"><label for="g_pflg">Flange de entrada</label>
-          <select id="g_pflg">
-            <option value="">— a definir —</option>
-            <option>P71</option><option>P80</option><option>P90</option><option>P100</option><option>P112</option>
-            <option>P132</option><option>P160</option><option>P180</option><option>P200</option><option>P225</option><option>P250</option>
-          </select>
-          <span class="tip">Vem do motor. No hidráulico exige adaptador motor–redutor: confirme com a Bonfiglioli.</span></div>
-        <div class="fld"><label for="g_pos">Posição de montagem</label><input id="g_pos" type="text" value="" maxlength="4" placeholder="ex.: A"></div>
-        <div class="fld"><label for="g_opc">Opções e acessórios</label><input id="g_opc" type="text" value="" placeholder="ex.: freio, encoder"></div>
       </div>
-    </div></div>
-    <div id="m3host"></div>
+      </div></div>
+    </details>
   </details>
 
   <div class="gbar">
@@ -634,9 +625,48 @@ h3.sub{font-size:21px;font-weight:600;margin:26px 0 8px;text-transform:uppercase
 </section>
 
 
+<section id="mecsec">
+  <div class="sec-h">
+    <div class="eyebrow">Passo 4 · opcional</div>
+    <h2>Configuração mecânica</h2>
+    <p>Do redutor escolhido no passo 3 (caso ativo): versão de saída, flange de entrada e opções do catálogo 300M. O que ficar em branco sai como "a definir" na folha.</p>
+  </div>
+  <div class="calc"><div class="calc-body">
+      <div class="calc-in">
+        <div class="fld"><label for="g_ver">Versão de saída — designação</label>
+          <select id="g_ver">
+            <option value="MC">MC — eixo cilíndrico chavetado</option>
+            <option value="HC" selected>HC — eixo cilíndrico chavetado reforçado</option>
+            <option value="MZ">MZ — eixo estriado macho</option>
+            <option value="HZ">HZ — eixo estriado reforçado</option>
+            <option value="PC">PC — base com pés e eixo chavetado</option>
+            <option value="PZ">PZ — base com pés e eixo estriado</option>
+            <option value="FZ">FZ — eixo oco estriado</option>
+            <option value="FZP">FZP — eixo oco estriado com bloqueio axial</option>
+            <option value="FP">FP — eixo oco para disco de contração</option>
+            <option value="FDK">FDK — eixo oco com chaveta dupla</option>
+            <option value="VK">VK — saída reforçada</option>
+          </select></div>
+      </div>
+      <div class="calc-in">
+        <div class="fld"><label for="g_pflg">Flange de entrada</label>
+          <select id="g_pflg">
+            <option value="">— a definir —</option>
+            <option>P71</option><option>P80</option><option>P90</option><option>P100</option><option>P112</option>
+            <option>P132</option><option>P160</option><option>P180</option><option>P200</option><option>P225</option><option>P250</option>
+          </select>
+          <span class="tip">Vem do motor. No hidráulico exige adaptador motor–redutor: confirme com a Bonfiglioli.</span></div>
+      </div>
+      <div class="calc-in">
+        <div class="fld"><label for="g_pos">Posição de montagem</label><input id="g_pos" type="text" value="" maxlength="4" placeholder="ex.: A"></div>
+        <div class="fld"><label for="g_opc">Opções e acessórios</label><input id="g_opc" type="text" value="" placeholder="ex.: freio, encoder"></div>
+      </div>
+  </div><div id="m3host"></div></div>
+</section>
+
 <section id="ficha">
   <div class="sec-h">
-    <div class="eyebrow">Passo 4 · <span id="ficha-case">Caso 1</span></div>
+    <div class="eyebrow">Passo 5 · <span id="ficha-case">Caso 1</span></div>
     <h2>Folha de dados</h2>
     <p>Do caso ativo. O bloco sai formatado para colar no pedido de cotação à Bonfiglioli.</p>
   </div>
