@@ -659,9 +659,9 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
         <div class="grp-h"><span class="gn">3</span><div><h3>Regime de trabalho</h3><p>Define o fator de serviço exigido pelo catálogo.</p></div><span class="tag-ess">Essencial</span></div>
         <div class="grp-b">
           <div class="fld"><label for="hd">Turnos de trabalho</label><select id="hd"><option value="8">1 turno · até 8 h/dia</option><option value="16" selected>2 turnos · 16 h/dia</option><option value="24">3 turnos · 24 h/dia</option></select></div>
-          <div class="fld"><label for="zr">Partidas por hora <em>Z<sub>r</sub></em></label><input id="zr" type="number" step="1" min="0" max="300" value="10" inputmode="numeric"><span class="tip">De 0 a 300. Acima disso, consulte o Serviço Técnico.</span></div>
-          <div class="fld"><label for="kk">Tipo de carga</label><select id="kk"><option value="1">Uniforme</option><option value="2" selected>Choque moderado</option><option value="3">Choque pesado</option></select><span class="tip"><b>Uniforme:</b> correia, ventilador, bomba. <b>Moderado:</b> elevador de canecas, misturador. <b>Pesado:</b> britador, prensa. Equivale às curvas K1, K2 e K3 do catálogo (K = inércia da carga ÷ inércia do motor). Exemplos orientativos; acima de K = 10, consulte o Serviço Técnico.</span></div>
-          <div class="fld"><label for="fr">Carga radial no eixo de saída <em>opcional</em> — N</label><input id="fr" type="number" step="10" min="0" value="" inputmode="numeric" placeholder="ex.: 3000"><span class="tip">Se informada, a ferramenta compara com R<sub>n2</sub> do catálogo. Confira a posição de aplicação da carga no catálogo.</span></div>
+          <div class="fld"><label for="zr">Partidas por hora <em>Z<sub>r</sub></em></label><input id="zr" type="number" step="1" min="0" max="300" value="10" inputmode="numeric"><span class="tip">De 0 a 300.</span></div>
+          <div class="fld"><label for="kk">Tipo de carga</label><select id="kk"><option value="1">Uniforme</option><option value="2" selected>Choque moderado</option><option value="3">Choque pesado</option></select><span class="tip">Curvas K1, K2 e K3 do catálogo. Ex.: correia (uniforme), misturador (moderado), britador (pesado).</span></div>
+          <input id="fr" type="hidden" value="">
         </div>
       </div>
     </div>
