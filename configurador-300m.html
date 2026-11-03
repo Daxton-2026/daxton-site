@@ -50,6 +50,16 @@ img{max-width:100%}
 .backbar a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){.backbar a,.backbar a svg{transition:none}}
 @media print{.backbar{display:none!important}}
+.m3wrap>label{font-weight:700}
+.m3g{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));gap:12px 16px;margin-top:6px}
+.m3g .fld{min-width:0}
+.m3g select{width:100%}
+.m3off{opacity:.62}
+.m3why{color:var(--crit)}
+.m3lb{font-weight:600}
+.m3ck{display:flex;gap:9px;align-items:flex-start;font-weight:400;cursor:pointer;line-height:1.4;white-space:normal;text-transform:none;letter-spacing:normal}
+.m3ck input{margin-top:3px;flex:none;width:18px !important;height:18px;min-width:0;padding:0;accent-color:var(--accent)}
+.m3ck span{flex:1;min-width:0}
 </style>
 <style>
 :root{
@@ -2731,6 +2741,112 @@ function motorFrame(P,polos){
 var FLG={"300L1":[71,80,90,100,112,132],"300L2":[71,80,90,100,112,132],"300L3":[71,80,90,100,112,132],"300L4":[71,80,90,100,112,132],"300R2":[71,80,90,100,112,132],"300R3":[71,80,90,100,112,132],"300R4":[71,80,90,100,112,132],"301L1":[71,80,90,100,112,132],"301L2":[71,80,90,100,112,132],"301L3":[71,80,90,100,112,132],"301L4":[71,80,90,100,112,132],"301R2":[71,80,90,100,112,132],"301R3":[71,80,90,100,112,132],"301R4":[71,80,90,100,112,132],"303L1":[132,160,180,200],"303L2":[71,80,90,100,112,132,160],"303L3":[71,80,90,100,112,132,160],"303L4":[71,80,90,100,112,132,160],"303R2":[71,80,90,100,112,132],"303R3":[71,80,90,100,112,132],"303R4":[71,80,90,100,112,132],"304L1":[132,160,180,200],"304L2":[71,80,90,100,112,132,160],"304L3":[71,80,90,100,112,132,160],"304L4":[71,80,90,100,112,132,160],"304R2":[71,80,90,100,112,132],"304R3":[71,80,90,100,112,132],"304R4":[71,80,90,100,112,132],"305L1":[132,160,180,200],"305L2":[71,80,90,100,112,132,160],"305L3":[71,80,90,100,112,132,160],"305L4":[71,80,90,100,112,132,160],"305R2":[71,80,90,100,112,132],"305R3":[71,80,90,100,112,132],"305R4":[71,80,90,100,112,132],"306L1":[160,180,200,225,250],"306L2":[132,160,180,200],"306L3":[71,80,90,100,112,132,160],"306L4":[71,80,90,100,112,132,160],"306R2":[71,80,90,100,112,132,160],"306R3":[71,80,90,100,112,132,160],"306R4":[71,80,90,100,112,132,160],"307L1":[180,200,225,250],"307L2":[132,160,180,200],"307L3":[71,80,90,100,112,132,160],"307L4":[71,80,90,100,112,132,160],"307R2":[132,160,180,200],"307R3":[71,80,90,100,112,132,160],"307R4":[71,80,90,100,112,132,160],"309L1":[180,200,225,250],"309L2":[132,160,180,200],"309L3":[71,80,90,100,112,132,160],"309L4":[71,80,90,100,112,132,160],"309R2":[132,160,180,200],"309R3":[71,80,90,100,112,132,160],"309R4":[71,80,90,100,112,132,160],"310ML1":[200,225,250],"310ML2":[160,180,200,225,250],"310ML3":[132,160,180,200],"310ML4":[71,80,90,100,112,132,160],"310MR2":[160,180,200,225,250],"310MR3":[71,80,90,100,112,132,160],"310MR4":[71,80,90,100,112,132,160],"311ML1":[200,225,250],"311ML2":[180,200,225,250],"311ML3":[132,160,180,200],"311ML4":[71,80,90,100,112,132,160],"311MR2":[180,200,225,250],"311MR3":[132,160,180,200],"311MR4":[71,80,90,100,112,132,160],"313ML2":[180,200,225,250],"313ML3":[132,160,180,200],"313ML4":[71,80,90,100,112,132,160],"313MR2":[180,200,225,250],"313MR3":[132,160,180,200],"313MR4":[71,80,90,100,112,132,160],"314ML2":[200,225,250],"314ML3":[160,180,200,225,250],"314ML4":[132,160,180,200],"314MR3":[180,200,225,250],"314MR4":[71,80,90,100,112,132,160],"315ML2":[200,225,250],"315ML3":[180,200,225,250],"315ML4":[132,160,180,200],"315MR3":[180,200,225,250],"315MR4":[132,160,180,200],"316ML2":[200,225,250],"316ML3":[180,200,225,250],"316ML4":[132,160,180,200],"316MR3":[180,200,225,250],"316MR4":[132,160,180,200],"317ML3":[180,200,225,250],"317ML4":[132,160,180,200],"317MR3":[180,200,225,250],"317MR4":[132,160,180,200],"318ML3":[180,200,225,250],"318ML4":[180,200,225,250],"318MR4":[180,200,225,250],"319L3":[180,200,225,250],"319L4":[180,200,225,250],"319R4":[180,200,225,250],"321L4":[180,200,225,250],"321R4":[180,200,225,250],"323L4":[200,225,250],"325L4":[200,225,250]};
 function flgLista(x){ return FLG[x.size+x.fam+x.st]||[]; }
 function flgFaixa(a){ return a.length?('P'+a[0]+(a.length>1?' a P'+a[a.length-1]:'')):''; }
+/* ---------- configuração mecânica da série 300M (catálogo 300M R4.1, cap. 5, 19, 23 e 24) ---------- */
+var M3={cfg:null,st:{},size:null,fam:null,hyd:null};
+var M3VER={MC:[300,307],MZ:[300,307],HC:[300,321],HZ:[300,321],PC:[300,321],PZ:[300,321],FZ:[300,325],FP:[300,325],FDK:[300,310],FZP:[311,325],VK:[303,315]};
+var M3RAL=[['RAL7042','Cinza Traffik A (padrão)'],['RAL5010','Azul genciana'],['RAL9005','Preto'],['RAL9006','Alumínio branco'],['RAL9010','Branco puro'],['RAL7035','Cinza claro'],['RAL7001','Cinza prata'],['RAL5015','Azul céu'],['RAL7037','Cinza pó'],['RAL5024','Azul pastel']];
+function m3$(id){ return document.getElementById(id); }
+function m3n(){ return parseInt(M3.size,10); }
+function m3VerOk(v,n){ var r=M3VER[v]; return !r||!isFinite(n)||(n>=r[0]&&n<=r[1]); }
+function m3Pos(){
+  if(M3.fam==='R'){ var o=[]; ['B','I','J','M','P','R','U','W'].forEach(function(l){ for(var k=0;k<4;k++) o.push(l+k); }); return o; }
+  return ['A','E','F','G','O','Q','T','V'];
+}
+function m3Fit(ver){
+  if(ver==='MZ'||ver==='HZ'||ver==='PZ') return [['W0A','W0A — flange'],['P__','P__ — pinhão (código do pinhão a definir)'],['M0A','M0A — luva de acoplamento']];
+  if(ver==='FZ') return [['B0A','B0A — barra estriada']];
+  if(ver==='FP') return [['G0A','G0A — disco de contração']];
+  return [];
+}
+function m3Spec(){
+  var F=[], n=m3n(), ver=m3$(M3.cfg.ver).value, hyd=!!M3.hyd, st=M3.st;
+  var pl=m3Pos();
+  F.push({id:'pos',label:'Posição de montagem',blank:'— a definir —',opts:pl.map(function(c){return [c,c];}),
+    hint:(M3.fam==='R'?'Ortogonais: B, I, J, M, P, R, U, W com variantes 0 a 3 (tabela A28).':'Coaxiais: A, E, F, G (eixo horizontal) e O, Q, T, V (eixo vertical) (tabela A27).')+' A designação só fica completa com ela: define a quantidade de óleo e os bujões.'});
+  var fo=m3Fit(ver);
+  F.push({id:'fit',label:'Acessório de saída',blank:fo.length?'— nenhum —':'— não se aplica a '+ver+' —',opts:fo,dis:!fo.length,hint:'Conforme a versão de saída: W0A, P__ e M0A nos eixos estriados machos; B0A no FZ; G0A no FP.'});
+  var pfOk=!hyd;
+  F.push({id:'pf',type:'check',label:'Conexão do motor com ventilador integrado (PF)',txt:'PF — PF160 a PF250, no lugar do P da flange',dis:!pfOk,reason:pfOk?'':'Só com motor elétrico IEC.',
+    hint:'Vale para flange P160 a P250.'+(M3.fam==='R'?' Na versão R, consultar o Serviço Técnico.':' Nas posições T e V, consultar o Serviço Técnico.')});
+  F.push({id:'cr',label:'Refrigeração adicional',blank:'— nenhuma —',opts:[['CR1','CR1'],['CR2','CR2'],['CR3','CR3']],hint:'Sistema de refrigeração suplementar do catálogo (capítulo 14): só quando a verificação térmica pede. A térmica não é verificada por esta ferramenta.'});
+  F.push({id:'pv',type:'check',label:'Vedação',txt:'PV — retentores em elastômero fluorado (padrão: NBR)',dis:hyd,reason:hyd?'Com entrada hidráulica, consultar o Serviço Técnico.':''});
+  var tk=(ver==='FP'||ver==='FZ')&&n>=314;
+  if(tk) F.push({id:'tk',type:'check',label:'Vedação taconite',txt:'Vedação taconite (pó abrasivo), FP e FZ do 314M ao 325',hint:'Opção do catálogo sem código na designação: o pedido sai com a observação. Detalhes com o Serviço Técnico.'});
+  F.push({id:'lub',label:'Lubrificação',blank:'— padrão (sem óleo especificado) —',opts:[['LM','LM — Shell Omala S4 WE 320'],['LH','LH — Shell Omala S4 WE 150']],dis:hyd,reason:hyd?'Com entrada hidráulica, consultar o Serviço Técnico.':''});
+  if(n<=321) F.push({id:'lts',label:'Estoque prolongado (Long Term Stock)',blank:'— não —',opts:[['SLM','SLM — protetor compatível com óleo mineral'],['SLP','SLP — protetor compatível com óleo poliglicol']],hint:'Para instalação mais de 6 meses após a entrega. Tamanhos 300 a 321.'});
+  if(M3.fam==='R') F.push({id:'rar',label:'Sentido de rotação preferencial (só ortogonal)',blank:'— nenhum —',opts:[['RA','RA — esquerda'],['RO','RO — direita']],hint:'Para aplicação monodirecional ou com sentido predominante: garante o desempenho declarado.'});
+  F.push({id:'prot',label:'Proteção superficial',blank:'— C2 (padrão: só primer) —',opts:[['C3','C3 — urbano e industrial, até 100% de umidade (poluição média)'],['C4','C4 — industrial, costeiro, químico, até 100% de umidade (poluição alta)'],['C5','C5 — consultar o Serviço Técnico']]});
+  var cor=(st.prot==='C3'||st.prot==='C4');
+  F.push({id:'cor',label:'Cor',blank:'— RAL7042 (padrão) —',opts:M3RAL.map(function(r){return [r[0],r[0]+' — '+r[1]];}),dis:!cor,reason:cor?'':'A cor só pode ser pedida junto com C3 ou C4.'});
+  F.push({id:'ac',type:'check',label:'Certificado de conformidade',txt:'AC — conformidade com o pedido'});
+  F.push({id:'cc',type:'check',label:'Certificado de inspeção',txt:'CC — inspeção por amostragem do lote'});
+  return F;
+}
+function m3Clean(){
+  for(var p=0;p<3;p++){ var F=m3Spec(), ch=false;
+    F.forEach(function(f){ var v=M3.st[f.id]; if(!v) return; var ok=f.type==='check'?v==='1':f.opts.some(function(o){return o[0]===v;}); if(f.dis||!ok){ delete M3.st[f.id]; ch=true; } });
+    Object.keys(M3.st).forEach(function(k){ if(!F.some(function(f){return f.id===k;})){ delete M3.st[k]; ch=true; } });
+    if(!ch) return F; }
+  return m3Spec();
+}
+function m3Opc(){
+  var s=M3.st, o=[]; ['fit','cr'].forEach(function(k){ if(s[k]) o.push(s[k]); }); if(s.pv) o.push('PV'); if(s.lub) o.push(s.lub);
+  if(s.prot) o.push(s.prot); if(s.cor) o.push(s.cor); if(s.ac) o.push('AC'); if(s.cc) o.push('CC'); if(s.rar) o.push(s.rar); if(s.lts) o.push(s.lts);
+  return o.join(' ');
+}
+function m3Flange(pf){ if(M3.st.pf&&pf&&/^P(160|180|200|225|250)$/.test(pf)) return 'PF'+pf.slice(1); return pf; }
+function m3Notes(){
+  var n=m3n(), ver=m3$(M3.cfg.ver).value, A=[];
+  if(!m3VerOk(ver,n)) A.push('A versão de saída '+ver+' não existe no tamanho '+M3.size+' (catálogo, capítulo 5). Escolha outra versão.');
+  if(n>=323&&(M3.st.pos==='O'||M3.st.pos==='T')) A.push('Tamanhos 323 a 325 nas posições O e T: consultar o Serviço Técnico.');
+  if(M3.st.tk) A.push('Vedação taconite: vai como observação no pedido (sem código na designação).');
+  if(M3.st.prot==='C5') A.push('C5: o catálogo manda consultar o Serviço Técnico.');
+  return A;
+}
+function m3Write(){
+  var c=M3.cfg; m3$(c.pos).value=M3.st.pos||''; m3$(c.opc).value=m3Opc();
+  [c.pos,c.opc].forEach(function(id){ var e=m3$(id); e.dispatchEvent(new Event('input',{bubbles:true})); e.dispatchEvent(new Event('change',{bubbles:true})); });
+}
+function m3Render(){
+  var box=m3$('m3box'); if(!box) return;
+  if(!M3.size){ box.innerHTML='<p class="cap">Selecione um candidato para ver as opções do tamanho.</p>'; return; }
+  var F=m3Clean(), n=m3n(), verSel=m3$(M3.cfg.ver);
+  Array.prototype.forEach.call(verSel.options,function(o){ var ok=m3VerOk(o.value,n); o.textContent=o.textContent.replace(/ \(não existe no \S+\)$/,'')+(ok?'':' (não existe no '+M3.size+')'); });
+  var h='<div class="m3g">';
+  F.forEach(function(f){
+    var id='m3_'+f.id, v=M3.st[f.id]||'';
+    h+='<div class="fld'+(f.dis?' m3off':'')+'">';
+    if(f.type==='check') h+='<label class="m3lb">'+f.label+'</label><label class="m3ck"><input type="checkbox" id="'+id+'" data-k="'+f.id+'"'+(v==='1'?' checked':'')+(f.dis?' disabled':'')+'> <span>'+f.txt+'</span></label>';
+    else h+='<label for="'+id+'">'+f.label+'</label><select id="'+id+'" data-k="'+f.id+'"'+(f.dis?' disabled':'')+'><option value="">'+f.blank+'</option>'+f.opts.map(function(o){return '<option value="'+o[0]+'"'+(v===o[0]?' selected':'')+'>'+o[1]+'</option>';}).join('')+'</select>';
+    h+=(f.reason?'<span class="tip m3why">'+f.reason+'</span>':(f.hint?'<span class="tip">'+f.hint+'</span>':''))+'</div>';
+  });
+  h+='</div>';
+  var A=m3Notes(); if(A.length) h+='<div class="note warn" style="margin-top:12px"><i></i><div><h4>Confira</h4><p>'+A.join('<br>')+'</p></div></div>';
+  h+='<p class="cap" style="margin-top:8px">Só o redutor, conforme o catálogo 300M (capítulos 5, 19, 23 e 24). Fica fora: freio, motor, entradas hidráulicas e eixo de entrada (V..., FV...).</p>';
+  box.innerHTML=h;
+  Array.prototype.forEach.call(box.querySelectorAll('[data-k]'),function(el){ el.addEventListener('change',function(){ var k=el.getAttribute('data-k');
+    if(el.type==='checkbox'){ if(el.checked) M3.st[k]='1'; else delete M3.st[k]; } else { if(el.value) M3.st[k]=el.value; else delete M3.st[k]; }
+    m3Clean(); m3Write(); m3Render(); }); });
+}
+function m3Update(size,fam,hyd){
+  hyd=!!hyd;
+  if(size===M3.size&&fam===M3.fam&&hyd===M3.hyd) return;
+  M3.size=size; M3.fam=fam; M3.hyd=hyd;
+  var before=m3Opc()+'|'+(M3.st.pos||''); m3Clean(); m3Render();
+  if(m3Opc()+'|'+(M3.st.pos||'')!==before) setTimeout(m3Write,0);
+}
+function m3Init(cfg){
+  M3.cfg=cfg;
+  var pf=m3$(cfg.pos).closest('.fld'), of=m3$(cfg.opc).closest('.fld');
+  pf.hidden=true; of.hidden=true;
+  m3$(cfg.pos).value=''; m3$(cfg.opc).value='';
+  var d=document.createElement('div'); d.className='fld full m3wrap'; d.innerHTML='<label>Configuração mecânica do redutor <em>opcional</em></label><div id="m3box"></div>';
+  var host=cfg.host?m3$(cfg.host):null; if(host){ d.style.padding='4px 16px 16px'; host.appendChild(d); } else of.parentNode.insertBefore(d,of.nextSibling);
+  m3$(cfg.ver).addEventListener('change',function(){ M3.size&&(m3Clean(),m3Write(),m3Render()); });
+  m3Render();
+}
+
+m3Init({pos:'pos',opc:'opc',ver:'ver'});
 function ficha(){
   var o=$('out');
   Array.prototype.forEach.call(document.querySelectorAll('#ta3 tr.hl'),function(e){e.classList.remove('hl')});
@@ -2740,11 +2856,12 @@ function ficha(){
   $('a3cap').innerHTML='Capítulo 8 do catálogo. O candidato selecionado tem <b>'+sel.st+' reduções</b> &rarr; &eta; = <b>'+fmt(sel.eta,2)+'</b>.'+
     (sel.fam==='R'?' <b>Atenção:</b> é unidade ortogonal, e a A3 tabula só a linha de 3 reduções — confirme o η com a fábrica.':'');
   var q=requisito(), x=sel, ver=$('ver').value;
+  m3Update(x.size,x.fam,false);
   var pfm=$('pflg').value, pos=($('pos').value||'').trim(), opc=($('opc').value||'').trim();
   var Pef=(q.Pm>0)?q.Pm:(x.adot?x.Pad:NaN), npol=parseInt($('polos').value,10)||0;
   var mf=isFinite(Pef)?motorFrame(Pef,npol):null;
   var pf0=pfm||(mf&&mf.p)||'', fl=flgLista(x), flOk=!pf0||fl.indexOf(parseInt(pf0.slice(1),10))>=0;
-  var pf=flOk?pf0:'';
+  var pf=m3Flange(flOk?pf0:'');
   var ratio=(x.i%1?fmt(x.i,1):fmt(x.i,0));
   var d=x.size+' '+x.fam+' '+x.st+' '+ratio+' '+ver
         +' '+(pf||'P___')+' '+(pos||'___')+(opc?' '+opc:'');
