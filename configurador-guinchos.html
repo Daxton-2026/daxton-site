@@ -383,7 +383,7 @@ table.cg tr.grp td.gc{text-align:center;font-size:12px;opacity:.75;padding:6px 4
 table.cg td.v input,table.cg td.v select{display:block;width:100%;border:0;background:transparent;color:var(--ink);
   font-family:"JetBrains Mono",monospace;font-size:14.5px;padding:8px 10px;text-align:right;border-radius:0}
 table.cg td.v select{text-align:left;font-size:13px;padding:8px 6px}
-table.cg td.v input[type=text]{text-align:left}
+table.cg td.v input[type=text]:not([inputmode]){text-align:left}
 table.cg td.v input:focus-visible,table.cg td.v select:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;background:var(--surface2)}
 table.cg td.c{background:var(--inset);padding:8px 10px;text-align:right;font-family:"JetBrains Mono",monospace;
   font-size:14px;font-variant-numeric:tabular-nums;color:var(--ink)}
@@ -553,18 +553,18 @@ h3.sub{font-size:21px;font-weight:600;margin:26px 0 8px;text-transform:uppercase
       <summary>Ajustes avançados — pico, desvio de rotação, leitura do M<sub>n2</sub>, n₁ liberada e roldanas</summary>
       <div class="calc"><div class="calc-body">
       <div class="calc-in">
-        <div class="fld"><label for="g_tfr">Torque de pico — % do nominal</label><input id="g_tfr" type="number" step="5" value="150">
+        <div class="fld"><label for="g_tfr">Torque de pico — % do nominal</label><input id="g_tfr" type="text" inputmode="decimal" value="150">
           <span class="tip">Referência: o equipamento suporta <b>150%</b> da capacidade nominal. No elétrico o pico sai da potência instalada; no hidráulico, do torque de projeto.</span></div>
-        <div class="fld"><label for="g_tol">Desvio de rotação aceito — ±%</label><input id="g_tol" type="number" step="1" value="15"></div>
+        <div class="fld"><label for="g_tol">Desvio de rotação aceito — ±%</label><input id="g_tol" type="text" inputmode="decimal" value="15"></div>
       </div>
       <div class="calc-in">
         <div class="fld"><label for="g_leit">Leitura do M<sub>n2</sub></label>
           <select id="g_leit"><option value="0" selected>Literal — próxima coluna de n₂·h</option><option value="1">Interpolada na curva do catálogo</option></select></div>
-        <div class="fld"><label for="g_n1lib">n₁ liberada pela fábrica — rpm</label><input id="g_n1lib" type="number" step="10" value="1750">
+        <div class="fld"><label for="g_n1lib">n₁ liberada pela fábrica — rpm</label><input id="g_n1lib" type="text" inputmode="decimal" value="1750">
           <span class="tip">Liberação Bonfiglioli de 1750 rpm em regime contínuo (60 Hz). Confirme por escrito antes de usar em proposta.</span></div>
       </div>
       <div class="calc-in">
-        <div class="fld"><label for="g_etar">Rendimento por roldana</label><input id="g_etar" type="number" step="0.005" value="0.99"></div>
+        <div class="fld"><label for="g_etar">Rendimento por roldana</label><input id="g_etar" type="text" inputmode="decimal" value="0,99"></div>
       </div>
       </div></div>
     </details>
@@ -2488,7 +2488,7 @@ function buildGrid(){
       } else if(row.t==='t')
         h+='<td class="v" data-ci="'+ci+'"><input type="text" id="'+id+'" data-ci="'+ci+'" data-k="'+row.k+'" value="'+esc(v)+'"></td>';
       else
-        h+='<td class="v" data-ci="'+ci+'"><input type="number" step="any" id="'+id+'" data-ci="'+ci+'" data-k="'+row.k+'" value="'+esc(v)+'"></td>';
+        h+='<td class="v" data-ci="'+ci+'"><input type="text" inputmode="decimal" id="'+id+'" data-ci="'+ci+'" data-k="'+row.k+'" value="'+esc(v)+'"></td>';
     });
     h+='</tr>';
   });
