@@ -289,6 +289,11 @@ section { padding: 96px 5%; }
   background: var(--gray-50); border-bottom: 1px solid var(--gray-100);
 }
 .produto-img-wrap img { max-height: 100%; max-width: 100%; object-fit: contain; }
+.produto-card { display:flex; flex-direction:column; }
+.produto-go { margin-top:auto; padding-top:14px; display:inline-flex; align-items:center; gap:7px; font-size:13.5px; font-weight:700; color:var(--navy); text-decoration:none; }
+.produto-go svg { transition: transform .2s ease; }
+@media (hover:hover){ .produto-go:hover { color:var(--amber-dark,#D4891A); } .produto-go:hover svg { transform: translateX(3px); } }
+.produto-go:focus-visible { outline:3px solid var(--amber); outline-offset:3px; border-radius:4px; }
 .produto-title { font-size: 17px; font-weight: 700; color: var(--navy-deep); margin-bottom: 10px; }
 .produto-text { font-size: 13px; color: var(--text-light); line-height: 1.7; }
 
@@ -770,21 +775,25 @@ footer {
         <div class="produto-img-wrap"><img src="marcas/bonfiglioli-redutor-planetario.jpg" alt="Redutor Planetário Bonfiglioli" loading="lazy"></div>
         <div class="produto-title">Redutores planetários</div>
         <p class="produto-text">Alta densidade de torque em volume compacto. Para aplicações severas com ciclo intenso — reciclagem, movimentação de carga, acionamento de tambor e misturadores.</p>
+        <a class="produto-go" href="/configurador?modo=geral">Dimensionar planetário <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
       </div>
       <div class="produto-card fade-up">
         <div class="produto-img-wrap"><img src="marcas/bonfiglioli-motorredutor-eixos-paralelos.jpg" alt="Motorredutor de eixos paralelos Bonfiglioli" loading="lazy"></div>
         <div class="produto-title">Motorredutores de eixos paralelos</div>
         <p class="produto-text">Motor e redutor de eixos paralelos integrados em um único conjunto, com alto rendimento e baixo aquecimento em operação contínua. Padrão em transportadores, esteiras e linhas de processo.</p>
+        <a class="produto-go" href="/configurador-acf?tipo=F">Dimensionar série F <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
       </div>
       <div class="produto-card fade-up">
         <div class="produto-img-wrap"><img src="marcas/bonfiglioli-motorredutor-conico.jpg" alt="Motorredutor cônico Bonfiglioli" loading="lazy"></div>
         <div class="produto-title">Motorredutores cônicos</div>
         <p class="produto-text">Mudança de direção do eixo de saída em ângulo reto, com alto rendimento e menor volume que uma solução com acoplamento adicional. Indicado quando o layout da máquina exige transmissão perpendicular sem perda de eficiência.</p>
+        <a class="produto-go" href="/configurador-acf?tipo=A">Dimensionar série A <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
       </div>
       <div class="produto-card fade-up">
         <div class="produto-img-wrap"><img src="marcas/bonfiglioli-motorredutor-coaxial.jpg" alt="Motorredutor coaxial Bonfiglioli" loading="lazy"></div>
         <div class="produto-title">Motorredutores coaxiais</div>
         <p class="produto-text">Motor e redutor montados em linha, com eixos de entrada e saída alinhados. Solução compacta que reduz espaço ocupado e simplifica a fixação na máquina.</p>
+        <a class="produto-go" href="/configurador-acf?tipo=C">Dimensionar série C <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
       </div>
     </div>
   </div>

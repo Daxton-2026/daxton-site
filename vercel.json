@@ -1,13 +1,48 @@
 {
   "rewrites": [
-    { "source": "/links", "destination": "/links.html" },
-    { "source": "/real-escadas", "destination": "/real-escadas.html" },
-    { "source": "/csm", "destination": "/csm.html" },
-    { "source": "/bonfiglioli", "destination": "/bonfiglioli.html" },
-    { "source": "/configurador", "destination": "/configurador-300m.html" },
-    { "source": "/configurador-acf", "destination": "/configurador-acf.html" },
-    { "source": "/configurador-vfw", "destination": "/configurador-vfw.html" },
-    { "source": "/configuradores", "destination": "/configuradores.html" },
-    { "source": "/configurador-guinchos", "destination": "/configurador-guinchos.html" }
+    {
+      "source": "/links",
+      "destination": "/links.html"
+    },
+    {
+      "source": "/real-escadas",
+      "destination": "/real-escadas.html"
+    },
+    {
+      "source": "/csm",
+      "destination": "/csm.html"
+    },
+    {
+      "source": "/bonfiglioli",
+      "destination": "/bonfiglioli.html"
+    },
+    {
+      "source": "/configurador",
+      "destination": "/configurador-300m.html"
+    },
+    {
+      "source": "/configurador-acf",
+      "destination": "/configurador-acf.html"
+    },
+    {
+      "source": "/configurador-vfw",
+      "destination": "/configurador-vfw.html"
+    },
+    {
+      "source": "/configurador-guinchos",
+      "destination": "/configurador-guinchos.html"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/configuradores",
+      "destination": "/bonfiglioli#ferramenta",
+      "permanent": false
+    },
+    {
+      "source": "/configuradores.html",
+      "destination": "/bonfiglioli#ferramenta",
+      "permanent": false
+    }
   ]
 }
