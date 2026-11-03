@@ -2027,7 +2027,10 @@ var G9=9.81, CVW=0.7355;
 function num(x){
   if(x===null||x===undefined||x==='') return NaN;
   if(typeof x==='number') return x;
-  return parseFloat(String(x).replace(',','.'));
+  var s=String(x).trim().replace(/\s/g,'');
+  if(s.indexOf(',')>=0) s=s.replace(/\./g,'').replace(',','.');          /* padrão brasileiro: 1.234,5 e 350,00 */
+  else if(/^-?[1-9]\d{0,2}(\.\d{3})+$/.test(s)) s=s.replace(/\./g,'');  /* 2.000 e 12.500 = milhar */
+  return parseFloat(s);
 }
 function ok(x){ return isFinite(x)&&x>0; }
 
