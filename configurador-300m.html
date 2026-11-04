@@ -749,7 +749,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
   <div class="tblwrap"><table id="tbl">
     <thead><tr>
       <th>Tamanho</th><th class="n">i</th><th class="n">n₂</th><th class="n">desvio</th>
-      <th class="n">coluna n₂·h</th><th class="n">M<sub>n2</sub></th><th class="n">M<sub>c2</sub></th><th class="n" title="Fator de serviço exigido (tabela A4) — o que o catálogo pede para a aplicação">f<sub>S</sub>' exigido</th><th class="n" title="Fator de serviço real do redutor: M n2 ÷ M r2. Tem de ser ≥ f S' exigido">f<sub>S</sub> real</th>
+      <th class="n">coluna n₂·h</th><th class="n">M<sub>n2</sub></th><th class="n">M<sub>c2</sub></th><th class="n" title="Fator de serviço exigido (tabela A4) — o que o catálogo pede para a aplicação">f<sub>S</sub>' exigido</th><th class="n" title="Fator de serviço real do redutor: M n2 ÷ torque de seleção. Tem de ser ≥ f S' exigido. Em elevação, embaixo, o mesmo fator sobre o torque só da carga.">f<sub>S</sub> real</th>
       <th>torque</th><th>P₁</th><th>n₁</th><th>M<sub>2máx</sub></th><th title="Flange IEC de entrada pedida pela carcaça do motor: o redutor tem de aceitá-la no catálogo">flange</th>
     </tr></thead>
     <tbody id="tb"></tbody>
@@ -2505,7 +2505,7 @@ function buscar(q){
     if(warnX){ ck.M=ck.M; fail++; }
     out.push({si:si,size:SIZES[si],fam:fm?'R':'L',st:st,i:i,n2:n2,dev:dev,eta:eta,
       col:COLS[c],colIdx:c,Mn:Mn,MnLit:mn[c],MnInt:interp(mn,F),Mr:Mr,Mc:Mc,F:F,
-      fS:Mn/Mr,flp:flp,Pad:Pad,Mm:Mm,adot:adot,p1:p1,nn1:nn1,n1max:n1max,m2max:m2max,Mp:Mp,Pmin:Pmin,ck:ck,fail:fail,
+      fS:Mn/Mr,fSc:(q.Mr2carga>0?Mn/q.Mr2carga:NaN),flp:flp,Pad:Pad,Mm:Mm,adot:adot,p1:p1,nn1:nn1,n1max:n1max,m2max:m2max,Mp:Mp,Pmin:Pmin,ck:ck,fail:fail,
       warnN:warnN,warnX:warnX,libN:libN});
   }
   out.sort(function(a,b){ return a.fail-b.fail || a.si-b.si || a.st-b.st || Math.abs(a.dev)-Math.abs(b.dev); });
@@ -2569,13 +2569,17 @@ function render(){
 
   list=buscar(q); lastQ=q;
   var ok=list.filter(function(x){return x.fail===0;});
+  if(ok.length&&q.fs.v){ var x0=ok[0], kp='';
+    kp+='<div class="kpi"><span>Fator de serviço real f<sub>S</sub> <span class="hint">'+(modo==='elev'?'sobre a seleção · ':'')+x0.size+' '+x0.fam+x0.st+'</span></span><b>'+fmt(x0.fS,2)+'</b></div>';
+    if(modo==='elev'&&isFinite(x0.fSc)) kp+='<div class="kpi"><span>Fator de serviço real f<sub>S</sub> <span class="hint">sobre a carga</span></span><b>'+fmt(x0.fSc,2)+'</b></div>';
+    $('reqbox').insertAdjacentHTML('beforeend',kp); }
   $('fld-n1op').hidden=(modo!=='elev');
   var qwb=$('qw'); qwb.hidden=true; if(modo==='elev'&&isFinite(q.Q)&&q.Q>250000){ qwb.hidden=false; $('qwtxt').innerHTML='A carga informada equivale a <b>'+fmt(q.Q/1000,1)+' t</b>. Isso é muito acima do que um redutor da série 300 levanta e costuma ser <b>kg digitado no campo de t</b>. Troque a unidade para kg (ou divida por 1.000) antes de olhar a tabela: os torques abaixo não valem.'; }
   var mw=$('marg'); mw.hidden=true; var pw=$('pminw'); pw.hidden=true;
   if(modo==='elev'&&ok.length&&isFinite(q.Pm)&&q.fsm>1&&ok[0].Pmin>q.Pm*1.0001&&ok[0].Pmin<=q.Pm*q.fsm*1.0001){ pw.hidden=false; $('pmintxt').innerHTML='O motor informado (<b>'+fmt(q.Pm,2)+' kW</b>) está abaixo da mínima necessária (<b>'+fmt(ok[0].Pmin,2)+' kW</b>) e só atende contando o <b>fator de serviço '+fmt(q.fsm,2)+'</b>, que dá <b>'+fmt(q.Pm*q.fsm,2)+' kW</b> disponíveis. Isso usa a reserva do motor: confirme que o fator vale para o regime e a alimentação (com inversor costuma ser 1,00). O redutor foi selecionado com essa potência.'; }
   else if(modo==='elev'&&ok.length&&isFinite(q.Pm)&&ok[0].Pmin>q.Pm*q.fsm*1.0001){ pw.hidden=false; $('pmintxt').innerHTML='A potência informada (<b>'+fmt(q.Pm,2)+' kW</b>) é menor que a mínima necessária para a carga e a velocidade (<b>'+fmt(ok[0].Pmin,2)+' kW</b>, com rendimento de '+fmt(ok[0].eta,2)+' do redutor e '+fmt(q.etac,3)+' do cabeamento). Confira o rendimento real do redutor; se o motor for este mesmo, verifique a velocidade em plena carga.'; }
   if(modo==='elev'&&ok.length&&q.fs.v){ var mm=ok[0].Mn/ok[0].Mc-1;
-    if(mm<0.10){ mw.hidden=false; $('margtxt').innerHTML='O menor redutor que passa (<b>'+ok[0].size+' '+ok[0].fam+ok[0].st+' i='+fmt(ok[0].i,0)+'</b>) tem só <b>'+fmt(mm*100,1)+'%</b> de folga sobre o torque de cálculo. Uma mudança pequena de premissa — classe T, número de polias, rotação — pode trocar o tamanho. Em elevação, confirme com a engenharia Bonfiglioli.'; } }
+    if(mm<0.10){ mw.hidden=false; $('margtxt').innerHTML='O menor redutor que passa (<b>'+ok[0].size+' '+ok[0].fam+ok[0].st+' i='+fmt(ok[0].i,0)+'</b>) tem só <b>'+fmt(mm*100,1)+'%</b> de folga sobre o torque de cálculo'+((q.Mr2mot>q.Mr2carga*1.0001&&q.base!=='carga')?', que aqui vem do <b>motor instalado</b> ('+fmt(ok[0].Mr,0)+' Nm). Sobre a carga ('+fmt(q.Mr2carga,0)+' Nm) a folga é de <b>'+fmt((ok[0].Mn/(q.Mr2carga*q.fs.v)-1)*100,1)+'%</b>':'')+'. Uma mudança pequena de premissa — classe T, número de polias, rotação — pode trocar o tamanho. Em elevação, confirme com a engenharia Bonfiglioli.'; } }
   var tb=$('tb');
   if(!list.length){
     var msg = (modo==='elev'&&!isFinite(q.h))
@@ -2637,8 +2641,10 @@ function renderSum(){
     relSel(x)+
     '<div class="sum-grid">'+
       '<div><span>f<sub>S</sub>\' exigido</span><b>'+fmt(q.fs.v,2)+'</b></div>'+
-      '<div><span>f<sub>S</sub> real</span><b>'+fmt(x.fS,2)+'</b></div>'+
-      '<div><span>Folga sobre M<sub>c2</sub></span><b>'+fmt((x.Mn/x.Mc-1)*100,1)+'%</b></div>'+
+      '<div><span>f<sub>S</sub> real'+(modo==='elev'?' · seleção':'')+'</span><b>'+fmt(x.fS,2)+'</b></div>'+
+      (modo==='elev'&&isFinite(x.fSc)?'<div><span>f<sub>S</sub> real · carga</span><b>'+fmt(x.fSc,2)+'</b></div>':'')+
+      '<div><span>Folga sobre M<sub>c2</sub>'+(modo==='elev'?' · seleção':'')+'</span><b>'+fmt((x.Mn/x.Mc-1)*100,1)+'%</b></div>'+
+      (modo==='elev'&&isFinite(x.fSc)?'<div><span>Folga · carga</span><b>'+fmt((x.fSc/q.fs.v-1)*100,1)+'%</b></div>':'')+
       '<div><span>Torque de seleção</span><b>'+fmt(x.Mr,0)+' Nm</b></div>'+
     '</div>'+
     '<div class="sum-ck">'+chip(x.ck.T,'Torque')+chip(x.ck.P,'P₁')+nchip+chip(x.ck.M,'M₂máx')+(x.flp?chip(x.ck.F,'Flange P'+x.flp):'')+'</div>'+
@@ -2700,7 +2706,7 @@ function drawRows(){
       '<td class="n">'+fmt(x.Mn,0)+'</td>'+
       '<td class="n">'+fmt(x.Mc,0)+'</td>'+
       '<td class="n">'+(q.fs.v?fmt(q.fs.v,2):'—')+'</td>'+
-      '<td class="n">'+fmt(x.fS,2)+'</td>'+
+      '<td class="n">'+fmt(x.fS,2)+(modo==='elev'&&isFinite(x.fSc)&&Math.abs(x.fSc-x.fS)>0.005?'<br><small style="color:var(--muted)">carga '+fmt(x.fSc,2)+'</small>':'')+'</td>'+
       '<td>'+chip(x.ck.T)+'</td>'+
       '<td>'+chip(x.ck.P,x.ck.P?'':fmt(x.p1,1))+'</td>'+
       '<td>'+chip(x.warnX?false:(x.warnN?'w':true), (x.warnN||x.warnX)?fmt(x.nn1,0):(x.libN?'lib':''))+'</td>'+
@@ -2924,7 +2930,8 @@ function ficha(){
   L.push('VERIFICADO CONTRA A LINHA DO CATÁLOGO');
   L.push(pad('Mn2 tabelado na coluna',   fmt(x.MnLit,0)+' Nm   '+(x.Mc<=x.MnLit?'atende':'NAO ATENDE')));
   L.push(pad('Mn2 interpolado na curva', fmt(x.MnInt,0)+' Nm   '+(x.Mc<=x.MnInt?'atende':'NAO ATENDE')));
-  L.push(pad('Fator de serviço real fS', fmt(x.fS,2)));
+  L.push(pad('Fator de serviço real fS', fmt(x.fS,2)+(modo==='elev'?'  (sobre o torque de seleção, '+fmt(x.Mr,0)+' Nm)':'')));
+  if(modo==='elev'&&isFinite(x.fSc)) L.push(pad('fS real sobre a carga', fmt(x.fSc,2)+'  (torque requerido pela carga, '+fmt(q.Mr2carga,0)+' Nm)'));
   L.push(pad('P1 máx admitida',          (x.p1>0?fmt(x.p1,1)+' kW':'nao tabelada')+'   '+(x.ck.P?'atende':'NAO ATENDE')));
   L.push(pad('n1 contínua tabelada',     fmt(x.nn1,0)+' rpm   '+
     (x.warnX?'NAO ATENDE — acima da maxima intermitente'

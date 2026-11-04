@@ -2339,6 +2339,7 @@ function verifRows(){ return [
   {k:'Tsel',l:'Torque de seleção',u:'N·m',t:'c',f:function(r){return fmt(isFinite(r.Tsel)?r.Tsel:r.T,0)}},
   {k:'fsA4',l:'f′S exigido (tabela A4)',t:'c',f:function(r){return r.fs.v?fmt(r.fs.v,2):(isFinite(G.hv)?'sem A4':'escolha a classe T')}},
   {k:'fsE',l:'Fator de serviço obtido (Tn ÷ torque de seleção)',t:'c',cls:'big',f:function(r){return fmt(r.fsE,2)}},
+  {k:'fsC',l:'Fator de serviço sobre a carga (Tn ÷ torque requerido)',t:'c',f:function(r){return (isFinite(r.Tn)&&r.T>0)?fmt(r.Tn/r.T,2):'—'}},
   {k:'ck',l:'Verificações',t:'c',cls:'wrapc',f:function(r){
      if(r.man) return chip(r.ck.T,'T')+' '+chip(r.ck.M,'M₂');
      var x=r.cand; if(!x) return chip(false,'sem candidato');
@@ -2635,6 +2636,7 @@ function renderFicha(){
   L.push(pad('Torque de seleção', fmt(isFinite(r.Tsel)?r.Tsel:r.T,0)+' N.m'+(E_&&isFinite(r.Tmot)?'   (o maior: requerido ou de saída)':'')));
   L.push(pad("Fator de serviço f'S exigido (A4)", fmt(r.fs.v,2)));
   L.push(pad('Fator de serviço obtido (Tn ÷ torque de seleção)', fmt(r.fsE,2)));
+  if(isFinite(r.Tn)&&r.T>0) L.push(pad('Fator de serviço sobre a carga (Tn ÷ T)', fmt(r.Tn/r.T,2)));
   L.push(pad('Torque de pico exigido', fmt(r.Mp,0)+' N.m'));
   if(r.man){
     L.push(pad('Torque máximo informado', isFinite(r.Tmax)?fmt(r.Tmax,0)+' N.m   '+(r.ck.M?'atende':'NAO ATENDE'):'nao informado'));
