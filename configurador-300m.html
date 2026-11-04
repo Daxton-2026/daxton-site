@@ -671,8 +671,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
           
           <div class="fld"><label for="fam">Configuração</label><select id="fam"><option value="">Coaxial e ortogonal</option><option value="0" selected>Coaxial — série L</option><option value="1">Ortogonal — série R</option></select></div>
           <div class="fld"><label for="tol">Desvio de rotação aceito — ±%</label><input id="tol" type="number" step="1" value="10" inputmode="numeric"></div>
-          <div class="fld span2 only-elev"><label for="base">Base do torque exigido</label><select id="base"><option value="max" selected>O maior dos dois</option><option value="motor">Torque de saída (potência do motor)</option></select>
-            <span class="tip"><b>Torque requerido</b> é o que a carga pede no eixo de saída; <b>torque de saída</b>, o que o motor entrega no mesmo eixo. O padrão usa o <b>maior</b> dos dois.</span></div>
+          <input type="hidden" id="base" value="carga">
           
           
           
@@ -2532,16 +2531,15 @@ function render(){
   b.push(['Relação necessária i', fmt(q.n1/q.n2req,1)]);
   if(q.pot){ b.push(['Torque exigido M<sub>r2</sub> <span class="hint">3 est.</span>', fmt(q.Mr2base,0)+' Nm']); }
   else {
-    b.push(['Torque requerido <span class="hint">pela carga</span>', fmt(q.Mr2carga,0)+' Nm']);
-    b.push(['Torque de saída <span class="hint">'+((q.Pm>0)?'pelo motor':(isFinite(q.Padq)?'motor adotado '+fmt(q.Padq,1)+' kW':'pelo motor'))+'</span>', fmt(q.Mr2mot,0)+' Nm']);
-    b.push(['Torque de seleção M<sub>r2</sub> <span class="hint">'+({max:'o maior',motor:'motor',carga:'carga'}[q.base])+'</span>', fmt(q.Mr2base,0)+' Nm']);
+    b.push(['Torque requerido M<sub>r2</sub> <span class="hint">pela carga · método C</span>', fmt(q.Mr2carga,0)+' Nm']);
+    b.push(['Torque de saída do motor <span class="hint">'+((q.Pm>0)?'só verificação':(isFinite(q.Padq)?'motor adotado '+fmt(q.Padq,1)+' kW · só verificação':'só verificação'))+'</span>', fmt(q.Mr2mot,0)+' Nm']);
   }
   b.push(['Fator de serviço f<sub>S</sub>\'', q.fs.v?fmt(q.fs.v,2):'—']);
   b.push(['Torque de cálculo M<sub>c2</sub>'+(q.pot?' <span class="hint">3 est.</span>':''), q.fs.v?fmt(q.Mr2base*q.fs.v,0)+' Nm':'—']);
   b.push(['Fator de vida F<sub>h2</sub>', fmt(q.n2req*q.h,0)]);
   $('reqsub').innerHTML = q.pot
     ? 'O que a aplicação exige. Em modo geral o torque sai da potência do motor — <b>M<sub>r2</sub> e M<sub>c2</sub> mostrados aqui usam &eta; = 0,91 como referência</b>; na tabela de candidatos cada linha usa o rendimento do seu próprio número de estágios.'
-    : 'O que a aplicação exige, antes de olhar qualquer tamanho. Em elevação o torque parte da carga e do tambor e, por padrão, é comparado com o que o motor instalado consegue entregar: vale o maior.';
+    : 'O que a aplicação exige, antes de olhar qualquer tamanho. Método C do catálogo (cap. 14.4): o torque requerido M<sub>r2</sub> vem da carga e do tambor; o motor entra na verificação do torque de pico (M<sub>2máx</sub>, cap. 14.5).';
   $('reqbox').innerHTML=b.map(function(x){
     return '<div class="kpi"><span>'+x[0]+'</span><b>'+x[1]+'</b></div>'; }).join('');
 
@@ -2572,8 +2570,7 @@ function render(){
   list=buscar(q); lastQ=q;
   var ok=list.filter(function(x){return x.fail===0;});
   if(ok.length&&q.fs.v){ var x0=ok[0], kp='';
-    kp+='<div class="kpi"><span>Fator de serviço real f<sub>S</sub> <span class="hint">'+(modo==='elev'?'sobre a seleção · ':'')+x0.size+' '+x0.fam+x0.st+'</span></span><b>'+fmt(x0.fS,2)+'</b></div>';
-    if(modo==='elev'&&isFinite(x0.fSc)) kp+='<div class="kpi"><span>Fator de serviço real f<sub>S</sub> <span class="hint">sobre a carga</span></span><b>'+fmt(x0.fSc,2)+'</b></div>';
+    kp+='<div class="kpi"><span>Fator de serviço real f<sub>S</sub> <span class="hint">'+(modo==='elev'?'sobre a carga · ':'')+x0.size+' '+x0.fam+x0.st+'</span></span><b>'+fmt(x0.fS,2)+'</b></div>';
     $('reqbox').insertAdjacentHTML('beforeend',kp); }
   $('fld-n1op').hidden=(modo!=='elev');
   var qwb=$('qw'); qwb.hidden=true; if(modo==='elev'&&isFinite(q.Q)&&q.Q>250000){ qwb.hidden=false; $('qwtxt').innerHTML='A carga informada equivale a <b>'+fmt(q.Q/1000,1)+' t</b>. Isso é muito acima do que um redutor da série 300 levanta e costuma ser <b>kg digitado no campo de t</b>. Troque a unidade para kg (ou divida por 1.000) antes de olhar a tabela: os torques abaixo não valem.'; }
@@ -2643,11 +2640,9 @@ function renderSum(){
     relSel(x)+
     '<div class="sum-grid">'+
       '<div><span>f<sub>S</sub>\' exigido</span><b>'+fmt(q.fs.v,2)+'</b></div>'+
-      '<div><span>f<sub>S</sub> real'+(modo==='elev'?' · seleção':'')+'</span><b>'+fmt(x.fS,2)+'</b></div>'+
-      (modo==='elev'&&isFinite(x.fSc)?'<div><span>f<sub>S</sub> real · carga</span><b>'+fmt(x.fSc,2)+'</b></div>':'')+
-      '<div><span>Folga sobre M<sub>c2</sub>'+(modo==='elev'?' · seleção':'')+'</span><b>'+fmt((x.Mn/x.Mc-1)*100,1)+'%</b></div>'+
-      (modo==='elev'&&isFinite(x.fSc)?'<div><span>Folga · carga</span><b>'+fmt((x.fSc/q.fs.v-1)*100,1)+'%</b></div>':'')+
-      '<div><span>Torque de seleção</span><b>'+fmt(x.Mr,0)+' Nm</b></div>'+
+      '<div><span>f<sub>S</sub> real</span><b>'+fmt(x.fS,2)+'</b></div>'+
+      '<div><span>Folga sobre M<sub>c2</sub></span><b>'+fmt((x.Mn/x.Mc-1)*100,1)+'%</b></div>'+
+      '<div><span>Torque requerido M<sub>r2</sub></span><b>'+fmt(x.Mr,0)+' Nm</b></div>'+
     '</div>'+
     '<div class="sum-ck">'+chip(x.ck.T,'Torque')+chip(x.ck.P,'P₁')+nchip+chip(x.ck.M,'M₂máx')+(x.flp?chip(x.ck.F,'Flange P'+x.flp):'')+'</div>'+
     (modo==='elev'?'<div class="sum-pm"><span>Potência mínima do motor</span><b>'+fmt(x.Pmin,2)+' kW</b></div>':'<div class="sum-pm"><span>Potência do motor</span><b>'+fmt(q.Pm,q.Pm%1?2:0)+' kW</b></div>')+
@@ -2932,8 +2927,7 @@ function ficha(){
   L.push('VERIFICADO CONTRA A LINHA DO CATÁLOGO');
   L.push(pad('Mn2 tabelado na coluna',   fmt(x.MnLit,0)+' Nm   '+(x.Mc<=x.MnLit?'atende':'NAO ATENDE')));
   L.push(pad('Mn2 interpolado na curva', fmt(x.MnInt,0)+' Nm   '+(x.Mc<=x.MnInt?'atende':'NAO ATENDE')));
-  L.push(pad('Fator de serviço real fS', fmt(x.fS,2)+(modo==='elev'?'  (sobre o torque de seleção, '+fmt(x.Mr,0)+' Nm)':'')));
-  if(modo==='elev'&&isFinite(x.fSc)) L.push(pad('fS real sobre a carga', fmt(x.fSc,2)+'  (torque requerido pela carga, '+fmt(q.Mr2carga,0)+' Nm)'));
+  L.push(pad('Fator de serviço real fS', fmt(x.fS,2)+(modo==='elev'?'  (Mn2 / torque requerido pela carga, '+fmt(x.Mr,0)+' Nm)':'')));
   L.push(pad('P1 máx admitida',          (x.p1>0?fmt(x.p1,1)+' kW':'nao tabelada')+'   '+(x.ck.P?'atende':'NAO ATENDE')));
   L.push(pad('n1 contínua tabelada',     fmt(x.nn1,0)+' rpm   '+
     (x.warnX?'NAO ATENDE — acima da maxima intermitente'
@@ -2949,7 +2943,7 @@ function ficha(){
     L.push('- rendimento do cabeamento '+fmt(q.etac,3)+' ('+$('pol').value+' polia(s) a 0,98)');
     L.push('- cavalamento '+$('ram').value+' ramais / '+$('pta').value+' ponta(s) no tambor');
     L.push('- torque requerido (carga): '+fmt(q.Mr2carga,0)+' Nm | torque de saida (motor, eta 0,91): '+fmt(q.Pm>0?q.Mr2mot:x.Mm,0)+' Nm');
-    L.push('- torque de selecao: '+({max:'o maior dos dois',motor:'torque de saida (motor)',carga:'torque requerido (carga)'}[$('base').value]));
+    L.push('- metodo C do catalogo (cap. 14.4): Mc2 = torque requerido pela carga x fS\'; o torque do motor entra so na verificacao do M2max (cap. 14.5 c)');
     if(isFinite(q.n1op)&&q.n1op>0) L.push('- rotacao maxima do motor sem carga (inversor): '+fmt(q.n1op,0)+' rpm');
     if($('qunit').value==='kg') L.push('- carga informada em kg ('+fmt(V('q'),1)+' kg = '+fmt(V('q')/1000,3)+' t)');
   } else {

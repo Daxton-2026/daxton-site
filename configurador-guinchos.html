@@ -2069,7 +2069,7 @@ function search(q){
     var Mnom=q.Mnom, Pad=null;
     if(!(q.Pm>0)&&q.Ptam>0){ Pad=stdAboveCV(q.Ptam/eta/CVW); if(!(Pad>0)) continue; Mnom=9550*Pad*CVW/q.n1; }
     var Mmot=(Mnom>0)?Mnom*i*eta:NaN;             /* torque de saida: o que o motor instalado entrega no eixo de saida */
-    var MrS=isFinite(Mmot)?Math.max(q.Mr,Mmot):q.Mr;   /* torque de selecao: o maior entre requerido (carga) e de saida (motor) */
+    var MrS=q.Mr;   /* metodo C do catalogo (cap. 14.4): Mc2 = torque requerido pela carga x fS'; o motor entra so no M2max */
     var Mc=MrS*q.fs.v, F=n2*q.h, c=colFor(F);
     if(c<0) continue;
     var Mn=(q.leit===1)?interp(mn,F):mn[c];
@@ -2168,7 +2168,7 @@ function calcE(c,G){
     r.i=i; r.eta=Math.pow(G.etaEst,st); r.Tn=num(c.mTn); r.Tmax=num(c.mTm);
     r.n2=nmot/i;
     var Mnom=9550*r.Pkw/nmot; r.Mp=Mnom*G.tfr*i*r.eta;
-    r.Tmot=Mnom*i*r.eta; r.Tsel=isFinite(r.Tmot)?Math.max(r.T,r.Tmot):r.T;
+    r.Tmot=Mnom*i*r.eta; r.Tsel=r.T;
     r.ck={T:(r.fs.v?r.Tn>=r.Tsel*r.fs.v:null),M:(ok(r.Tmax)?r.Tmax>=r.Mp:null)};
     r.fail=(r.ck.T===false?1:0)+(r.ck.M===false?1:0);
   } else {
@@ -2183,7 +2183,7 @@ function calcE(c,G){
     }
   }
   if(ok(r.i)){
-    if(!r.man){ r.Tmot=(ok(nmot)&&ok(r.Pkw))?9550*r.Pkw/nmot*r.i*r.eta:NaN; r.Tsel=isFinite(r.Tmot)?Math.max(r.T,r.Tmot):r.T; }
+    if(!r.man){ r.Tmot=(ok(nmot)&&ok(r.Pkw))?9550*r.Pkw/nmot*r.i*r.eta:NaN; r.Tsel=r.T; }
     r.fsE=r.Tn/(r.Tsel||r.T);
     r.ncorr=r.n2/ie;
     r.vc1=r.ncorr*Math.PI*r.Dp/1000;
@@ -2335,10 +2335,8 @@ function verifRows(){ return [
      return esc(r.cand.size+' '+r.cand.fam+' '+r.cand.st+' · i '+fr(r.cand.i)); }},
   {k:'ired',l:'Redução real',t:'c',f:function(r){return fr(r.i)}},
   {k:'Tmot',l:'Torque de saída (motor)',u:'N·m',t:'c',f:function(r){return isFinite(r.Tmot)?fmt(r.Tmot,0):'—'}},
-  {k:'Tsel',l:'Torque de seleção',u:'N·m',t:'c',f:function(r){return fmt(isFinite(r.Tsel)?r.Tsel:r.T,0)}},
   {k:'fsA4',l:'f′S exigido (tabela A4)',t:'c',f:function(r){return r.fs.v?fmt(r.fs.v,2):(isFinite(G.hv)?'sem A4':'escolha a classe T')}},
-  {k:'fsE',l:'Fator de serviço obtido (Tn ÷ torque de seleção)',t:'c',cls:'big',f:function(r){return fmt(r.fsE,2)}},
-  {k:'fsC',l:'Fator de serviço sobre a carga (Tn ÷ torque requerido)',t:'c',f:function(r){return (isFinite(r.Tn)&&r.T>0)?fmt(r.Tn/r.T,2):'—'}},
+  {k:'fsE',l:'Fator de serviço obtido (Tn ÷ torque requerido)',t:'c',cls:'big',f:function(r){return fmt(r.fsE,2)}},
   {k:'ck',l:'Verificações',t:'c',cls:'wrapc',f:function(r){
      if(r.man) return chip(r.ck.T,'T')+' '+chip(r.ck.M,'M₂');
      var x=r.cand; if(!x) return chip(false,'sem candidato');
@@ -2631,11 +2629,9 @@ function renderFicha(){
   L.push(r.man?'REDUTOR INFORMADO (verificação pelo critério Bonfiglioli)':'VERIFICADO CONTRA A LINHA DO CATÁLOGO 300M');
   L.push(pad('Redução i', ratio));
   L.push(pad('Torque nominal Tn'+(r.man?' (informado)':' (Mn2 tabelado)'), fmt(r.Tn,0)+' N.m'));
-  if(E_&&isFinite(r.Tmot)) L.push(pad('Torque de saída (motor, eixo de saída)', fmt(r.Tmot,0)+' N.m'));
-  L.push(pad('Torque de seleção', fmt(isFinite(r.Tsel)?r.Tsel:r.T,0)+' N.m'+(E_&&isFinite(r.Tmot)?'   (o maior: requerido ou de saída)':'')));
+  if(E_&&isFinite(r.Tmot)) L.push(pad('Torque de saída do motor (só verificação)', fmt(r.Tmot,0)+' N.m'));
   L.push(pad("Fator de serviço f'S exigido (A4)", fmt(r.fs.v,2)));
-  L.push(pad('Fator de serviço obtido (Tn ÷ torque de seleção)', fmt(r.fsE,2)));
-  if(isFinite(r.Tn)&&r.T>0) L.push(pad('Fator de serviço sobre a carga (Tn ÷ T)', fmt(r.Tn/r.T,2)));
+  L.push(pad('Fator de serviço obtido (Tn ÷ torque requerido)', fmt(r.fsE,2)));
   L.push(pad('Torque de pico exigido', fmt(r.Mp,0)+' N.m'));
   if(r.man){
     L.push(pad('Torque máximo informado', isFinite(r.Tmax)?fmt(r.Tmax,0)+' N.m   '+(r.ck.M?'atende':'NAO ATENDE'):'nao informado'));
