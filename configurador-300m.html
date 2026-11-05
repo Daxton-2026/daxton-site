@@ -505,6 +505,7 @@ tbody tr{transition:background .12s}
 #tbl tbody tr.sel td{background:var(--accent-soft)}
 .note{border-radius:12px;box-shadow:none}
 .note h4{font-family:var(--font);font-weight:650}
+#reqbox #fsnote{margin:0;background:var(--surface)}
 .formula,.desig-box,.exc,.sheet{border-radius:12px}
 .sheet{box-shadow:var(--shadow)}
 .sheet-h{background:linear-gradient(120deg,#00223F,#00396B)}
@@ -2544,6 +2545,7 @@ function render(){
   $('reqsub').innerHTML = q.pot
     ? 'O que a aplicação exige. Em modo geral o torque sai da potência do motor — <b>M<sub>r2</sub> e M<sub>c2</sub> mostrados aqui usam &eta; = 0,91 como referência</b>; na tabela de candidatos cada linha usa o rendimento do seu próprio número de estágios.'
     : 'O que a aplicação exige, antes de olhar qualquer tamanho. Método C do catálogo (cap. 14.4): o torque requerido M<sub>r2</sub> vem da carga e do tambor; o motor entra na verificação do torque de pico (M<sub>2máx</sub>, cap. 14.5).';
+  var fsn=$('fsnote'), rqb=$('reqbox'); if(fsn.parentNode===rqb) rqb.parentNode.insertBefore(fsn,rqb.nextSibling);   /* tira a nota antes de redesenhar o quadro */
   $('reqbox').innerHTML=b.map(function(x){
     return '<div class="kpi"><span>'+x[0]+'</span><b>'+x[1]+'</b></div>'; }).join('');
 
@@ -2577,6 +2579,7 @@ function render(){
   if(ok.length&&q.fs.v){ var x0=ok[0], kp='';
     kp+='<div class="kpi"><span>Fator de serviço real f<sub>S</sub> <span class="hint">'+(modo==='elev'?'sobre a carga · ':'')+x0.size+' '+x0.fam+x0.st+'</span></span><b>'+fmt(x0.fS,2)+'</b></div>';
     $('reqbox').insertAdjacentHTML('beforeend',kp); }
+  fsPlace();
   $('fld-n1op').hidden=(modo!=='elev');
   var qwb=$('qw'); qwb.hidden=true; if(modo==='elev'&&isFinite(q.Q)&&q.Q>250000){ qwb.hidden=false; $('qwtxt').innerHTML='A carga informada equivale a <b>'+fmt(q.Q/1000,1)+' t</b>. Isso é muito acima do que um redutor da série 300 levanta e costuma ser <b>kg digitado no campo de t</b>. Troque a unidade para kg (ou divida por 1.000) antes de olhar a tabela: os torques abaixo não valem.'; }
   var mw=$('marg'); mw.hidden=true; var pw=$('pminw'); pw.hidden=true;
@@ -2619,6 +2622,11 @@ function render(){
   sel=list[0]; mark(); ficha();
 }
 var lastQ=null, CONS=null;
+/* nota do fator de serviço no espaço que sobra na última linha do quadro (mínimo 2 colunas; senão, linha inteira) */
+function fsPlace(){ var rqb=$('reqbox'), fsn=$('fsnote'); rqb.appendChild(fsn);
+  var cols=getComputedStyle(rqb).gridTemplateColumns.split(' ').filter(Boolean).length||1, n=rqb.children.length-1, livre=cols-(n%cols);
+  fsn.style.gridColumn=(cols<2||livre===cols||livre<2)?'1 / -1':'span '+livre; }
+window.addEventListener('resize',function(){ if($('fsnote').parentNode===$('reqbox')) fsPlace(); });
 function ratioTxt(x){ return (x.i%1?fmt(x.i,1):fmt(x.i,0)); }
 function relSel(x){
   var o=list.filter(function(y){ return y.size===x.size&&y.fam===x.fam&&y.st===x.st; }).sort(function(a,b){ return a.i-b.i; });
