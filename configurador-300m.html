@@ -2540,7 +2540,6 @@ function render(){
     b.push(['Torque requerido M<sub>r2</sub> <span class="hint">pela carga · método C</span>', fmt(q.Mr2carga,0)+' Nm']);
     b.push(['Torque de saída do motor <span class="hint">'+((q.Pm>0)?'só verificação':(isFinite(q.Padq)?'motor adotado '+fmt(q.Padq,1)+' kW · só verificação':'só verificação'))+'</span>', fmt(q.Mr2mot,0)+' Nm']);
   }
-  b.push(['Fator de serviço f<sub>S</sub>\'', q.fs.v?fmt(q.fs.v,2):'—']);
   b.push(['Torque de cálculo M<sub>c2</sub>'+(q.pot?' <span class="hint">3 est.</span>':''), q.fs.v?fmt(q.Mr2base*q.fs.v,0)+' Nm':'—']);
   b.push(['Fator de vida F<sub>h2</sub>', fmt(q.n2req*q.h,0)]);
   $('reqsub').innerHTML = q.pot
