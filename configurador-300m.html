@@ -2535,12 +2535,12 @@ function render(){
   }
   b.push(['Rotação de saída n₂', fmt(q.n2req,2)+' rpm']);
   b.push(['Relação necessária i', fmt(q.n1/q.n2req,1)]);
+  b.push(['Fator de vida F<sub>h2</sub>', fmt(q.n2req*q.h,0)]);
   if(q.pot){ b.push(['Torque exigido M<sub>r2</sub> <span class="hint">3 est.</span>', fmt(q.Mr2base,0)+' Nm']); }
   else {
     b.push(['Torque requerido M<sub>r2</sub> <span class="hint">pela carga · método C</span>', fmt(q.Mr2carga,0)+' Nm']);
   }
   b.push(['Torque de cálculo M<sub>c2</sub>'+(q.pot?' <span class="hint">3 est.</span>':''), q.fs.v?fmt(q.Mr2base*q.fs.v,0)+' Nm':'—']);
-  b.push(['Fator de vida F<sub>h2</sub>', fmt(q.n2req*q.h,0)]);
   $('reqsub').innerHTML = q.pot
     ? 'O que a aplicação exige. Em modo geral o torque sai da potência do motor — <b>M<sub>r2</sub> e M<sub>c2</sub> mostrados aqui usam &eta; = 0,91 como referência</b>; na tabela de candidatos cada linha usa o rendimento do seu próprio número de estágios.'
     : 'O que a aplicação exige, antes de olhar qualquer tamanho. Método C do catálogo (cap. 14.4): o torque requerido M<sub>r2</sub> vem da carga e do tambor; o motor entra na verificação do torque de pico (M<sub>2máx</sub>, cap. 14.5).';
