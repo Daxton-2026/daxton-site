@@ -466,7 +466,10 @@ body[data-modo="ger"] .only-elev,body[data-modo="elev"] .only-ger{display:none!i
 .sum{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:22px;overflow:hidden;position:relative}
 .sum::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
 .sum-st{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:4px 11px;margin-bottom:14px}
-.sum-st.ok{background:var(--ok-soft);color:var(--ok)}.sum-st.bad{background:var(--crit-soft);color:var(--crit)}.sum-st.wait{background:var(--inset);color:var(--muted)}
+.sum-st.ok{background:var(--ok-soft);color:var(--ok)}.sum-st.cons{background:var(--warn-soft);color:var(--warn)}
+.sum-why{margin:8px 0 0;font-size:.86rem;line-height:1.45;color:var(--muted)}.sum-why b{color:var(--ink,inherit)}
+.sum-cons{margin:10px 0 0;padding:9px 11px;border-radius:8px;background:var(--warn-soft);font-size:.86rem;line-height:1.45}.sum-cons a{font-weight:700}
+#tbl tbody tr.consrow td:first-child{box-shadow:inset 3px 0 0 var(--warn)}.sum-st.bad{background:var(--crit-soft);color:var(--crit)}.sum-st.wait{background:var(--inset);color:var(--muted)}
 .sum-k{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
 .sum-m{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:34px;font-weight:700;color:var(--accent);letter-spacing:-.02em;line-height:1.15;margin-top:2px;overflow-wrap:anywhere}
 .sum-m.sm{font-family:var(--font);font-size:20px;letter-spacing:-.01em;color:var(--ink)}
@@ -2504,9 +2507,12 @@ function buscar(q){
     var warnN = q.ne>lim && q.ne<=n1max;            // acima da liberação: alerta
     var warnX = q.ne>n1max;                         // acima da máxima intermitente: reprova
     if(warnX){ ck.M=ck.M; fail++; }
+    var why=[]; if(!ck.T) why.push('torque da carga (M<sub>c2</sub> acima do M<sub>n2</sub>)'); if(!ck.P) why.push('P₁ admissível abaixo da potência do motor');
+    if(warnX) why.push('n₁ acima da máxima intermitente'); if(!ck.M) why.push('pico do motor acima do M<sub>2máx</sub>'); if(ck.F===false) why.push('flange P'+flp+' fora do padrão do tamanho');
+    var soF=(fail===1&&ck.F===false);   /* só a flange reprova: sob consulta à fábrica (muitas vezes já desenvolvida) */
     out.push({si:si,size:SIZES[si],fam:fm?'R':'L',st:st,i:i,n2:n2,dev:dev,eta:eta,
       col:COLS[c],colIdx:c,Mn:Mn,MnLit:mn[c],MnInt:interp(mn,F),Mr:Mr,Mc:Mc,F:F,
-      fS:Mn/Mr,fSc:(q.Mr2carga>0?Mn/q.Mr2carga:NaN),flp:flp,Pad:Pad,Mm:Mm,adot:adot,p1:p1,nn1:nn1,n1max:n1max,m2max:m2max,Mp:Mp,Pmin:Pmin,ck:ck,fail:fail,
+      fS:Mn/Mr,fSc:(q.Mr2carga>0?Mn/q.Mr2carga:NaN),flp:flp,Pad:Pad,Mm:Mm,adot:adot,p1:p1,nn1:nn1,n1max:n1max,m2max:m2max,Mp:Mp,Pmin:Pmin,ck:ck,fail:fail,why:why,soF:soF,
       warnN:warnN,warnX:warnX,libN:libN});
   }
   out.sort(function(a,b){ return a.fail-b.fail || a.si-b.si || a.st-b.st || Math.abs(a.dev)-Math.abs(b.dev); });
@@ -2569,6 +2575,7 @@ function render(){
 
   list=buscar(q); lastQ=q;
   var ok=list.filter(function(x){return x.fail===0;});
+  CONS=null; for(var j=0;j<list.length;j++){ var y=list[j]; if(y.soF&&(!ok.length||y.si<ok[0].si)){ CONS=y; break; } }
   if(ok.length&&q.fs.v){ var x0=ok[0], kp='';
     kp+='<div class="kpi"><span>Fator de serviço real f<sub>S</sub> <span class="hint">'+(modo==='elev'?'sobre a carga · ':'')+x0.size+' '+x0.fam+x0.st+'</span></span><b>'+fmt(x0.fS,2)+'</b></div>';
     $('reqbox').insertAdjacentHTML('beforeend',kp); }
@@ -2595,6 +2602,7 @@ function render(){
     $('cnt').textContent='—'; sel=null; renderAlt(q); renderSum(); ficha(); return;
   }
   vis=ok.length?enxuto(ok):list.slice(0,14);
+  if(CONS&&vis.indexOf(CONS)<0) vis.unshift(CONS);
   drawRows();
   var wn=ok.filter(function(x){return x.warnN;}).length;
   var lb=ok.filter(function(x){return x.libN;}).length;
@@ -2602,7 +2610,8 @@ function render(){
     ? (verTodos
        ? 'Mostrando <b>todas as '+ok.length+'</b> combinações que atendem'+(ok.length>60?' (as 60 primeiras)':'')+'. <a href="#" id="tball">Mostrar só as recomendadas</a>.'
        : 'Até <b>3 tamanhos</b> que atendem, uma linha por tamanho e número de estágios (relação com menor desvio), sem os superdimensionados: f<sub>S</sub> real até '+fmt(FSMAX,1)+' vezes o exigido. '+(ok.length>vis.length?'<a href="#" id="tball">Mostrar todas as '+ok.length+'</a>.':''))
-    : '<b style="color:var(--crit)">Nenhuma combinação atende.</b> As linhas abaixo mostram o que falha — a coluna com ✕ é o motivo.')
+    : '<b style="color:var(--crit)">Nenhuma combinação atende no padrão.</b> As linhas abaixo mostram o que falha — a coluna com ✕ é o motivo.'+(CONS?' <b style="color:var(--warn)">'+CONS.size+' '+CONS.fam+CONS.st+' só falha na flange: sob consulta à fábrica.</b>':''))
+    + (ok.length&&CONS? ' <b style="color:var(--warn)">'+CONS.size+' '+CONS.fam+CONS.st+' sob consulta à fábrica</b> (só a flange P'+CONS.flp+' fora do padrão).' : '')
     + (lb? ' <b>'+lb+'</b> usam a liberação de fábrica de '+fmt(q.n1lib,0)+' rpm (marcadas <span class="ck y">✓ lib</span>).' : '')
     + (wn? ' <b style="color:var(--warn)">'+wn+' com n₁ acima do liberado</b> — ver nota.' : '');
   var ta=$('tball'); if(ta) ta.addEventListener('click',function(e){ e.preventDefault(); verTodos=!verTodos; render(); });
@@ -2611,12 +2620,12 @@ function render(){
   renderAlt(q);
   sel=list[0]; mark(); ficha();
 }
-var lastQ=null;
+var lastQ=null, CONS=null;
 function ratioTxt(x){ return (x.i%1?fmt(x.i,1):fmt(x.i,0)); }
 function relSel(x){
   var o=list.filter(function(y){ return y.size===x.size&&y.fam===x.fam&&y.st===x.st; }).sort(function(a,b){ return a.i-b.i; });
   if(o.length<2) return '';
-  return '<div class="sum-rel"><label for="relsel">Relação deste tamanho</label><select id="relsel">'+o.map(function(y,k){ return '<option value="'+k+'"'+(y===x?' selected':'')+'>i '+ratioTxt(y)+' · n₂ '+fmt(y.n2,1)+' rpm · fS '+fmt(y.fS,2)+(y.fail?' · não atende':'')+'</option>'; }).join('')+'</select></div>';
+  return '<div class="sum-rel"><label for="relsel">Relação deste tamanho</label><select id="relsel">'+o.map(function(y,k){ return '<option value="'+k+'"'+(y===x?' selected':'')+'>i '+ratioTxt(y)+' · n₂ '+fmt(y.n2,1)+' rpm · fS '+fmt(y.fS,2)+(y.fail?(y.soF?' · sob consulta à fábrica':' · não atende'):'')+'</option>'; }).join('')+'</select></div>';
 }
 function pickRel(k){
   var x=sel, o=list.filter(function(y){ return y.size===x.size&&y.fam===x.fam&&y.st===x.st; }).sort(function(a,b){ return a.i-b.i; }), y=o[k]; if(!y) return;
@@ -2630,10 +2639,10 @@ function renderSum(){
     el.innerHTML='<div class="sum-st wait">Aguardando</div><div class="sum-k">Próximo passo</div><div class="sum-m sm">'+(modo==='elev'?'Escolha a classe de utilização T':'Informe a vida útil em horas totais')+'</div><p class="sum-p">'+(modo==='elev'?'Ela define a vida do redutor.':'Ela define a coluna da tabela A4.')+' Com ela preenchida, o resultado aparece aqui na hora.</p>'+foot; return; }
   if(!list.length){
     el.innerHTML='<div class="sum-st bad">Sem resultado</div><div class="sum-k">Redutor</div><div class="sum-m sm">Nenhuma combinação no desvio de ±'+fmt(q.tol*100,0)+'%</div><p class="sum-p">Amplie o desvio de rotação em Opções avançadas ou revise velocidade, tambor e cavalamento. Relação necessária: <b>'+fmt(q.n1/q.n2req,1)+'</b>.</p>'+foot; return; }
-  var x=sel||list[0], pass=(x.fail===0);
+  var x=sel||list[0], pass=(x.fail===0), cons=!!x.soF;
   var nchip=chip(x.warnX?false:(x.warnN?'w':true),'n₁');
   el.innerHTML=
-    '<div class="sum-st '+(pass?'ok':'bad')+'">'+(pass?'Atende':'Não atende')+'</div>'+
+    '<div class="sum-st '+(pass?'ok':(cons?'cons':'bad'))+'">'+(pass?'Atende':(cons?'Sob consulta à fábrica':'Não atende'))+'</div>'+
     '<div class="sum-k">Redutor selecionado</div>'+
     '<div class="sum-m">'+x.size+' '+x.fam+x.st+' '+ratioTxt(x)+'</div>'+
     '<div class="sum-sub">n₂ '+fmt(x.n2,2)+' rpm · desvio '+(x.dev>=0?'+':'')+fmt(x.dev*100,1)+'%</div>'+
@@ -2644,7 +2653,10 @@ function renderSum(){
       '<div><span>Folga sobre M<sub>c2</sub></span><b>'+fmt((x.Mn/x.Mc-1)*100,1)+'%</b></div>'+
       '<div><span>Torque requerido M<sub>r2</sub></span><b>'+fmt(x.Mr,0)+' Nm</b></div>'+
     '</div>'+
-    '<div class="sum-ck">'+chip(x.ck.T,'Torque')+chip(x.ck.P,'P₁')+nchip+chip(x.ck.M,'M₂máx')+(x.flp?chip(x.ck.F,'Flange P'+x.flp):'')+'</div>'+
+    '<div class="sum-ck">'+chip(x.ck.T,'Torque')+chip(x.ck.P,'P₁')+nchip+chip(x.ck.M,'M₂máx')+(x.flp?chip(cons?'w':x.ck.F,'Flange P'+x.flp):'')+'</div>'+
+    (cons?'<p class="sum-why">Passa em torque, P₁, n₁ e M<sub>2máx</sub>. Só a <b>flange P'+x.flp+'</b> não é padrão neste tamanho: consulte a fábrica, que muitas vezes já tem a flange desenvolvida.</p>'
+      :(!pass&&x.why&&x.why.length?'<p class="sum-why"><b>Reprovado por:</b> '+x.why.join(' · ')+'.</p>':''))+
+    (pass&&CONS&&CONS!==x?'<p class="sum-cons"><b>Sob consulta à fábrica:</b> '+CONS.size+' '+CONS.fam+CONS.st+' '+ratioTxt(CONS)+' (f<sub>S</sub> '+fmt(CONS.fS,2)+'), menor que o selecionado. Só a flange P'+CONS.flp+' não é padrão. <a href="#" id="conslink">Ver</a></p>':'')+
     (modo==='elev'?'<div class="sum-pm"><span>Potência mínima do motor</span><b>'+fmt(x.Pmin,2)+' kW</b></div>':'<div class="sum-pm"><span>Potência do motor</span><b>'+fmt(q.Pm,q.Pm%1?2:0)+' kW</b></div>')+
     (x.adot?'<div class="sum-pm"><span>Motor adotado (padrão comercial)</span><b>'+fmt(x.Pad,1)+' kW</b></div>':'')+
     '<a class="sum-btn" href="#ficha">Ver folha de dados <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>'+foot;
@@ -2694,7 +2706,7 @@ function renderAlt(q){
 function drawRows(){
   var q=lastQ, tb=$('tb');
   tb.innerHTML=vis.map(function(x,k){
-    return '<tr data-k="'+k+'"'+(x.fail===0?(x.warnN?' class="warnrow"':''):' class="failrow"')+'>'+
+    return '<tr data-k="'+k+'"'+(x.fail===0?(x.warnN?' class="warnrow"':''):(x.soF?' class="consrow"':' class="failrow"'))+' title="'+(x.soF?'Sob consulta à fábrica: só a flange fora do padrão':(x.fail?'Reprovado por: '+x.why.join(' · ').replace(/<[^>]+>/g,''):''))+'">'+
       '<td><b>'+x.size+' '+x.fam+x.st+'</b></td>'+
       '<td class="n">'+fmt(x.i,1)+'</td>'+
       '<td class="n">'+fmt(x.n2,2)+'</td>'+
@@ -2708,7 +2720,7 @@ function drawRows(){
       '<td>'+chip(x.ck.P,x.ck.P?'':fmt(x.p1,1))+'</td>'+
       '<td>'+chip(x.warnX?false:(x.warnN?'w':true), (x.warnN||x.warnX)?fmt(x.nn1,0):(x.libN?'lib':''))+'</td>'+
       '<td>'+chip(x.ck.M,x.ck.M?'':fmt(x.m2max,0))+'</td>'+
-      '<td>'+(x.flp?chip(x.ck.F,'P'+x.flp):'<span style="color:var(--muted)">—</span>')+'</td></tr>';
+      '<td>'+(x.flp?(x.soF?chip('w','P'+x.flp+' consulta'):chip(x.ck.F,'P'+x.flp)):'<span style="color:var(--muted)">—</span>')+'</td></tr>';
   }).join('');
   Array.prototype.forEach.call(tb.querySelectorAll('tr[data-k]'),function(tr){
     tr.addEventListener('click',function(){ sel=vis[parseInt(tr.dataset.k,10)]; mark(); ficha(); });
@@ -2716,6 +2728,7 @@ function drawRows(){
 }
 function mark(){
   renderSum(); var rs=$('relsel'); if(rs) rs.addEventListener('change',function(){ pickRel(parseInt(rs.value,10)); });
+  var cl=$('conslink'); if(cl) cl.addEventListener('click',function(e){ e.preventDefault(); sel=CONS; mark(); ficha(); });
   Array.prototype.forEach.call($('tb').querySelectorAll('tr[data-k]'),function(tr){
     tr.classList.toggle('sel', vis[parseInt(tr.dataset.k,10)]===sel);
   });
@@ -2864,7 +2877,7 @@ function ficha(){
   var Pef=(q.Pm>0)?q.Pm:(x.adot?x.Pad:NaN), npol=parseInt($('polos').value,10)||0;
   var mf=isFinite(Pef)?motorFrame(Pef,npol):null;
   var pf0=pfm||(mf&&mf.p)||'', fl=flgLista(x), flOk=!pf0||fl.indexOf(parseInt(pf0.slice(1),10))>=0;
-  var pf=m3Flange(flOk?pf0:'');
+  var pf=m3Flange((flOk||x.soF)?pf0:'');
   var ratio=(x.i%1?fmt(x.i,1):fmt(x.i,0));
   var d=x.size+' '+x.fam+' '+x.st+' '+ratio+' '+ver
         +' '+(pf||'P___')+' '+(pos||'___')+(opc?' '+opc:'');
@@ -2886,6 +2899,7 @@ function ficha(){
   L.push('FOLHA DE DADOS — REDUTOR PLANETÁRIO 300M');
   L.push('Aplicação: '+($('app').value||'—'));
   L.push('Modelo: '+d);
+  if(x.soF) L.push('   SOB CONSULTA A FABRICA: a flange '+pf0+' nao e padrao do '+x.size+' '+x.fam+x.st+' (padrao '+(flgFaixa(fl)||'nenhuma IEC')+'). Torque, P1, n1 e M2max atendem.');
   if(!pf) L.push('   ATENCAO: flange de entrada (P__) nao definida — '+
     (pf0&&!flOk?(fl.length?'o motor pede '+pf0+(mf&&mf.fr?' (carcaca '+mf.fr+')':'')+', mas o '+x.size+' '+x.fam+x.st+' aceita '+flgFaixa(fl)+' no catalogo. Escolha outro candidato ou consulte a fabrica.'
                          :'o '+x.size+' '+x.fam+x.st+' nao tem entrada IEC no catalogo. Consulte a fabrica.')
@@ -2919,7 +2933,7 @@ function ficha(){
   if(modo==='elev'&&q.Pm>0&&q.fsm>1) L.push(pad('Fator de serviço do motor', fmt(q.fsm,2)+'  -> '+fmt(q.Pm*q.fsm,2)+' kW disponíveis na seleção'));
   L.push(pad('Potência do motor',        (q.Pm>0?fmt(q.Pm,2)+' kW':(x.adot?fmt(x.Pad,1)+' kW adotada (padrao comercial acima da minima; potencia nao informada)':'nao informada'))+(modo==='elev'?'  (mínimo '+fmt(x.Pmin,2)+' kW)':'')));
   if($('polos').value!=='0') L.push(pad('Polos / Frequência', $('polos').value+' / '+$('freq').value+' Hz'));
-  L.push(pad('Flange de entrada IEC',     (pf?pf+(mf&&!pfm?'  (carcaça WEG '+mf.fr+', '+fmt(mf.P,mf.P%1?2:0)+' kW, '+mf.polos+' polos)':''):(pf0&&!flOk?'NAO DISPONIVEL neste redutor ('+pf0+'; aceita '+(flgFaixa(fl)||'nenhuma IEC')+')':'A DEFINIR — vem da carcaca do motor'))));
+  L.push(pad('Flange de entrada IEC',     (pf?pf+(x.soF?'  SOB CONSULTA A FABRICA':'')+(mf&&!pfm?'  (carcaça WEG '+mf.fr+', '+fmt(mf.P,mf.P%1?2:0)+' kW, '+mf.polos+' polos)':''):(pf0&&!flOk?'NAO DISPONIVEL neste redutor ('+pf0+'; aceita '+(flgFaixa(fl)||'nenhuma IEC')+')':'A DEFINIR — vem da carcaca do motor'))));
   if(pf&&mf&&!pfm) L.push('   Carcaça pela linha WEG W22 IR3 Premium; em outra marca ou linha pode mudar, confirme na placa do motor.');
   L.push(pad('Posição de montagem',       (pos||'A DEFINIR')));
   if(opc) L.push(pad('Opções e acessórios', opc));
