@@ -43,6 +43,11 @@
       "source": "/configuradores.html",
       "destination": "/bonfiglioli#ferramenta",
       "permanent": false
+    },
+    {
+      "source": "/index.html.html",
+      "destination": "/",
+      "permanent": true
     }
   ]
 }
