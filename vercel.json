@@ -31,6 +31,10 @@
     {
       "source": "/configurador-guinchos",
       "destination": "/configurador-guinchos.html"
+    },
+    {
+      "source": "/configurador-equivalencia",
+      "destination": "/configurador-equivalencia.html"
     }
   ],
   "redirects": [
