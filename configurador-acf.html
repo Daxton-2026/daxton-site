@@ -60,6 +60,7 @@ img{max-width:100%}
 .m3ck{display:flex;gap:9px;align-items:flex-start;font-weight:400;cursor:pointer;line-height:1.4;white-space:normal;text-transform:none;letter-spacing:normal}
 .m3ck input{margin-top:3px;flex:none;width:18px !important;height:18px;min-width:0;padding:0;accent-color:var(--accent)}
 .m3ck span{flex:1;min-width:0}
+.consulta-carga{display:block;margin-top:6px}.consulta-carga a{font-weight:700;color:var(--accent);text-decoration:underline}
 </style>
 <style>
 :root{
@@ -466,7 +467,10 @@ body[data-modo="ger"] .only-elev,body[data-modo="elev"] .only-ger{display:none!i
 .sum{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:22px;overflow:hidden;position:relative}
 .sum::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
 .sum-st{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:4px 11px;margin-bottom:14px}
-.sum-st.ok{background:var(--ok-soft);color:var(--ok)}.sum-st.bad{background:var(--crit-soft);color:var(--crit)}.sum-st.wait{background:var(--inset);color:var(--muted)}
+.sum-st.ok{background:var(--ok-soft);color:var(--ok)}.sum-st.cons{background:var(--warn-soft);color:var(--warn)}
+.sum-why{margin:8px 0 0;font-size:.86rem;line-height:1.45;color:var(--muted)}.sum-why b{color:var(--ink,inherit)}
+.sum-cons{margin:10px 0 0;padding:9px 11px;border-radius:8px;background:var(--warn-soft);font-size:.86rem;line-height:1.45}.sum-cons a{font-weight:700}
+#tbl tbody tr.consrow td:first-child{box-shadow:inset 3px 0 0 var(--warn)}.sum-st.bad{background:var(--crit-soft);color:var(--crit)}.sum-st.wait{background:var(--inset);color:var(--muted)}
 .sum-k{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
 .sum-m{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:34px;font-weight:700;color:var(--accent);letter-spacing:-.02em;line-height:1.15;margin-top:2px;overflow-wrap:anywhere}
 .sum-m.sm{font-family:var(--font);font-size:20px;letter-spacing:-.01em;color:var(--ink)}
@@ -502,6 +506,7 @@ tbody tr{transition:background .12s}
 #tbl tbody tr.sel td{background:var(--accent-soft)}
 .note{border-radius:12px;box-shadow:none}
 .note h4{font-family:var(--font);font-weight:650}
+#reqbox #fsnote{margin:0;background:var(--surface)}
 .formula,.desig-box,.exc,.sheet{border-radius:12px}
 .sheet{box-shadow:var(--shadow)}
 .sheet-h{background:linear-gradient(120deg,#00223F,#00396B)}
@@ -690,7 +695,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
   </div>
   <div class="tblwrap"><table id="tbl">
     <thead><tr>
-      <th>Modelo</th><th class="n">i</th><th class="n">n₂</th><th class="n">desvio</th><th class="n">M<sub>n2</sub></th><th class="n">M<sub>r2</sub></th><th class="n" title="Fator de serviço exigido pelo regime (gráfico A4)">f<sub>S</sub> exigido</th><th class="n" title="Fator de serviço real: Mn2 ÷ Mr2">f<sub>S</sub> real</th><th>torque</th><th>térmica</th><th title="Flange IEC de entrada da carcaça do motor">flange</th>
+      <th>Modelo</th><th class="n">i</th><th class="n">n₂</th><th class="n">desvio</th><th class="n">M<sub>n2</sub></th><th class="n">M<sub>r2</sub></th><th class="n" title="Fator de serviço exigido pelo regime (gráfico A4)">f<sub>S</sub> exigido</th><th class="n" title="Fator de serviço real: Mn2 ÷ Mr2">f<sub>S</sub> real</th><th class="n" title="Carga radial admissível no eixo de saída">R<sub>n2</sub> — N</th><th>torque</th><th>térmica</th><th title="Flange IEC de entrada da carcaça do motor">flange</th>
     </tr></thead>
     <tbody id="tb"></tbody>
   </table></div>
@@ -854,6 +859,7 @@ function setEnt(){
   $('lval').innerHTML=i?'Redução necessária <em>i</em>':'Rotação de saída <em>n₂</em> — rpm';
   $('tipent').innerHTML=i?'Entrando por <b>i</b>, a rotação de saída acompanha n₁: trocar os polos muda o alvo.':'Entrando por <b>n₂</b>, o requisito da máquina fica fixo e trocar os polos só muda a relação necessária.';
 }
+var NOFIT=null;
 function render(){
   var q=requisito(); lastQ=q;
   var b=[];
@@ -872,6 +878,16 @@ function render(){
   list=buscar(q);
   var ok=list.filter(function(x){return x.fail===0;});
   var tb=$('tb');
+  /* nenhum modelo atende: nao lista reprovados (so no modo "Ja sei o modelo" o escolhido aparece mesmo reprovado) */
+  NOFIT=null;
+  if(list.length&&!ok.length&&!q.fix){
+    var bst=null; list.forEach(function(y){ if(!bst||y.fS>bst.fS) bst=y; });
+    NOFIT={x:bst,serie:q.serie};
+    var onde=q.serie?'da linha <b>'+q.serie+'</b>':'do catálogo';
+    tb.innerHTML='<tr><td colspan="12"><b style="color:var(--crit)">Nenhum modelo '+onde+' atende a esta aplicação.</b> Com <b>'+fmt(q.P,q.P%1?2:0)+' kW</b> em <b>'+fmt(q.n2req,1)+' rpm</b> o torque de cálculo é <b>'+fmt(q.Mr*q.fsr,0)+' Nm</b> (f<sub>S</sub> exigido '+fmt(q.fsr,2)+'). O maior disponível nesta rotação é o <b>'+nmb(bst)+' '+ratioTxt(bst)+'</b>, com M<sub>n2</sub> de <b>'+fmt(bst.Mn,0)+' Nm</b> (f<sub>S</sub> '+fmt(bst.fS,2)+'). '+(q.serie?'Compare os outros tipos, reveja a rotação de saída ou fale com a Daxton: acima desta faixa a solução costuma ser outra linha Bonfiglioli.':'Reveja a rotação de saída ou fale com a Daxton: acima desta faixa a solução costuma ser outra linha Bonfiglioli.')+'</td></tr>';
+    $('cnt').textContent='—'; var bb0=$('bestbox'); if(bb0) bb0.hidden=true; var wn0=$('wnote'); if(wn0) wn0.hidden=true;
+    vis=[]; SEL=null; renderAlt(q); renderSum(); ficha(); return;
+  }
   if(!list.length){
     var msg=!q.ok?'<b style="color:var(--crit)">Dados de entrada incompletos ou fora do gráfico.</b>':'Nenhuma combinação dentro do desvio de rotação de ±'+fmt(q.tol*100,0)+'%. Amplie o desvio ou reveja n₁ e n₂ (relação necessária '+fmt(q.n1/q.n2req,1)+').';
     tb.innerHTML='<tr><td colspan="12" style="color:var(--muted)">'+msg+'</td></tr>'; $('cnt').textContent='—'; SEL=null; renderAlt(q); renderSum(); ficha(); return;
@@ -939,6 +955,7 @@ function renderSum(){
   var q=lastQ, el=$('sum'); if(!el||!q) return;
   var foot='<p class="sum-f">Pré-seleção. O tamanho definitivo é confirmado por escrito pela engenharia Bonfiglioli.</p>';
   if(!q.ok){ el.innerHTML='<div class="sum-st wait">Aguardando</div><div class="sum-k">Próximo passo</div><div class="sum-m sm">Complete os dados</div><p class="sum-p">Potência, rotação e regime de trabalho dentro do gráfico.</p>'+foot; return; }
+  if(NOFIT){ el.innerHTML='<div class="sum-st bad">Sem resultado</div><div class="sum-k">Redutor</div><div class="sum-m sm">Nenhum modelo '+(NOFIT.serie?'da linha '+NOFIT.serie+' ':'')+'atende</div><p class="sum-p">Torque de cálculo <b>'+fmt(q.Mr*q.fsr,0)+' Nm</b>. O maior nesta rotação, '+nmb(NOFIT.x)+', chega a <b>'+fmt(NOFIT.x.Mn,0)+' Nm</b> (f<sub>S</sub> '+fmt(NOFIT.x.fS,2)+', exige '+fmt(q.fsr,2)+').</p>'+foot; return; }
   if(!list.length){ el.innerHTML='<div class="sum-st bad">Sem resultado</div><div class="sum-k">Redutor</div><div class="sum-m sm">Nenhuma combinação no desvio de ±'+fmt(q.tol*100,0)+'%</div><p class="sum-p">Amplie o desvio de rotação ou revise n₂ e n₁. Relação necessária: <b>'+fmt(q.n1/q.n2req,1)+'</b>.</p>'+foot; return; }
   var x=SEL||list[0], pass=(x.fail===0);
   el.innerHTML='<div class="sum-st '+(pass?'ok':'bad')+'">'+(pass?'Atende':'Não atende')+'</div><div class="sum-k">Redutor selecionado</div>'+
