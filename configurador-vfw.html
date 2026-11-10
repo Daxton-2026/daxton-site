@@ -654,8 +654,8 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
         <div class="grp-h"><span class="gn">1</span><div><h3>Aplicação e tipo de redutor</h3><p>Se a geometria da máquina já está definida, escolha o tipo. Sem certeza, deixe "Comparar todos".</p></div><span class="tag-ess">Essencial</span></div>
         <div class="grp-b">
           <div class="fld full"><label for="app">Identificação do projeto / aplicação</label><input id="app" type="text" value="" placeholder="Ex.: Transportador de correia (digite o nome do projeto ou aplicação)"></div>
-          <div class="fld full"><label id="lmodo">Como você quer começar</label><div class="modos2" id="modos2" role="radiogroup" aria-labelledby="lmodo"><button type="button" class="m2 on" data-m="mod" role="radio" aria-checked="true"><b>Já sei o modelo</b><span>Escolho tipo, tamanho e redução, como na planilha SAP, e confiro o fator de serviço. Inclui VFR, WR e combinados.</span></button><button type="button" class="m2" data-m="sel" role="radio" aria-checked="false"><b>Encontrar o modelo</b><span>Informo potência, rotação de saída e regime; a ferramenta mostra os tamanhos que atendem.</span></button></div></div>
-          <div class="fld full" id="mbox"><div class="mgrid"><div><label for="mlin">Tipo</label><select id="mlin"></select></div><div><label for="mtam">Tamanho</label><select id="mtam"></select></div><div><label for="mrel">Redução</label><select id="mrel"></select></div></div><span class="tip" id="mnote"></span><span class="tip">Capacidade da tabela do SAP (aba VF-W Dados), a mesma do catálogo VF-W, no bloco de rotação do motor informado abaixo.</span></div>
+          <div class="fld full"><label id="lmodo">Como você quer começar</label><div class="modos2" id="modos2" role="radiogroup" aria-labelledby="lmodo"><button type="button" class="m2 on" data-m="sel" role="radio" aria-checked="true"><b>Encontrar o modelo</b><span>Informo potência, rotação de saída e regime; a ferramenta mostra os tamanhos que atendem.</span></button><button type="button" class="m2" data-m="mod" role="radio" aria-checked="false"><b>Já sei o modelo</b><span>Escolho tipo, tamanho e redução, como na planilha SAP, e confiro o fator de serviço. Inclui VFR, WR e combinados.</span></button></div></div>
+          <div class="fld full" id="mbox" hidden><div class="mgrid"><div><label for="mlin">Tipo</label><select id="mlin"></select></div><div><label for="mtam">Tamanho</label><select id="mtam"></select></div><div><label for="mrel">Redução</label><select id="mrel"></select></div></div><span class="tip" id="mnote"></span><span class="tip">Capacidade da tabela do SAP (aba VF-W Dados), a mesma do catálogo VF-W, no bloco de rotação do motor informado abaixo.</span></div>
           <div class="fld full"><label id="lserie">Tipo de redutor</label><input type="hidden" id="serie" value=""><div class="tipos" id="tipos" role="radiogroup" aria-labelledby="lserie"><button type="button" class="tipo all on" data-v="" role="radio" aria-checked="true"><img class="tipo-img" src="marcas/bonfiglioli-linha-produtos.jpg" alt="Linha de redutores Bonfiglioli" loading="lazy" width="120" height="80"><span class="tx"><b>Comparar todos</b><span>VF e W lado a lado: o menor modelo que atende em cada tipo</span></span></button><button type="button" class="tipo" data-v="VF" role="radio" aria-checked="false"><img class="tipo-img" src="marcas/bonfiglioli-motorredutor-sem-fim-vf.jpg" alt="Redutor sem-fim série VF" loading="lazy" width="120" height="80"><b>VF · Sem-fim</b><span>Parafuso sem-fim e coroa, 90°, tamanhos 27 a 250</span></button><button type="button" class="tipo" data-v="W" role="radio" aria-checked="false"><img class="tipo-img" src="marcas/bonfiglioli-motorredutor-sem-fim-w.jpg" alt="Redutor sem-fim série W" loading="lazy" width="120" height="80"><b>W · Sem-fim</b><span>Monobloco em alumínio, 90°, tamanhos 63 a 110</span></button></div></div>
         </div>
       </div>
@@ -1316,7 +1316,7 @@ function vfAvisos(x){
 }
 
 /* ---------- VF/W: entrada "Já sei o modelo" (fluxo da aba VF - W do SAP) ---------- */
-var MODO='mod';
+var MODO='sel';
 var VTIPOS=['VF','VFR','W','WR','VF/VF','VF/W','W/VF'];
 var VTXT={VF:'VF — sem-fim',VFR:'VFR — pré-estágio helicoidal + sem-fim VF',W:'W — sem-fim, carcaça universal',WR:'WR — pré-estágio helicoidal + sem-fim W','VF/VF':'VF/VF — combinado de dois sem-fim VF','VF/W':'VF/W — combinado VF + W','W/VF':'W/VF — combinado W + VF'};
 function mBi(){ return BLK.indexOf(band(V('n1'))); }
@@ -1359,7 +1359,7 @@ function setModo(m,quiet){
   $('mrel').addEventListener('change',function(){ render(); });
   ['n1','polos'].forEach(function(id){ $(id).addEventListener('change',function(){ if(MODO==='mod'){ mFill(true); render(); } }); });
   $('polos').addEventListener('change',n1Place);
-  setModo('mod',true);
+  setModo('sel',true);
 })();
 
 function ficha(){
@@ -1397,6 +1397,7 @@ function ficha(){
   mecLines(x,pad).forEach(function(s){ L.push(s); });
   L.push(Array(53).join('='));
   L.push('PREMISSAS ADOTADAS');
+  if(q.fix) L.push('- MODELO INFORMADO PELO USUARIO (modo "Ja sei o modelo"): a ferramenta conferiu o fator de servico, nao selecionou o tamanho');
   L.push('- bloco do catálogo por faixa de n1 (regra do SAP): ate 600 rpm = 500; ate 1200 = 900; ate 1800 = 1400; acima = 2800');
   L.push(wm?'- Mn2 e etad do catalogo VF-W (bloco por faixa de n1); n2 = n1 / i; Mr2 = P x 9550 x etad / n2 (mesma conta do SAP)':'- Mn2 do catálogo sem alteracao; n2 = n1 / i; Mr2 = P x 9550 / n2, sem rendimento');
   L.push('- fator de servico exigido lido do grafico A4 do catalogo (±0,02): '+q.hd+' h/dia, curva K'+q.K+', '+fmt(q.zr,0)+' partidas/h');

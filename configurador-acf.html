@@ -596,6 +596,15 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 .mc-lb{font-weight:600}
 #mec .desig-code{white-space:normal;overflow-wrap:anywhere;line-height:1.45}
 @media (max-width:900px){.tipos{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.modos2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.m2{display:flex;flex-direction:column;gap:4px;text-align:left;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);cursor:pointer;font:inherit;color:var(--ink2)}
+.m2 b{font-size:14.5px;color:var(--ink)}
+.m2 span{font-size:12.5px;color:var(--muted);line-height:1.4}
+.m2.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent-soft) 70%,var(--surface));box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 16%,transparent)}
+.m2:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.mgrid{display:grid;grid-template-columns:1.3fr 1fr 2.2fr;gap:10px}
+.mgrid select{width:100%}
+@media (max-width:640px){.modos2,.mgrid{grid-template-columns:1fr}}
 </style>
 <header class="top">
   <div class="wrap">
@@ -645,6 +654,8 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
         <div class="grp-h"><span class="gn">1</span><div><h3>Aplicação e tipo de redutor</h3><p>Se a geometria da máquina já está definida, escolha o tipo. Sem certeza, deixe "Comparar todos".</p></div><span class="tag-ess">Essencial</span></div>
         <div class="grp-b">
           <div class="fld full"><label for="app">Identificação do projeto / aplicação</label><input id="app" type="text" value="" placeholder="Ex.: Transportador de correia (digite o nome do projeto ou aplicação)"></div>
+          <div class="fld full"><label id="lmodo">Como você quer começar</label><div class="modos2" id="modos2" role="radiogroup" aria-labelledby="lmodo"><button type="button" class="m2 on" data-m="sel" role="radio" aria-checked="true"><b>Encontrar o modelo</b><span>Informo potência, rotação de saída e regime; a ferramenta mostra os tamanhos que atendem.</span></button><button type="button" class="m2" data-m="mod" role="radio" aria-checked="false"><b>Já sei o modelo</b><span>Escolho tipo, tamanho e redução, como na planilha SAP, e confiro o fator de serviço.</span></button></div></div>
+          <div class="fld full" id="mbox" hidden><div class="mgrid"><div><label for="mlin">Tipo</label><select id="mlin"></select></div><div><label for="mtam">Tamanho</label><select id="mtam"></select></div><div><label for="mrel">Estágios e redução</label><select id="mrel"></select></div></div><span class="tip" id="mnote"></span><span class="tip">Capacidade das tabelas do catálogo ACF R14, no bloco de rotação do motor informado abaixo.</span></div>
           <div class="fld full"><label id="lserie">Tipo de redutor</label><input type="hidden" id="serie" value=""><div class="tipos" id="tipos" role="radiogroup" aria-labelledby="lserie"><button type="button" class="tipo all on" data-v="" role="radio" aria-checked="true"><img class="tipo-img" src="marcas/bonfiglioli-linha-produtos.jpg" alt="Linha de redutores Bonfiglioli" loading="lazy" width="120" height="80"><span class="tx"><b>Comparar todos</b><span>A, C, F e S lado a lado: o menor modelo que atende em cada tipo</span></span></button><button type="button" class="tipo" data-v="C" role="radio" aria-checked="false"><img class="tipo-img" src="marcas/bonfiglioli-motorredutor-coaxial.jpg" alt="Redutor coaxial série C" loading="lazy" width="120" height="80"><b>C · Coaxial</b><span>Saída em linha com o motor</span></button><button type="button" class="tipo" data-v="A" role="radio" aria-checked="false"><img class="tipo-img" src="marcas/bonfiglioli-motorredutor-conico.jpg" alt="Redutor ortogonal série A" loading="lazy" width="120" height="80"><b>A · Ortogonal</b><span>Saída a 90° do motor</span></button><button type="button" class="tipo" data-v="F" role="radio" aria-checked="false"><img class="tipo-img" src="marcas/bonfiglioli-motorredutor-eixos-paralelos.jpg" alt="Redutor de eixos paralelos série F" loading="lazy" width="120" height="80"><b>F · Eixos paralelos</b><span>Saída paralela, deslocada</span></button><button type="button" class="tipo" data-v="S" role="radio" aria-checked="false"><img class="tipo-img" src="marcas/bonfiglioli-motorredutor-monoestagio.jpg" alt="Redutor monoestágio série S" loading="lazy" width="120" height="80"><b>S · Monoestágio</b><span>Uma só redução</span></button></div></div>
         </div>
       </div>
@@ -803,6 +814,7 @@ function requisito(){
   q.Mr=(P>0&&n2req>0)?P*9550/n2req:NaN;
   q.fsr=fsReq(hd,K,zr);
   q.ok=(P>0&&n1>0&&n2req>0&&isFinite(q.fsr)&&n1<=3600);
+  if(typeof vfFix==='function') vfFix(q);
   return q;
 }
 function buscar(q){
@@ -810,6 +822,7 @@ function buscar(q){
   for(var j=0;j<ROWS.length;j++){
     var r=ROWS[j], lin=r[0], tam=r[1], est=r[2], i=r[3];
     if(q.serie&&lin!==q.serie) continue;
+    if(q.fix){ if(String(tam)!==q.fix.tam||est!==q.fix.est||Math.abs(i-q.fix.i)>1e-9) continue; }
     var Mn=r[4+3*q.bi]; if(!(Mn>0)) continue;
     var n2=q.n1/i, dev=n2/q.n2req-1; if(Math.abs(dev)>q.tol) continue;
     var Mr=q.P*9550/n2, fS=Mn/Mr, key=lin+tam+'_'+est;
@@ -1298,6 +1311,55 @@ function vfAvisos(x){
   return A;
 }
 
+/* ---------- ACF: entrada "Já sei o modelo" (mesmo fluxo da planilha SAP) ---------- */
+var MODO='sel';
+var ATIPOS=['C','A','F','S'];
+var ATXT={C:'C — coaxial',A:'A — ortogonal',F:'F — eixos paralelos',S:'S — monoestágio'};
+function mBi(){ return BLK.indexOf(band(V('n1'))); }
+function mRows(t,s){ var bi=mBi(); return ROWS.filter(function(r){ return r[0]===t&&(s===undefined||String(r[1])===s)&&r[4+3*bi]>0; }); }
+function mFill(keep){
+  var t=$('mlin').value, sz=$('mtam'), rl=$('mrel'), os=sz.value, orl=rl.value;
+  var sizes=[]; mRows(t).forEach(function(r){ var s=String(r[1]); if(sizes.indexOf(s)<0) sizes.push(s); });
+  sizes.sort(function(a,b){ return parseFloat(a)-parseFloat(b); });
+  sz.innerHTML=sizes.map(function(s){ return '<option value="'+s+'">'+t+' '+(parseFloat(s)<10?'0'+s:s)+'</option>'; }).join('');
+  if(keep&&sizes.indexOf(os)>=0) sz.value=os;
+  var n1=V('n1'), want=n1/(lastQ&&lastQ.n2req>0?lastQ.n2req:n1/30), best=null;
+  var rs=mRows(t,sz.value).slice().sort(function(a,b){ return a[2]-b[2]||a[3]-b[3]; });
+  rl.innerHTML=rs.map(function(r){ var i=r[3], k=r[2]+'|'+i; if(!best||Math.abs(Math.log(i/want))<Math.abs(Math.log(best[1]/want))) best=[k,i];
+    return '<option value="'+k+'">'+r[2]+(r[2]===1?' estágio':' estágios')+' · i '+(i%1?fmt(i,1):fmt(i,0))+' · n₂ '+fmt(n1/i,1)+' rpm</option>'; }).join('');
+  if(keep&&orl&&rs.some(function(r){return (r[2]+'|'+r[3])===orl;})) rl.value=orl; else if(best) rl.value=best[0];
+  $('mnote').textContent=rs.length?'':'Sem dados de capacidade deste tipo e tamanho no bloco de '+band(n1)+' rpm.';
+}
+function vfFix(q){
+  if(MODO!=='mod') return;
+  var t=$('mlin').value, s=$('mtam').value, p=String($('mrel').value).split('|'), e=parseInt(p[0],10), i=parseFloat(p[1]);
+  if(!t||!s||!(i>0)){ q.ok=false; q.fix=null; return; }
+  q.fix={lin:t,tam:s,est:e,i:i}; q.serie=t; q.n2req=q.n1/i; q.Mr=(q.P>0)?q.P*9550/q.n2req:NaN; q.tol=1;
+  q.ok=(q.P>0&&q.n1>0&&isFinite(q.fsr)&&q.n1<=3600);
+}
+function n1Place(){ $('fld-n1').hidden=($('polos').value!=='0'); }
+function setModo(m,quiet){
+  MODO=m; FOCUS=null;
+  Array.prototype.forEach.call(document.querySelectorAll('#modos2 .m2'),function(b){ var on=b.dataset.m===m; b.classList.toggle('on',on); b.setAttribute('aria-checked',on?'true':'false'); });
+  var mod=(m==='mod');
+  $('mbox').hidden=!mod; $('tipos').closest('.fld').hidden=mod;
+  ['ent','val','tol'].forEach(function(id){ var f=$(id)&&$(id).closest('.fld'); if(f) f.hidden=mod; });
+  n1Place();
+  if(mod) mFill(true);
+  if(!quiet) render();
+}
+(function(){
+  $('mlin').innerHTML=ATIPOS.filter(function(t){ return ROWS.some(function(r){return r[0]===t;}); }).map(function(t){ return '<option value="'+t+'">'+ATXT[t]+'</option>'; }).join('');
+  var s0=$('serie').value; if(s0&&ATIPOS.indexOf(s0)>=0) $('mlin').value=s0;
+  Array.prototype.forEach.call(document.querySelectorAll('#modos2 .m2'),function(b){ b.addEventListener('click',function(){ setModo(b.dataset.m); }); });
+  $('mlin').addEventListener('change',function(){ mFill(false); render(); });
+  $('mtam').addEventListener('change',function(){ mFill(true); render(); });
+  $('mrel').addEventListener('change',function(){ render(); });
+  ['n1','polos'].forEach(function(id){ $(id).addEventListener('change',function(){ if(MODO==='mod'){ mFill(true); render(); } }); });
+  $('polos').addEventListener('change',n1Place);
+  setModo('sel',true);
+})();
+
 function ficha(){
   mecSync();
   var o=$('out'), q=lastQ;
@@ -1333,6 +1395,7 @@ function ficha(){
   mecLines(x,pad).forEach(function(s){ L.push(s); });
   L.push(Array(53).join('='));
   L.push('PREMISSAS ADOTADAS');
+  if(q.fix) L.push('- MODELO INFORMADO PELO USUARIO (modo "Ja sei o modelo"): a ferramenta conferiu o fator de servico, nao selecionou o tamanho');
   L.push('- bloco do catálogo por faixa de n1 (regra do SAP): ate 600 rpm = 500; ate 1200 = 900; ate 1800 = 1400; acima = 2800');
   L.push(wm?'- Mn2 e etad do catalogo VF-W (bloco por faixa de n1); n2 = n1 / i; Mr2 = P x 9550 x etad / n2 (mesma conta do SAP)':'- Mn2 do catálogo sem alteracao; n2 = n1 / i; Mr2 = P x 9550 / n2, sem rendimento');
   L.push('- fator de servico exigido lido do grafico A4 do catalogo (±0,02): '+q.hd+' h/dia, curva K'+q.K+', '+fmt(q.zr,0)+' partidas/h');
