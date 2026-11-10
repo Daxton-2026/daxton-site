@@ -430,7 +430,10 @@ tr.usedrow td:last-child{box-shadow:inset 0 2px 0 var(--accent),inset 0 -2px 0 v
   body.print-ficha .sheet-h h3{color:#fff!important}
   body.print-ficha h2,body.print-ficha .eyebrow{color:#003869!important}
   body.print-ficha .sheet-h{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  body.print-ficha .sheet pre{white-space:pre-wrap;font-size:10px;line-height:1.38;padding:12px 16px;background:#fff!important;color:#111!important}
+  body.print-ficha .sheet pre{white-space:pre-wrap;font-size:var(--pf,10px);line-height:1.38;padding:12px 16px;background:#fff!important;color:#111!important}
+  body.print-ficha #ficha>*:not(.sheet){display:none!important}
+  body.print-ficha main{padding:0!important;margin:0!important;max-width:none!important;width:auto!important}
+  body.print-ficha .sheet{margin:0!important;box-shadow:none!important}
 }
 
 #tbc td.bad{color:var(--crit);font-weight:700}
@@ -2891,6 +2894,13 @@ $('pp').addEventListener('click',function(){
   var t0=document.title, d=$('dsg').textContent;
   document.title='Folha de dados - '+(d&&d!=='—'?d:'Daxton');
   document.body.classList.add('print-ficha');
+  /* cabe em uma folha A4: mede a folha na largura de impressão e reduz a letra até caber (10 px até 6 px) */
+  var sh=$('out').closest('.sheet'), pr=$('out'), c1=sh.style.cssText, c2=pr.style.cssText, fz=10, lim=269/25.4*96-28;
+  sh.style.width='182mm'; sh.style.boxSizing='border-box';
+  pr.style.whiteSpace='pre-wrap'; pr.style.lineHeight='1.38'; pr.style.padding='12px 16px'; pr.style.maxHeight='none'; pr.style.overflow='visible';
+  for(;fz>6;fz-=0.25){ pr.style.fontSize=fz+'px'; if(sh.getBoundingClientRect().height<=lim) break; }
+  sh.style.cssText=c1; pr.style.cssText=c2;
+  document.body.style.setProperty('--pf',fz+'px');
   function fim(){ document.body.classList.remove('print-ficha'); document.title=t0; window.removeEventListener('afterprint',fim); }
   window.addEventListener('afterprint',fim);
   window.print();
