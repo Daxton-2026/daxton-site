@@ -64,6 +64,16 @@ img{max-width:100%}
 .m3ck input{margin-top:3px;flex:none;width:18px !important;height:18px;min-width:0;padding:0;accent-color:var(--accent)}
 .m3ck span{flex:1;min-width:0}
 .consulta-carga{display:block;margin-top:6px}.consulta-carga a{font-weight:700;color:var(--accent);text-decoration:underline}
+.modos2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.m2{display:flex;flex-direction:column;gap:4px;text-align:left;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);cursor:pointer;font:inherit;color:var(--ink2)}
+.m2 b{font-size:14.5px;color:var(--ink)}
+.m2 span{font-size:12.5px;color:var(--muted);line-height:1.4}
+.m2.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent-soft) 70%,var(--surface));box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 16%,transparent)}
+.m2:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.mgrid{display:grid;grid-template-columns:1.3fr 1fr 2.2fr;gap:10px}
+.mgrid select{width:100%}
+body[data-entr="mod"] .hide-mod{display:none!important}
+@media (max-width:640px){.modos2,.mgrid{grid-template-columns:1fr}}
 </style>
 <style>
 :root{
@@ -632,6 +642,8 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
           <div class="grp-h"><span class="gn">1</span><div><h3>Dados essenciais</h3><p id="g1-p">Identifique o projeto e informe os sete campos que definem a seleção.</p></div><span class="tag-ess">Essencial</span></div>
           <div class="grp-b">
             <div class="fld full"><label for="app">Identificação do projeto / aplicação</label><input id="app" type="text" value="Elevação principal — carro guincho" placeholder="ex.: Ponte rolante 20 t — Cliente X"></div>
+            <div class="fld full"><label id="lmodo">Como você quer começar</label><div class="modos2" id="modos2" role="radiogroup" aria-labelledby="lmodo"><button type="button" class="m2 on" data-m="sel" role="radio" aria-checked="true"><b>Encontrar o modelo</b><span id="m2sel">Informo os dados da aplicação; a ferramenta mostra os tamanhos que atendem.</span></button><button type="button" class="m2" data-m="mod" role="radio" aria-checked="false"><b>Já sei o modelo</b><span>Escolho configuração, tamanho e redução e confiro o fator de serviço.</span></button></div></div>
+            <div class="fld full" id="mbox" hidden><div class="mgrid"><div><label for="mfam">Configuração</label><select id="mfam"><option value="0">L — coaxial</option><option value="1">R — ortogonal</option></select></div><div><label for="mtam">Tamanho</label><select id="mtam"></select></div><div><label for="mrel">Estágios e redução</label><select id="mrel"></select></div></div><span class="tip" id="mnote"></span><span class="tip">Capacidade das tabelas do catálogo 300M R4.1. Só aparecem os tamanhos e as reduções que atendem aos dados informados.</span></div>
 
             <div class="fld only-ger"><label for="pger">Potência do motor <em>P</em> — kW</label><select id="pger"><option value="0.18">0,18 kW (0,25 cv)</option><option value="0.25">0,25 kW (0,33 cv)</option><option value="0.37">0,37 kW (0,5 cv)</option><option value="0.55">0,55 kW (0,75 cv)</option><option value="0.75">0,75 kW (1 cv)</option><option value="1.1">1,1 kW (1,5 cv)</option><option value="1.5">1,5 kW (2 cv)</option><option value="2.2">2,2 kW (3 cv)</option><option value="3">3 kW (4 cv)</option><option value="3.7">3,7 kW (5 cv)</option><option value="4.5">4,5 kW (6 cv)</option><option value="5.5">5,5 kW (7,5 cv)</option><option value="7.5">7,5 kW (10 cv)</option><option value="9.2">9,2 kW (12,5 cv)</option><option value="11">11 kW (15 cv)</option><option value="15">15 kW (20 cv)</option><option value="18.5">18,5 kW (25 cv)</option><option value="22">22 kW (30 cv)</option><option value="30">30 kW (40 cv)</option><option value="37">37 kW (50 cv)</option><option value="45">45 kW (60 cv)</option><option value="55">55 kW (75 cv)</option><option value="75" selected>75 kW (100 cv)</option><option value="90">90 kW (125 cv)</option><option value="110">110 kW (150 cv)</option><option value="132">132 kW (175 cv)</option><option value="150">150 kW (200 cv)</option><option value="185">185 kW (250 cv)</option><option value="220">220 kW (300 cv)</option><option value="260">260 kW (350 cv)</option><option value="300">300 kW (400 cv)</option><option value="330">330 kW (450 cv)</option><option value="370">370 kW (500 cv)</option><option value="x">Outra potência (digitar)</option></select><input id="pgerx" type="number" step="0.01" min="0" value="" inputmode="decimal" placeholder="kW" hidden style="margin-top:8px">
               <span class="tip">Potência nominal de placa, padrão comercial. O redutor é dimensionado por ela, pelo método do catálogo 300M.</span><span class="tip consulta-carga">Conhece o torque ou a potência que a máquina realmente consome? <a href="https://wa.me/5547999640526?text=Ol%C3%A1%2C%20usei%20o%20configurador%20300M%20(aplica%C3%A7%C3%A3o%20geral)%20e%20quero%20dimensionar%20pela%20carga%20da%20m%C3%A1quina." target="_blank" rel="noopener">Fale com a Daxton</a>: o dimensionamento pela carga pode reduzir o tamanho do redutor.</span></div>
@@ -2446,6 +2458,7 @@ function syncN1(){
 function getPger(){ var v=$('pger').value; return v==='x'?V('pgerx'):parseFloat(v); }
 function setPger(pw){ var s=$('pger'), ok=false; for(var k=0;k<s.options.length;k++){ if(s.options[k].value!=='x'&&Math.abs(parseFloat(s.options[k].value)-pw)<1e-9){ s.value=s.options[k].value; ok=true; break; } } $('pgerx').hidden=ok; if(!ok){ s.value='x'; $('pgerx').value=pw; } }
 function requisito(){
+  var fx=arguments.length?arguments[0]:(ENTR==='mod'?mSel():null);   /* modelo fixo ("Já sei o modelo") */
   var n1=V('n1'), n1lib=V('n1lib'), h=V('hv'), tfr=V('tfr')/100;
   var n1op=V('n1op'), ne=Math.max(n1,isFinite(n1op)?n1op:0);
   var fsm=V('fsm'); if(!(fsm>=1)||modo!=='elev') fsm=1;
@@ -2453,11 +2466,13 @@ function requisito(){
   var Pm=(modo==='ger')?getPger():V('pelev');
   var famv=$('fam').value, fam=(famv===''?null:parseInt(famv,10));
   var tol=V('tol')/100, leit=parseInt($('leit').value,10);
+  if(fx){ fam=fx.fam; tol=1e9; }
   var fs=fsLookup(h,parseInt($('carga').value,10),parseInt($('zb').value,10));
   var n2req,Mr2base,Mr2carga=null,Mr2mot=null,Padq=NaN,etac=null,r=null,Ptam=null,pot;
   if(modo==='elev'){
     var Q=V('q')*($('qunit').value==='kg'?1:1000),D=V('dt'),v=V('vel'),ram=V('ram'),pta=V('pta'),pol=V('pol');
     r=ram/pta; etac=Math.pow(0.98,pol);
+    if(fx) v=(n1/fx.i)*Math.PI*D/(r*1000);   /* com o modelo fixo a velocidade de içamento é resultado */
     n2req=v*r*1000/(Math.PI*D);
     Ptam=Q*9.81*v/60/1000/etac;
     Mr2carga=9550*Ptam/n2req;
@@ -2469,12 +2484,12 @@ function requisito(){
     pot=false;
   } else {
     var vv=V('val');
-    n2req=($('ent').value==='i')? n1/vv : vv;
+    n2req=fx? n1/fx.i : (($('ent').value==='i')? n1/vv : vv);
     Mr2base=9550*Pm*0.91/n2req;   // referência a 3 estágios; por candidato usa o eta dele
     pot=true;
   }
   return {npol:(parseInt($('polos').value,10)||0),n1:n1,ne:ne,n1op:n1op,n1lib:n1lib,Pm:Pm,h:h,tfr:tfr,fam:fam,tol:tol,leit:leit,fs:fs,
-          Q:(modo==='elev'?V('q')*($('qunit').value==='kg'?1:1000):NaN),n2req:n2req,Mr2base:Mr2base,Mr2carga:Mr2carga,Mr2mot:Mr2mot,Padq:Padq,fsm:fsm,base:(modo==='elev'?$('base').value:null),etac:etac,r:r,Ptam:Ptam,pot:pot};
+          Q:(modo==='elev'?V('q')*($('qunit').value==='kg'?1:1000):NaN),n2req:n2req,Mr2base:Mr2base,Mr2carga:Mr2carga,Mr2mot:Mr2mot,Padq:Padq,fsm:fsm,base:(modo==='elev'?$('base').value:null),etac:etac,r:r,Ptam:Ptam,pot:pot,fix:fx||null,nomod:(ENTR==='mod'&&!arguments.length&&!fx),vres:(fx&&modo==='elev')?(n1/fx.i)*Math.PI*V('dt')/((V('ram')/V('pta'))*1000):NaN};
 }
 
 var STDP=Array.prototype.map.call(document.getElementById('pelev').options,function(o){return parseFloat(o.value);}).filter(function(v){return v>0;}).sort(function(a,b){return a-b;});
@@ -2485,6 +2500,7 @@ function buscar(q){
   for(var j=0;j<ROWS.length;j++){
     var R=ROWS[j], si=R[0], fm=R[1], st=R[2], i=R[3];
     if(q.fam!==null && fm!==q.fam) continue;
+    if(q.fix&&(si!==q.fix.si||st!==q.fix.st||Math.abs(i-q.fix.i)>1e-9)) continue;
     var mn=R.slice(4,10), p1=R[10], nn1=R[11], n1max=R[12], m2max=R[13];
     var n2=q.n1/i, dev=n2/q.n2req-1;
     if(Math.abs(dev)>q.tol) continue;
@@ -2529,6 +2545,7 @@ function chip(st,txt){
   return '<span class="ck '+c+'">'+m+(txt?' '+txt:'')+'</span>'; }
 
 function render(){
+  if(ENTR==='mod') mFill(true);
   var q=requisito();
   // requisito
   var b=[];
@@ -2577,7 +2594,7 @@ function render(){
     ? 'Classificação de mecanismos da NBR 8400. A vida útil informada — <b>'+fmt(q.h,0)+' h</b> — corresponde à classe <b>T'+ti+'</b>. Confirme contra a tabela da norma na revisão vigente.'
     : 'Classificação de mecanismos da NBR 8400. A vida de <b>'+fmt(q.h,0)+' h</b> não corresponde a nenhuma classe da tabela — em ponte rolante e pórtico é a classe que fixa o <b>h</b>, não o contrário.';
 
-  list=buscar(q); lastQ=q;
+  list=q.nomod?[]:buscar(q); lastQ=q;
   var ok=list.filter(function(x){return x.fail===0;});
   CONS=null; for(var j=0;j<list.length;j++){ var y=list[j]; if(y.soF&&(!ok.length||y.si<ok[0].si)){ CONS=y; break; } }
   if(ok.length&&q.fs.v){ var x0=ok[0], kp='';
@@ -2593,7 +2610,9 @@ function render(){
     if(mm<0.10){ mw.hidden=false; $('margtxt').innerHTML='O menor redutor que passa (<b>'+ok[0].size+' '+ok[0].fam+ok[0].st+' i='+fmt(ok[0].i,0)+'</b>) tem só <b>'+fmt(mm*100,1)+'%</b> de folga sobre o torque de cálculo'+((q.Mr2mot>q.Mr2carga*1.0001&&q.base!=='carga')?', que aqui vem do <b>motor instalado</b> ('+fmt(ok[0].Mr,0)+' Nm). Sobre a carga ('+fmt(q.Mr2carga,0)+' Nm) a folga é de <b>'+fmt((ok[0].Mn/(q.Mr2carga*q.fs.v)-1)*100,1)+'%</b>':'')+'. Uma mudança pequena de premissa — classe T, número de polias, rotação — pode trocar o tamanho. Em elevação, confirme com a engenharia Bonfiglioli.'; } }
   var tb=$('tb');
   if(!list.length){
-    var msg = (modo==='elev'&&!isFinite(q.h))
+    var msg = (q.nomod&&q.fs.v&&isFinite(q.h))
+      ? '<b style="color:var(--crit)">Nenhum modelo desta configuração atende aos dados informados.</b> Troque a configuração, reveja os dados ou fale com a Daxton.'
+      : (modo==='elev'&&!isFinite(q.h))
       ? '<b style="color:var(--crit)">Escolha a classe de utilização T</b> para calcular. Em elevação ela define a vida e o fator de serviço.'
       : (modo==='elev'&&!(q.Pm>0)&&isFinite(q.Ptam)&&!isFinite(stdAbove(q.Ptam/ETA[4])))
       ? '<b style="color:var(--crit)">Potência mínima acima de 370 kW (500 cv).</b> Não há potência comercial na lista para adotar: informe a potência do motor instalado.'
@@ -2647,6 +2666,8 @@ function renderSum(){
   var foot='<p class="sum-f">Pré-seleção. O tamanho definitivo é confirmado por escrito pela engenharia Bonfiglioli.</p>';
   if(!isFinite(q.h)){
     el.innerHTML='<div class="sum-st wait">Aguardando</div><div class="sum-k">Próximo passo</div><div class="sum-m sm">'+(modo==='elev'?'Escolha a classe de utilização T':'Informe a vida útil em horas totais')+'</div><p class="sum-p">'+(modo==='elev'?'Ela define a vida do redutor.':'Ela define a coluna da tabela A4.')+' Com ela preenchida, o resultado aparece aqui na hora.</p>'+foot; return; }
+  if(q.nomod){
+    el.innerHTML='<div class="sum-st bad">Sem resultado</div><div class="sum-k">Redutor</div><div class="sum-m sm">Nenhum modelo atende</div><p class="sum-p">Nenhum tamanho desta configuração passa com os dados informados.</p>'+foot; return; }
   if(!list.length){
     el.innerHTML='<div class="sum-st bad">Sem resultado</div><div class="sum-k">Redutor</div><div class="sum-m sm">Nenhuma combinação no desvio de ±'+fmt(q.tol*100,0)+'%</div><p class="sum-p">Amplie o desvio de rotação em Opções avançadas ou revise velocidade, tambor e cavalamento. Relação necessária: <b>'+fmt(q.n1/q.n2req,1)+'</b>.</p>'+foot; return; }
   var x=sel||list[0], pass=(x.fail===0), cons=!!x.soF;
@@ -2962,6 +2983,7 @@ function ficha(){
   L.push(pad('M2max',                    fmt(x.m2max,0)+' Nm   '+(x.ck.M?'atende':'NAO ATENDE')));
   L.push(Array(53).join('='));
   L.push('PREMISSAS ADOTADAS');
+  if(q.fix) L.push('- MODELO INFORMADO PELO USUARIO (modo "Ja sei o modelo"): a ferramenta conferiu o fator de servico, nao selecionou o tamanho'+(modo==='elev'?'; a velocidade de icamento e resultado da relacao escolhida':''));
   L.push('- rendimento '+fmt(x.eta,2)+' ('+x.st+' estagios, tabela A3)');
   if(modo==='elev'){
     L.push('- rendimento do cabeamento '+fmt(q.etac,3)+' ('+$('pol').value+' polia(s) a 0,98)');
@@ -3110,6 +3132,57 @@ $('pp').addEventListener('click',function(){
   window.addEventListener('afterprint',fim);
   window.print();
 });
+
+/* ---------- entrada "Já sei o modelo" (padrão da ACF): só lista o que atende ---------- */
+var ENTR='sel', MWANT=NaN, MSAVE=null;
+function mSel(){
+  var f=parseInt($('mfam').value,10), si=parseInt($('mtam').value,10), p=String($('mrel').value).split('|'), st=parseInt(p[0],10), i=parseFloat(p[1]);
+  return (isFinite(si)&&isFinite(st)&&i>0)?{fam:f,si:si,st:st,i:i}:null;
+}
+function mPass(){
+  var f=parseInt($('mfam').value,10), out=[];
+  for(var j=0;j<ROWS.length;j++){ var R=ROWS[j]; if(R[1]!==f) continue;
+    var l=buscar(requisito({fam:f,si:R[0],st:R[2],i:R[3]})); if(l.length&&l[0].fail===0) out.push(R); }
+  return out;
+}
+function mFill(keep){
+  var sz=$('mtam'), rl=$('mrel'), os=sz.value, orl=rl.value, ok=mPass(), n1=V('n1');
+  var sizes=[]; ok.forEach(function(R){ if(sizes.indexOf(R[0])<0) sizes.push(R[0]); }); sizes.sort(function(a,b){return a-b;});
+  sz.innerHTML=sizes.map(function(si){ return '<option value="'+si+'">'+SIZES[si]+'</option>'; }).join('');
+  var q0=requisito(null), want=(MWANT>0)?MWANT:((q0.n2req>0)?n1/q0.n2req:30), best=null;
+  if(keep&&sizes.indexOf(parseInt(os,10))>=0) sz.value=os;
+  else if(ok.length){ /* ponto de partida: o menor tamanho que atende perto da relação que a aplicação pede */
+    var near=ok.filter(function(R){ return Math.abs(Math.log(R[3]/want))<=Math.log(1.1); }), pool=near.length?near:ok;
+    var b0=pool.slice().sort(function(a,b){ return near.length?(a[0]-b[0]||Math.abs(Math.log(a[3]/want))-Math.abs(Math.log(b[3]/want))):(Math.abs(Math.log(a[3]/want))-Math.abs(Math.log(b[3]/want))||a[0]-b[0]); })[0];
+    sz.value=String(b0[0]); orl=''; }
+  var cur=parseInt(sz.value,10);
+  var rs=ok.filter(function(R){ return R[0]===cur; }).sort(function(a,b){ return a[2]-b[2]||a[3]-b[3]; });
+  rl.innerHTML=rs.map(function(R){ var i=R[3], k=R[2]+'|'+i; if(!best||Math.abs(Math.log(i/want))<Math.abs(Math.log(best[1]/want))) best=[k,i];
+    return '<option value="'+k+'">'+R[2]+(R[2]===1?' estágio':' estágios')+' · i '+(i%1?fmt(i,1):fmt(i,0))+' · n₂ '+fmt(n1/i,1)+' rpm</option>'; }).join('');
+  if(keep&&orl&&rs.some(function(R){return (R[2]+'|'+R[3])===orl;})) rl.value=orl; else if(best) rl.value=best[0];
+  var fx=mSel(), nt='';
+  if(!rs.length) nt=(!q0.fs.v||!isFinite(q0.h))?(modo==='elev'?'Escolha a classe de utilização T para listar os modelos.':'Informe a vida útil para listar os modelos.'):'Nenhum modelo desta configuração atende aos dados informados.';
+  else if(fx&&modo==='elev'){ var vr=requisito(fx).vres; if(isFinite(vr)){ nt='Velocidade de içamento com esta relação: '+fmt(vr,2)+' m/min.'; $('vel').value=String(Math.round(vr*100)/100); } }
+  else if(fx&&modo==='ger'){ $('ent').value='i'; $('val').value=String(fx.i); setEnt(); }
+  $('mnote').textContent=nt;
+}
+function setEntrada(m,quiet){
+  ENTR=m; document.body.setAttribute('data-entr',m);
+  Array.prototype.forEach.call(document.querySelectorAll('#modos2 .m2'),function(b){ var on=b.dataset.m===m; b.classList.toggle('on',on); b.setAttribute('aria-checked',on?'true':'false'); });
+  $('mbox').hidden=(m!=='mod');
+  if(m==='mod'){ var q0=requisito(null); MWANT=(q0.n2req>0)?V('n1')/q0.n2req:NaN;   /* relação que a aplicação pedia ao entrar no modo */
+    if(!MSAVE) MSAVE={vel:$('vel').value,ent:$('ent').value,val:$('val').value};
+    var fv=$('fam').value; if(fv==='0'||fv==='1') $('mfam').value=fv; mFill(false); }
+  else if(MSAVE){ $('vel').value=MSAVE.vel; $('ent').value=MSAVE.ent; $('val').value=MSAVE.val; MSAVE=null; setEnt(); }
+  if(!quiet) render();
+}
+(function(){
+  ['ent','val','tol','fam','vel'].forEach(function(id){ var f=$(id)&&$(id).closest('.fld'); if(f) f.classList.add('hide-mod'); });
+  Array.prototype.forEach.call(document.querySelectorAll('#modos2 .m2'),function(b){ b.addEventListener('click',function(){ setEntrada(b.dataset.m); }); });
+  $('mfam').addEventListener('change',function(){ mFill(false); render(); });
+  $('mtam').addEventListener('change',function(){ mFill(true); render(); });
+  $('mrel').addEventListener('change',function(){ render(); });
+})();
 buildA4(); syncN1(); setEnt(); 
 // Modo pela URL: ?modo=geral (aplicacao geral) ou ?modo=elevacao (padrao). O seletor interno fica oculto: cada modo e um card na pagina Bonfiglioli.
 $('modes').style.display='none';
