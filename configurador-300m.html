@@ -1192,6 +1192,7 @@ var TCL=[200,400,800,1600,3200,6300,12500,25000,50000];
 var MG=[1,2,3,4,5,6,7,8,8];
 var TBAND=["até 0,16 h/dia", "0,16 a 0,25 h/dia", "0,25 a 0,5 h/dia", "0,5 a 1 h/dia", "1 a 2 h/dia", "2 a 4 h/dia", "4 a 8 h/dia", "8 a 16 h/dia", "mais de 16 h/dia"];
 var A4Z=['Z < 10','10 < Z < 30','30 < Z < 100'];
+var TEC=/[?&]tec=1/.test(location.search);   /* verificação térmica: desligada para o público; liga com ?tec=1 (conferência interna) */
 var modo='ger', sel=null, list=[], vis=[], verTodos=false;
 // Quadro enxuto: só quem atende, uma linha por tamanho+família+estágios (a relação de menor desvio)
 // e só os 3 menores tamanhos, com fS real até FSMAX vezes o exigido (acima disso é superdimensionado; o 1º sempre fica).
@@ -1624,13 +1625,13 @@ function radLinha(x){
   return '<div class="sum-pm"><span>Carga radial admissível R<sub>n2</sub> <small>(catálogo)</small></span><b>'+fmt(r.rn,0)+' N</b></div>'+
     '<p class="sum-why">Valor do catálogo (cap. 25.1) no meio do eixo, para 10.000 h e n₂ = '+fmt(r.n2,r.n2<10?1:0)+' rpm. Outra posição da carga ou outra vida: consulte a Daxton.</p>';
 }
-function thLinha(x){ var t=x.th; if(!t) return '';
+function thLinha(x){ var t=x.th; if(!t||!TEC) return '';
   function f(v){ return fmt(v,v<100?1:0); }
   var v, ok=(t.ok===true);
   if(t.st==='ok') v=f(t.pt)+' kW'+(t.viaCR?' + '+t.crSel:'')+' — '+(ok?'atende':'não atende');
   else v=(isFinite(t.ptmax)&&t.ok===false)?'até '+f(t.ptmax)+' kW — não atende':'consultar a Daxton';
   return '<div class="sum-pm"><span>Capacidade térmica'+(t.pf?' <small>(com PF)</small>':'')+'</span><b'+(ok?'':' style="color:var(--crit)"')+'>'+v+'</b></div>'; }
-function thAviso(x){ var t=x.th; return (t&&t.ok!==true)?'<p class="sum-alert"><b>Verificar a potência térmica:</b> consulte a Daxton antes de especificar este redutor.</p>':''; }
+function thAviso(x){ var t=x.th; return (TEC&&t&&t.ok!==true)?'<p class="sum-alert"><b>Verificar a potência térmica:</b> consulte a Daxton antes de especificar este redutor.</p>':''; }
 function thSum(x){ return x.th?'<p class="sum-why"><b>Térmica:</b> '+thTxt(x,false)+'</p>':''; }
 function ratioTxt(x){ return (x.i%1?fmt(x.i,1):fmt(x.i,0)); }
 function relSel(x){
@@ -1798,7 +1799,7 @@ function m3Spec(){
   var pfOk=!hyd;
   F.push({id:'pf',type:'check',label:'Conexão do motor com ventilador integrado (PF)',txt:'PF — PF160 a PF250, no lugar do P da flange',dis:!pfOk,reason:pfOk?'':'Só com motor elétrico IEC.',
     hint:'Vale para flange P160 a P250.'+(M3.fam==='R'?' Na versão R, consultar o Serviço Técnico.':' Nas posições T e V, consultar o Serviço Técnico.')});
-  F.push({id:'cr',label:'Refrigeração adicional',blank:'— nenhuma —',opts:[['CR1','CR1'],['CR2','CR2'],['CR3','CR3']],hint:'Sistema de refrigeração suplementar do catálogo (capítulo 14): só quando a verificação térmica pede. Se a verificação térmica indicar problema, o resumo pede para consultar a Daxton.'});
+  F.push({id:'cr',label:'Refrigeração adicional',blank:'— nenhuma —',opts:[['CR1','CR1'],['CR2','CR2'],['CR3','CR3']],hint:'Sistema de refrigeração suplementar do catálogo (capítulo 14): só quando a verificação térmica do capítulo 14.5 pede. Em dúvida, consulte a Daxton.'});
   F.push({id:'pv',type:'check',label:'Vedação',txt:'PV — retentores em elastômero fluorado (padrão: NBR)',dis:hyd,reason:hyd?'Com entrada hidráulica, consultar o Serviço Técnico.':''});
   var tk=(ver==='FP'||ver==='FZ')&&n>=314;
   if(tk) F.push({id:'tk',type:'check',label:'Vedação taconite',txt:'Vedação taconite (pó abrasivo), FP e FZ do 314M ao 325',hint:'Opção do catálogo sem código na designação: o pedido sai com a observação. Detalhes com o Serviço Técnico.'});
@@ -1965,7 +1966,8 @@ function ficha(){
      :'atende')));
   L.push(pad('n1 máx intermitente',      fmt(x.n1max,0)+' rpm'));
   L.push(pad('M2max',                    fmt(x.m2max,0)+' Nm   '+(x.ck.M?'atende':'NAO ATENDE')));
-  if(x.th){ var t=x.th, fp=function(v){ return fmt(v,v<100?1:0); };
+  if(!TEC) L.push(pad('Verificação térmica','nao incluida (cap. 14.5 do catalogo): confirmar com a Daxton'));
+  if(x.th&&TEC){ var t=x.th, fp=function(v){ return fmt(v,v<100?1:0); };
     L.push(pad('Capacidade térmica',(t.st==='ok'?fp(t.pt)+' kW'+(t.viaCR?' com '+t.crSel:'')+(t.pf?' (com PF)':'')+'   '+(t.ok===true?'atende':'NAO ATENDE - consultar a Daxton'):(isFinite(t.ptmax)&&t.ok===false?'ate '+fp(t.ptmax)+' kW   NAO ATENDE - consultar a Daxton':'consultar a Daxton')))); }
   L.push(pad('Carga radial admissivel Rn2',x.rad?fmt(x.rad.rn,0)+' N   (catalogo cap. 25.1: meio do eixo, 10.000 h, n2 '+fmt(x.rad.n2,x.rad.n2<10?1:0)+' rpm; outra posicao ou vida: consultar a Daxton)':'consultar a Daxton'));
   L.push(Array(53).join('='));
@@ -2052,6 +2054,7 @@ function interpCalc(){
   if(!(x>a&&x<=b)) f.innerHTML+='<br><span style="color:var(--warn)"><b>Atenção:</b> o F<sub>h2</sub> informado não está entre as duas colunas. Escolha as colunas que realmente o cercam.</span>';
 }
 
+(function(){ if(!TEC) ['tamb','tair','ted'].forEach(function(id){ var f=$(id)&&$(id).closest('.fld'); if(f) f.hidden=true; }); })();
 function setModo(m){
   modo=m;
   $('ted').value=(m==='elev')?'40':'100';   /* guincho/elevação: serviço intermitente, padrão 40% por hora; aplicação geral: contínuo */
@@ -2149,8 +2152,10 @@ function mFill(keep){
     sz.value=String(b0[0]); orl=''; }
   var cur=parseInt(sz.value,10);
   var rs=allR.filter(function(R){ return R[0]===cur; }).sort(function(a,b){ return a[2]-b[2]||a[3]-b[3]; });
-  rl.innerHTML=rs.map(function(R){ var i=R[3], k=R[2]+'|'+i, pass=!!okSet[R[0]+'|'+k], fora=(MST[R[0]+'|'+k]===-1); if(pass&&(!best||Math.abs(Math.log(i/want))<Math.abs(Math.log(best[1]/want)))) best=[k,i];
-    return '<option value="'+k+'"'+(fora?' disabled':'')+'>'+R[2]+(R[2]===1?' estágio':' estágios')+' · i '+(i%1?fmt(i,1):fmt(i,0))+' · n₂ '+fmt(n1/i,1)+' rpm'+(pass?'':(fora?' ✕ fora da tabela de vida do catálogo':(MST[R[0]+'|'+k]===-2?' ⚠ sob consulta: vida acima da tabela':(MST[R[0]+'|'+k]===-3?'':' ✕ não atende'))))+'</option>'; }).join('');
+  var optOf=function(R){ var i=R[3], k=R[2]+'|'+i, pass=!!okSet[R[0]+'|'+k], fora=(MST[R[0]+'|'+k]===-1); if(pass&&(!best||Math.abs(Math.log(i/want))<Math.abs(Math.log(best[1]/want)))) best=[k,i];
+    return '<option value="'+k+'"'+(fora?' disabled':'')+'>'+R[2]+(R[2]===1?' estágio':' estágios')+' · i '+(i%1?fmt(i,1):fmt(i,0))+' · n₂ '+fmt(n1/i,1)+' rpm'+(pass?'':(fora?' ✕ fora da tabela de vida do catálogo':(MST[R[0]+'|'+k]===-2?' ⚠ sob consulta: vida acima da tabela':(MST[R[0]+'|'+k]===-3?'':' ✕ não atende'))))+'</option>'; };
+  var fsOk3=!!q0.fs.v, rsOk=rs.filter(function(R){ return okSet[R[0]+'|'+R[2]+'|'+R[3]]; }), rsNo=rs.filter(function(R){ return !okSet[R[0]+'|'+R[2]+'|'+R[3]]; });
+  rl.innerHTML=(rsOk.length?'<optgroup label="Atendem aos dados informados">'+rsOk.map(optOf).join('')+'</optgroup>':'')+(rsNo.length?'<optgroup label="'+(fsOk3?'Não atendem ou sob consulta':'Reduções do catálogo')+'">'+rsNo.map(optOf).join('')+'</optgroup>':'');
   if(!best&&rs.length){ var R0=rs.filter(function(R){ return MST[R[0]+'|'+R[2]+'|'+R[3]]!==-1; }).sort(function(a,b){ return Math.abs(Math.log(a[3]/want))-Math.abs(Math.log(b[3]/want)); })[0]; if(R0) best=[R0[2]+'|'+R0[3],R0[3]]; }
   if(keep&&orl&&rs.some(function(R){return (R[2]+'|'+R[3])===orl;})) rl.value=orl; else if(best) rl.value=best[0];
   var fx=mSel(), nt='';
