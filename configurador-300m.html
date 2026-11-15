@@ -1303,11 +1303,11 @@ function buscar(q){
     else if(q.base===null||q.base==='carga'||!isFinite(Pad)||!(Pad>0)) Mr=q.Mr2base;
     else { Mm=9550*Pad*((q.Pm>0)?q.fsm:1)*eta/n2; Mr=(q.base==='motor')?Mm:Math.max(q.Mr2carga,Mm); }
     var Mc=Mr*q.fs.v, F=n2*q.h, c=colFor(F);
-    if(c<0) continue;
-    var Mn=(q.leit===1)?interp(mn,F):mn[c];
+    var fhF=false; if(c<0){ if(!q.fix) continue; fhF=true; c=COLS.length-1; }   /* modelo informado com n2 x h acima da última coluna do catálogo (1.000.000): avalia pela última coluna e marca sob consulta */
+    var Mn=(q.leit===1&&!fhF)?interp(mn,F):mn[c];   /* acima da tabela a interpolação não existe (NaN): usa a última coluna */
     var Mp=isFinite(Mnom)?Mnom*q.tfr*i*eta:Mr*q.tfr;   // sem motor informado: pico = torque requerido x pico%
     var Pmin=(q.Ptam!==null)?q.Ptam/eta:(Mr*n2/9550);
-    var ck={T:Mc<=Mn,P:((p1>0&&Pad>0)?p1>=Pad*((q.Pm>0)?q.fsm:1):true),M:m2max>=Mp};
+    var ck={T:Mc<=Mn,P:((p1>0&&Pad>0)?p1>=Pad*((q.Pm>0)?q.fsm:1):true),M:m2max>=Mp,H:!fhF};
     // flange: a carcaça do motor (potência + polos) tem de estar entre as flanges IEC que este tamanho/estágio aceita
     var flp=null;
     if(Pad>0){ var mfr=motorFrame(Pad,q.npol);
@@ -1330,11 +1330,12 @@ function buscar(q){
     var warnX = q.ne>n1max;                         // acima da máxima intermitente: reprova
     if(warnX){ ck.M=ck.M; fail++; }
     var why=[]; if(!ck.T) why.push('torque da carga (M<sub>c2</sub> acima do M<sub>n2</sub>)'); if(!ck.P) why.push('P₁ admissível abaixo da potência do motor');
-    if(warnX) why.push('n₁ acima da máxima intermitente'); if(!ck.M) why.push('pico do motor acima do M<sub>2máx</sub>'); if(ck.F===false) why.push('flange P'+flp+' fora do padrão do tamanho');
+    if(warnX) why.push('n₁ acima da máxima intermitente'); if(!ck.M) why.push('pico do motor acima do M<sub>2máx</sub>'); if(ck.H===false) why.push('vida: n₂·h de '+fmt(F,0)+' acima da última coluna do catálogo (1.000.000)'); if(ck.F===false) why.push('flange P'+flp+' fora do padrão do tamanho');
+    var soH=(fail===1&&ck.H===false);
     var soF=(fail===1&&ck.F===false);   /* só a flange reprova: sob consulta à fábrica (muitas vezes já desenvolvida) */
     out.push({si:si,size:SIZES[si],fam:fm?'R':'L',st:st,i:i,n2:n2,dev:dev,eta:eta,
       col:COLS[c],colIdx:c,Mn:Mn,MnLit:mn[c],MnInt:interp(mn,F),Mr:Mr,Mc:Mc,F:F,
-      fS:Mn/Mr,fSc:(q.Mr2carga>0?Mn/q.Mr2carga:NaN),flp:flp,Pad:Pad,Mm:Mm,adot:adot,p1:p1,nn1:nn1,n1max:n1max,m2max:m2max,Mp:Mp,Pmin:Pmin,ck:ck,fail:fail,why:why,soF:soF,th:th,rad:rad,ptb:R[14],
+      fS:Mn/Mr,fSc:(q.Mr2carga>0?Mn/q.Mr2carga:NaN),flp:flp,Pad:Pad,Mm:Mm,adot:adot,p1:p1,nn1:nn1,n1max:n1max,m2max:m2max,Mp:Mp,Pmin:Pmin,ck:ck,fail:fail,why:why,soF:soF,soH:soH,th:th,rad:rad,ptb:R[14],
       warnN:warnN,warnX:warnX,libN:libN});
   }
   out.sort(function(a,b){ return a.fail-b.fail || a.si-b.si || a.st-b.st || Math.abs(a.dev)-Math.abs(b.dev); });
@@ -1651,7 +1652,7 @@ function renderSum(){
     el.innerHTML='<div class="sum-st bad">Sem resultado</div><div class="sum-k">Redutor</div><div class="sum-m sm">Nenhum modelo atende</div><p class="sum-p">Nenhum tamanho desta configuração passa com os dados informados.</p>'+foot; return; }
   if(!list.length){
     el.innerHTML='<div class="sum-st bad">Sem resultado</div><div class="sum-k">Redutor</div><div class="sum-m sm">Nenhuma combinação no desvio de ±'+fmt(q.tol*100,0)+'%</div><p class="sum-p">Amplie o desvio de rotação em Opções avançadas ou revise velocidade, tambor e cavalamento. Relação necessária: <b>'+fmt(q.n1/q.n2req,1)+'</b>.</p>'+foot; return; }
-  var x=sel||list[0], pass=(x.fail===0), cons=!!x.soF;
+  var x=sel||list[0], pass=(x.fail===0), cons=!!(x.soF||x.soH);
   var nchip=chip(x.warnX?false:(x.warnN?'w':true),'n₁');
   el.innerHTML=
     '<div class="sum-st '+(pass?'ok':(cons?'cons':'bad'))+'">'+(pass?'Atende':(cons?'Sob consulta à fábrica':'Não atende'))+'</div>'+
@@ -1665,8 +1666,8 @@ function renderSum(){
       '<div><span>Folga sobre M<sub>c2</sub></span><b>'+fmt((x.Mn/x.Mc-1)*100,1)+'%</b></div>'+
       '<div><span>Torque requerido M<sub>r2</sub></span><b>'+fmt(x.Mr,0)+' Nm</b></div>'+
     '</div>'+
-    '<div class="sum-ck">'+chip(x.ck.T,'Torque')+chip(x.ck.P,'P₁')+nchip+chip(x.ck.M,'M₂máx')+(x.flp?chip(cons?'w':x.ck.F,'Flange P'+x.flp):'')+'</div>'+
-    (cons?'<p class="sum-why">Passa em torque, P₁, n₁ e M<sub>2máx</sub>. Só a <b>flange P'+x.flp+'</b> não é padrão neste tamanho: consulte a fábrica, que muitas vezes já tem a flange desenvolvida.</p>'
+    '<div class="sum-ck">'+chip(x.ck.T,'Torque')+chip(x.ck.P,'P₁')+nchip+chip(x.ck.M,'M₂máx')+(x.flp?chip(x.soF?'w':x.ck.F,'Flange P'+x.flp):'')+(x.soH?chip('w','Vida'):'')+'</div>'+
+    (x.soH?'<p class="sum-why">Passa em torque, P₁, n₁ e M<sub>2máx</sub> pela <b>última coluna do catálogo</b> (1.000.000), mas a vida pedida dá n₂·h = <b>'+fmt(x.F,0)+'</b>, acima do que a tabela cobre. Confirme o torque nominal e o fator de serviço com a fábrica.</p>':x.soF?'<p class="sum-why">Passa em torque, P₁, n₁ e M<sub>2máx</sub>. Só a <b>flange P'+x.flp+'</b> não é padrão neste tamanho: consulte a fábrica, que muitas vezes já tem a flange desenvolvida.</p>'
       :(!pass&&x.why&&x.why.length?'<p class="sum-why"><b>Reprovado por:</b> '+x.why.join(' · ')+'.</p>':''))+
     (pass&&CONS&&CONS!==x?'<p class="sum-cons"><b>Sob consulta à fábrica:</b> '+CONS.size+' '+CONS.fam+CONS.st+' '+ratioTxt(CONS)+' (f<sub>S</sub> '+fmt(CONS.fS,2)+'), menor que o selecionado. Só a flange P'+CONS.flp+' não é padrão. <a href="#" id="conslink">Ver</a></p>':'')+
     (modo==='elev'?'<div class="sum-pm"><span>Potência mínima do motor</span><b>'+fmt(x.Pmin,2)+' kW</b></div>':'<div class="sum-pm"><span>Potência do motor</span><b>'+fmt(q.Pm,q.Pm%1?2:0)+' kW</b></div>')+
@@ -1719,7 +1720,7 @@ function renderAlt(q){
 function drawRows(){
   var q=lastQ, tb=$('tb');
   tb.innerHTML=vis.map(function(x,k){
-    return '<tr data-k="'+k+'"'+(x.fail===0?(x.warnN?' class="warnrow"':''):(x.soF?' class="consrow"':' class="failrow"'))+' title="'+(x.soF?'Sob consulta à fábrica: só a flange fora do padrão':(x.fail?'Reprovado por: '+x.why.join(' · ').replace(/<[^>]+>/g,''):''))+'">'+
+    return '<tr data-k="'+k+'"'+(x.fail===0?(x.warnN?' class="warnrow"':''):((x.soF||x.soH)?' class="consrow"':' class="failrow"'))+' title="'+(x.soH?'Sob consulta à fábrica: vida acima da tabela do catálogo':(x.soF?'Sob consulta à fábrica: só a flange fora do padrão':(x.fail?'Reprovado por: '+x.why.join(' · ').replace(/<[^>]+>/g,''):'')))+'">'+
       '<td><b>'+x.size+' '+x.fam+x.st+'</b></td>'+
       '<td class="n">'+fmt(x.i,1)+'</td>'+
       '<td class="n">'+fmt(x.n2,2)+'</td>'+
@@ -1912,6 +1913,7 @@ function ficha(){
   L.push('FOLHA DE DADOS — REDUTOR PLANETÁRIO 300M');
   L.push('Aplicação: '+($('app').value||'—'));
   L.push('Modelo: '+d);
+  if(x.soH) L.push('   SOB CONSULTA A FABRICA: vida pedida (n2 x h = '+fmt(x.F,0)+') acima da ultima coluna do catalogo (1.000.000). Torque, P1, n1 e M2max atendem pela ultima coluna; confirmar torque nominal e fator de servico.');
   if(x.soF) L.push('   SOB CONSULTA A FABRICA: a flange '+pf0+' nao e padrao do '+x.size+' '+x.fam+x.st+' (padrao '+(flgFaixa(fl)||'nenhuma IEC')+'). Torque, P1, n1 e M2max atendem.');
   if(!pf) L.push('   ATENCAO: flange de entrada (P__) nao definida — '+
     (pf0&&!flOk?(fl.length?'o motor pede '+pf0+(mf&&mf.fr?' (carcaca '+mf.fr+')':'')+', mas o '+x.size+' '+x.fam+x.st+' aceita '+flgFaixa(fl)+' no catalogo. Escolha outro candidato ou consulte a fabrica.'
@@ -2129,7 +2131,7 @@ var MST={};   /* status por linha: 1 atende, 0 não atende, -1 fora da tabela de
 function mPass(){
   var f=parseInt($('mfam').value,10), out=[], fsOk=!!requisito(null).fs.v; MST={};
   for(var j=0;j<ROWS.length;j++){ var R=ROWS[j]; if(R[1]!==f) continue;
-    var l=buscar(requisito({fam:f,si:R[0],st:R[2],i:R[3]})); MST[R[0]+'|'+R[2]+'|'+R[3]]=l.length?(l[0].fail===0?1:0):(fsOk?-1:-2); if(l.length&&l[0].fail===0) out.push(R); }
+    var l=buscar(requisito({fam:f,si:R[0],st:R[2],i:R[3]})); MST[R[0]+'|'+R[2]+'|'+R[3]]=l.length?(l[0].fail===0?1:(l[0].soH?-2:0)):(fsOk?-1:-3);   /* -3: falta classe T / vida, nada a avaliar ainda */ if(l.length&&l[0].fail===0) out.push(R); }
   return out;
 }
 function mFill(keep){
@@ -2148,7 +2150,7 @@ function mFill(keep){
   var cur=parseInt(sz.value,10);
   var rs=allR.filter(function(R){ return R[0]===cur; }).sort(function(a,b){ return a[2]-b[2]||a[3]-b[3]; });
   rl.innerHTML=rs.map(function(R){ var i=R[3], k=R[2]+'|'+i, pass=!!okSet[R[0]+'|'+k], fora=(MST[R[0]+'|'+k]===-1); if(pass&&(!best||Math.abs(Math.log(i/want))<Math.abs(Math.log(best[1]/want)))) best=[k,i];
-    return '<option value="'+k+'"'+(fora?' disabled':'')+'>'+R[2]+(R[2]===1?' estágio':' estágios')+' · i '+(i%1?fmt(i,1):fmt(i,0))+' · n₂ '+fmt(n1/i,1)+' rpm'+(pass?'':(fora?' ✕ fora da tabela de vida do catálogo':(MST[R[0]+'|'+k]===-2?'':' ✕ não atende')))+'</option>'; }).join('');
+    return '<option value="'+k+'"'+(fora?' disabled':'')+'>'+R[2]+(R[2]===1?' estágio':' estágios')+' · i '+(i%1?fmt(i,1):fmt(i,0))+' · n₂ '+fmt(n1/i,1)+' rpm'+(pass?'':(fora?' ✕ fora da tabela de vida do catálogo':(MST[R[0]+'|'+k]===-2?' ⚠ sob consulta: vida acima da tabela':(MST[R[0]+'|'+k]===-3?'':' ✕ não atende'))))+'</option>'; }).join('');
   if(!best&&rs.length){ var R0=rs.filter(function(R){ return MST[R[0]+'|'+R[2]+'|'+R[3]]!==-1; }).sort(function(a,b){ return Math.abs(Math.log(a[3]/want))-Math.abs(Math.log(b[3]/want)); })[0]; if(R0) best=[R0[2]+'|'+R0[3],R0[3]]; }
   if(keep&&orl&&rs.some(function(R){return (R[2]+'|'+R[3])===orl;})) rl.value=orl; else if(best) rl.value=best[0];
   var fx=mSel(), nt='';
