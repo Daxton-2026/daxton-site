@@ -550,6 +550,24 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 .note p i,.note h4 i,.note li i{background:none;border-radius:0;font-style:italic;color:inherit}
 .wsteps li{align-items:center}
 @media print{.wb-out,.alt{display:none!important}}
+/* quadro de resultado sempre inteiro na tela: compacta em telas baixas; o script ajusta a escala se ainda sobrar */
+@media (min-width:1021px){
+  .wb-out{max-height:calc(100vh - 72px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+}
+@media (min-width:1021px) and (max-height:900px){
+  .sum{padding:16px 18px}
+  .sum-st{margin-bottom:8px;padding:3px 10px}
+  .sum-m{font-size:27px;margin-top:0}
+  .sum-sub{font-size:12.5px;margin-top:2px}
+  .sum-rel{margin:0 0 8px}.sum-rel label{margin-bottom:2px}.sum-rel select{padding-top:4px;padding-bottom:4px;min-height:0;font-size:13px}
+  .sum-grid{margin:10px 0 9px}.sum-grid>div{padding:7px 11px}.sum-grid b{font-size:15.5px}
+  .sum-ck{gap:5px;margin-bottom:8px}
+  .sum-why{margin:6px 0 0;font-size:12.5px;line-height:1.35}
+  .sum-cons{margin:6px 0 0;padding:6px 9px;font-size:12.5px;line-height:1.35}
+  .sum-pm{padding:6px 0;font-size:13px}
+  .sum-btn{margin-top:9px;padding:9px 14px}
+  .sum-f{margin:8px 0 0;font-size:10.5px;line-height:1.35}
+}
 </style>
 </head>
 <body>
@@ -2207,6 +2225,20 @@ setModo(/[?&]modo=ger/.test(location.search)?'ger':'elev');
 })();
 })();
 
+
+/* quadro de resultado inteiro na tela: se ainda passar da altura da janela, reduz a escala (até 70%) */
+(function(){
+  var el=document.getElementById('sum'); if(!el) return; var box=el.closest('.wb-out')||el, t=null;
+  function fit(){
+    el.style.zoom='';
+    if(window.innerWidth<=1020) return;
+    var top=parseFloat(getComputedStyle(box).top)||64, av=window.innerHeight-top-12, h=el.offsetHeight;
+    if(h>av&&av>200) el.style.zoom=String(Math.max(0.7,Math.floor(av/h*1000)/1000));
+  }
+  function sched(){ clearTimeout(t); t=setTimeout(fit,40); }
+  new MutationObserver(sched).observe(el,{childList:true,subtree:true,characterData:true});
+  window.addEventListener('resize',sched); sched();
+})();
 </script>
 </body>
 </html>
