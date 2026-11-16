@@ -64,6 +64,16 @@ img{max-width:100%}
 .m3ck input{margin-top:3px;flex:none;width:18px !important;height:18px;min-width:0;padding:0;accent-color:var(--accent)}
 .m3ck span{flex:1;min-width:0}
 .consulta-carga{display:block;margin-top:6px}.consulta-carga a{font-weight:700;color:var(--accent);text-decoration:underline}
+.modos2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.m2{display:flex;flex-direction:column;gap:4px;text-align:left;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);cursor:pointer;font:inherit;color:var(--ink2)}
+.m2 b{font-size:14.5px;color:var(--ink)}
+.m2 span{font-size:12.5px;color:var(--muted);line-height:1.4}
+.m2.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent-soft) 70%,var(--surface));box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 16%,transparent)}
+.m2:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.mgrid{display:grid;grid-template-columns:1.3fr 1fr 2.2fr;gap:10px}
+.mgrid select{width:100%}
+body[data-entr="mod"] .hide-mod{display:none!important}
+@media (max-width:640px){.modos2,.mgrid{grid-template-columns:1fr}}
 </style>
 <style>
 :root{
@@ -472,6 +482,7 @@ body[data-modo="ger"] .only-elev,body[data-modo="elev"] .only-ger{display:none!i
 .sum-st{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:4px 11px;margin-bottom:14px}
 .sum-st.ok{background:var(--ok-soft);color:var(--ok)}.sum-st.cons{background:var(--warn-soft);color:var(--warn)}
 .sum-why{margin:8px 0 0;font-size:.86rem;line-height:1.45;color:var(--muted)}.sum-why b{color:var(--ink,inherit)}
+.sum-alert{margin:10px 0 0;padding:9px 12px;border-radius:8px;background:var(--crit-soft);color:var(--crit);border:1px solid var(--crit);font-size:.86rem;line-height:1.45}.sum-alert b{color:var(--crit)}
 .sum-cons{margin:10px 0 0;padding:9px 11px;border-radius:8px;background:var(--warn-soft);font-size:.86rem;line-height:1.45}.sum-cons a{font-weight:700}
 #tbl tbody tr.consrow td:first-child{box-shadow:inset 3px 0 0 var(--warn)}.sum-st.bad{background:var(--crit-soft);color:var(--crit)}.sum-st.wait{background:var(--inset);color:var(--muted)}
 .sum-k{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
@@ -1097,8 +1108,11 @@ function mecSpec(x){
   if(x.lin==='A'&&(/^UH/.test(fo)||fo==='UV')){
     var f1=/^F1/.test(MC.flange||''), f2=/^F2/.test(MC.flange||''), so=[];
     if(!f1) so.push({v:'SC1',t:'SC1'}); if(!f2) so.push({v:'SC2',t:'SC2'});
+    var taOk=(x.tam<=60);
+    F.push({id:'tarm',g:'Opções do redutor',type:'check',label:'Braço de torque (TA)',txt:'TA — redutor fornecido com o braço de torque montado',dis:!taOk,
+      reason:taOk?'':'A opção TA do catálogo vale do A 05 ao A 60. Para A 70 a A 90, consultar a fábrica.',hint:'Para fixação pendular: eixo oco na máquina e reação pelo braço. Dimensões no capítulo 44 do catálogo.'});
     F.push({id:'sc',g:'Opções do redutor',label:'Braço de torque e tampa de proteção: posição',blank:'— padrão —',opts:so,
-      hint:'A05 a A60 saem com o braço de torque montado como no catálogo; SC1 e SC2 são as posições alternativas. Com flange F1 só vale SC2; com F2, só SC1.'});
+      hint:'SC1 e SC2 são as posições alternativas de montagem do braço de torque e da tampa de proteção. Com flange F1 só vale SC2; com F2, só SC1.'});
   }
   if(x.lin==='F'){
     if(x.tam<=41) F.push({id:'fl',g:'Opções do redutor',type:'check',label:'Furação lateral (FL)',txt:'FL — usinada e roscada na lateral (F51 a F90 já saem assim)',hint:'Cotas de fixação na tabela D47 do catálogo.'});
@@ -1205,7 +1219,7 @@ function mecTokens(x){
   if(MC.lub) T.push([MC.lub,'Lubrificação: '+L('lub')+'.']);
   if(MC.lts) T.push([MC.lts,'Estoque prolongado: '+L('lts')+'.']);
   if(MC.cr){ var c=x.lin==='A'?(MC.cr==='CW'?'AL':'AR'):(MC.cr==='CW'?'AR':'AL'); T.push([c,'Contra-recuo: rotação livre no sentido '+(MC.cr==='CW'?'horário':'anti-horário')+' na saída.']); }
-  [['rb','RB','Folga angular reduzida.'],['ihb','IHB','Rolamentos com maior capacidade de carga.'],['hdb','HDB','Rolamentos reforçados no eixo de saída (carga radial maior).'],['fl','FL','Furação lateral usinada e roscada.'],['kav','KAV','Kit antivibração para montagem pendular.'],['bp','BP','Respiro com válvula.']].forEach(function(o){ if(MC[o[0]]) T.push([o[1],o[2]]); });
+  [['rb','RB','Folga angular reduzida.'],['ihb','IHB','Rolamentos com maior capacidade de carga.'],['hdb','HDB','Rolamentos reforçados no eixo de saída (carga radial maior).'],['fl','FL','Furação lateral usinada e roscada.'],['tarm','TA','Braço de torque montado no redutor.'],['kav','KAV','Kit antivibração para montagem pendular.'],['bp','BP','Respiro com válvula.']].forEach(function(o){ if(MC[o[0]]) T.push([o[1],o[2]]); });
   if(MC.rbi) T.push([MC.rbi==='1'?'RB':MC.rbi,MC.rbi==='RBO'?'Eixo de entrada duplo no 2º redutor do combinado.':'Eixo de entrada duplo, saindo também do lado oposto ao motor.']);
   if(MC.out) T.push([MC.out,'Eixo de saída: '+L('out')+'.']);
   if(MC.pes) T.push([MC.pes,L('pes')+'.']);
@@ -1233,7 +1247,7 @@ function mecLines(x,pad){
   if(x.lin==='A'||x.lin==='F') L.push(pad('Flange de saída',opt('flange')||(/^QF/.test(MC.forma||'')?'nao se aplica (Quick-fit)':'sem flange / a definir')));
   L.push(pad('Posição de montagem',opt('pos')||'A DEFINIR'));
   L.push(pad('Entrada',opt('ent')||'a definir (flange IEC pela carcaça do motor)'));
-  var ex=[['lim','Limitador de torque'],['arr','Arranjo do combinado'],['bore','Furo do eixo de saída'],['ved','Vedação'],['lub','Lubrificação'],['lts','Estoque prolongado'],['cr','Contra-recuo'],['rb','Folga angular reduzida'],['bp','Respiro com válvula'],['ihb','Rolamentos reforçados'],['hdb','Carga radial reforçada'],['sc','Braço de torque: posição'],['rbi','Eixo de entrada duplo'],['out','Eixo de saída'],['pes','Kit de pés'],['ta','Braço de torque: posição'],['scw','Tampa de proteção: posição'],['fl','Furação lateral'],['kav','Kit antivibração'],['prot','Proteção superficial'],['cor','Cor'],['cert','Certificados']], any=false;
+  var ex=[['lim','Limitador de torque'],['arr','Arranjo do combinado'],['bore','Furo do eixo de saída'],['ved','Vedação'],['lub','Lubrificação'],['lts','Estoque prolongado'],['cr','Contra-recuo'],['rb','Folga angular reduzida'],['bp','Respiro com válvula'],['ihb','Rolamentos reforçados'],['hdb','Carga radial reforçada'],['tarm','Braço de torque'],['sc','Braço de torque: posição'],['rbi','Eixo de entrada duplo'],['out','Eixo de saída'],['pes','Kit de pés'],['ta','Braço de torque: posição'],['scw','Tampa de proteção: posição'],['fl','Furação lateral'],['kav','Kit antivibração'],['prot','Proteção superficial'],['cor','Cor'],['cert','Certificados']], any=false;
   ex.forEach(function(e){ var v=opt(e[0]); if(v){ any=true; L.push(pad(e[1],MC[e[0]]==='1'?'sim':v)); } });
   if(!any) L.push('Demais opções ......................... padrão de fábrica');
   mecAvisos(x).forEach(function(a){ L.push('ATENCAO: '+a); });
@@ -1469,8 +1483,6 @@ $('pp').addEventListener('click',function(){
 setEnt(); render();
 // ?tipo=C|A|F|S|VF|W: abre já com o tipo escolhido (links dos cards de produto)
 (function(){ var t=null; try{ t=(new URLSearchParams(location.search)).get('tipo'); }catch(e){} if(t){ var b=document.querySelector('#tipos .tipo[data-v="'+t.toUpperCase()+'"]'); if(b&&!b.closest('.fld').hidden) b.click(); } })();
-})();
-
 
 /* quadro de resultado inteiro na tela: se ainda passar da altura da janela, reduz a escala (até 70%) */
 (function(){
@@ -1485,6 +1497,8 @@ setEnt(); render();
   new MutationObserver(sched).observe(el,{childList:true,subtree:true,characterData:true});
   window.addEventListener('resize',sched); sched();
 })();
+})();
+
 </script>
 </body>
 </html>
