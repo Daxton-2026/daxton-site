@@ -1105,8 +1105,8 @@ function mecSpec(x){
     var f1=/^F1/.test(MC.flange||''), f2=/^F2/.test(MC.flange||''), so=[];
     if(!f1) so.push({v:'SC1',t:'SC1'}); if(!f2) so.push({v:'SC2',t:'SC2'});
     var taOk=(x.tam<=60);
-    F.push({id:'tarm',g:'Opções do redutor',type:'check',label:'Braço de torque (TA)',txt:'TA — redutor fornecido com o braço de torque montado',dis:!taOk,
-      reason:taOk?'':'A opção TA do catálogo vale do A 05 ao A 60. Para A 70 a A 90, consultar a fábrica.',hint:'Para fixação pendular: eixo oco na máquina e reação pelo braço. Dimensões no capítulo 44 do catálogo.'});
+    F.push({id:'tarm',g:'Opções do redutor',type:'check',label:'Braço de torque (BT)',txt:'BT — redutor fornecido com o braço de torque',dis:!taOk,
+      reason:taOk?'':'O catálogo traz o braço montado do A 05 ao A 60. Para A 70 a A 90, consultar a fábrica.',hint:'Para fixação pendular: eixo oco na máquina e reação pelo braço. Código BT, como na planilha SAP da Bonfiglioli (no catálogo a opção aparece como TA). Dimensões no capítulo 44 do catálogo.'});
     F.push({id:'sc',g:'Opções do redutor',label:'Braço de torque e tampa de proteção: posição',blank:'— padrão —',opts:so,
       hint:'SC1 e SC2 são as posições alternativas de montagem do braço de torque e da tampa de proteção. Com flange F1 só vale SC2; com F2, só SC1.'});
   }
@@ -1215,7 +1215,7 @@ function mecTokens(x){
   if(MC.lub) T.push([MC.lub,'Lubrificação: '+L('lub')+'.']);
   if(MC.lts) T.push([MC.lts,'Estoque prolongado: '+L('lts')+'.']);
   if(MC.cr){ var c=x.lin==='A'?(MC.cr==='CW'?'AL':'AR'):(MC.cr==='CW'?'AR':'AL'); T.push([c,'Contra-recuo: rotação livre no sentido '+(MC.cr==='CW'?'horário':'anti-horário')+' na saída.']); }
-  [['rb','RB','Folga angular reduzida.'],['ihb','IHB','Rolamentos com maior capacidade de carga.'],['hdb','HDB','Rolamentos reforçados no eixo de saída (carga radial maior).'],['fl','FL','Furação lateral usinada e roscada.'],['tarm','TA','Braço de torque montado no redutor.'],['kav','KAV','Kit antivibração para montagem pendular.'],['bp','BP','Respiro com válvula.']].forEach(function(o){ if(MC[o[0]]) T.push([o[1],o[2]]); });
+  [['rb','RB','Folga angular reduzida.'],['ihb','IHB','Rolamentos com maior capacidade de carga.'],['hdb','HDB','Rolamentos reforçados no eixo de saída (carga radial maior).'],['fl','FL','Furação lateral usinada e roscada.'],['tarm','BT','Braço de torque.'],['kav','KAV','Kit antivibração para montagem pendular.'],['bp','BP','Respiro com válvula.']].forEach(function(o){ if(MC[o[0]]) T.push([o[1],o[2]]); });
   if(MC.rbi) T.push([MC.rbi==='1'?'RB':MC.rbi,MC.rbi==='RBO'?'Eixo de entrada duplo no 2º redutor do combinado.':'Eixo de entrada duplo, saindo também do lado oposto ao motor.']);
   if(MC.out) T.push([MC.out,'Eixo de saída: '+L('out')+'.']);
   if(MC.pes) T.push([MC.pes,L('pes')+'.']);
