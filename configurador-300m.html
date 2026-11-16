@@ -1839,7 +1839,8 @@ function m3Clean(){
   return m3Spec();
 }
 /* ---------- folha de dados: configuração mecânica por extenso ---------- */
-/* eixo de saída por tamanho, da planilha SAP da Bonfiglioli (tabela "eixosaida"): [Ø do chavetado, comprimento em mm, perfil do estriado] */
+/* eixo de saída por tamanho: [Ø do chavetado, comprimento em mm, perfil do estriado]. Tabela "eixosaida" da planilha SAP, conferida tamanho a tamanho com os desenhos do catálogo 300M R4.1 (páginas de dimensões de cada tamanho).
+   P = PC/PZ, M = MC/MZ. HC/HZ usam o mesmo eixo do PC/PZ, menos no tamanho 300, em que o HC é Ø50h6 x 82 (M3EIXO_HC). */
 var M3EIXO={
  P:{'300':['38h6',58,'B40x36 DIN 5482'],'301':['50h6',82,'B40x36 DIN 5482'],'303':['60h6',105,'58x53 DIN 5482'],'304':['60h6',105,'58x53 DIN 5482'],'305':['60h6',105,'58x53 DIN 5482'],
     '306':['80h6',130,'70x64 DIN 5482'],'307':['90h6',170,'B80x74 DIN 5482'],'309':['100m6',165,'B80x74 DIN 5482'],'310M':['110m6',210,'B100x94 DIN 5482'],'311M':['120m6',210,'B100x94 DIN 5482'],
@@ -1847,18 +1848,20 @@ var M3EIXO={
     '318M':['250m6',330,'W220x5 DIN 5480'],'319':['280h6',380,'W260x5 DIN 5480'],'321':['340m6',540,'W300x8 DIN 5480']},
  M:{'300':['38h6',58,'B40x36 DIN 5482'],'301':['38h6',58,'B40x36 DIN 5482'],'303':['60h6',105,'58x53 DIN 5482'],'304':['60h6',105,'58x53 DIN 5482'],'305':['60h6',105,'58x53 DIN 5482'],
     '306':['80h6',130,'70x64 DIN 5482'],'307':['90h6',170,'B80x74 DIN 5482']}};
+var M3EIXO_HC={'300':['50h6',82,'B40x36 DIN 5482']};
+var M3CHAV={'38h6':'10x8x50','50h6':'14x9x70','60h6':'18x11x90','80h6':'22x14x110','90h6':'25x14x150','100m6':'28x16x150','110m6':'28x16x200','120m6':'32x18x180','140m6':'36x20x180','160m6':'40x22x220','180m6':'45x25x240','200r6':'45x25x250','250m6':'56x32x310','280h6':'63x32x350','340m6':'80x40x500'};
 function m3Lines(x,ver,pos,opc,pad){
   var L=[], sel=document.getElementById(M3.cfg.ver), ot=sel&&sel.selectedOptions[0]?sel.selectedOptions[0].textContent.replace(/ \(não existe no \S+\)$/,''):ver;
   L.push(pad('Versão de saída', ot));
-  var grp=(ver==='MC'||ver==='MZ')?'M':((ver==='PC'||ver==='PZ'||ver==='HC'||ver==='HZ')?'P':null), e=grp?M3EIXO[grp][x.size]:null, est=/Z$/.test(ver);
-  if(e) L.push(pad('Eixo de saída', est?('maciço estriado '+e[2]):('maciço chavetado Ø'+e[0]+' x '+e[1]+' mm')));
+  var grp=(ver==='MC'||ver==='MZ')?'M':((ver==='PC'||ver==='PZ'||ver==='HC'||ver==='HZ')?'P':null), e=grp?(((ver==='HC'||ver==='HZ')&&M3EIXO_HC[x.size])||M3EIXO[grp][x.size]):null, est=/Z$/.test(ver);
+  if(e) L.push(pad('Eixo de saída', est?('maciço estriado '+e[2]):('maciço chavetado Ø'+e[0]+' x '+e[1]+' mm'+(M3CHAV[e[0]]?', chaveta '+M3CHAV[e[0]]+' (DIN 6885)':''))));
   else L.push(pad('Eixo de saída', grp?'dimensões no catálogo (não tabelado na SAP para este tamanho)':'dimensões da saída '+ver+' no catálogo, capítulo de dimensões'));
   L.push(pad('Posição de montagem', pos||'A DEFINIR'));
   var n=0; m3Spec().forEach(function(f){ var v=M3.st[f.id]; if(!v||f.id==='pos') return; var t;
     if(f.type==='check') t=f.txt; else { var o=f.opts.filter(function(a){return a[0]===v;})[0]; t=o?o[1]:v; }
     L.push(pad(f.label.replace(/ \(.*$/,''), t)); n++; });
   if(!n) L.push(pad('Demais opções', 'padrão de fábrica'));
-  if(e) L.push('   Dimensões do eixo pela planilha SAP da Bonfiglioli; confirme no desenho do catálogo.');
+  if(e) L.push('   Dimensões do eixo conforme os desenhos do catálogo 300M R4.1.');
   return L;
 }
 function m3Opc(){
