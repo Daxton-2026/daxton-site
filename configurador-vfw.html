@@ -1058,8 +1058,13 @@ function mecSpec(x){
   if(/^(VF|W)/.test(x.lin)) return vfSpec(x);
   var F=[], sz=sz2(x.tam), small=(x.lin==='S')?x.tam<=40:x.tam<=41, fo=MC.forma||'';
   var forms=(ACO.forma[x.lin]||{})[sz]||[], flgs=(ACO.flange[x.lin]||{})[sz]||[], veds=(ACO.ved[x.lin]||{})[sz]||[];
-  F.push({id:'forma',g:'Construção',label:'Versão do eixo de saída / forma construtiva',blank:'— a definir —',opts:forms.map(function(c){return {v:c,t:formaTxt(x.lin,c)};}),
-    hint:(x.lin==='A'||x.lin==='F')?'Ø é o diâmetro do furo do eixo oco, em mm. Séries '+x.lin+': diâmetro padrão e alternativo conforme o catálogo.':''});
+  /* furo padrão e furo alternativo do eixo oco, por tamanho (catálogo ACF R14, quadro de designação das séries A e F) */
+  var stdB=(MEC_FURO[x.lin]||{})[sz], pre=(x.lin==='A'?'UH':'H');
+  function furoTag(c){ if(!stdB||c.indexOf(pre)!==0||!/^\d+$/.test(c.slice(pre.length))) return ''; var d=parseInt(c.slice(pre.length),10);
+    return d===stdB[0]?' · padrão do catálogo':(d===stdB[1]?(x.lin==='F'?' · alternativo, sob consulta':' · alternativo'):''); }
+  if(stdB) forms=forms.slice().sort(function(a,b){ var fa=furoTag(a), fb=furoTag(b); return (fa.indexOf('padrão')>=0?0:1)-(fb.indexOf('padrão')>=0?0:1); });
+  F.push({id:'forma',g:'Construção',label:'Versão do eixo de saída / forma construtiva',blank:'— a definir —',opts:forms.map(function(c){return {v:c,t:formaTxt(x.lin,c)+furoTag(c)};}),
+    hint:(x.lin==='A'||x.lin==='F')?'Ø é o diâmetro do furo do eixo oco, em mm. O catálogo define um furo padrão e um alternativo por tamanho'+(x.lin==='F'?'; o alternativo é fornecido sob consulta.':'. Confirme o diâmetro do eixo da máquina antes de escolher.'):''});
   if((x.lin==='A'||x.lin==='F')&&flgs.length){
     var qf=/^QF/.test(fo);
     F.push({id:'flange',g:'Construção',label:'Flange de saída',blank:'— sem flange (versão básica) —',dis:qf,reason:qf?'A versão Quick-fit não tem flange parafusado de saída.':'',
@@ -1195,6 +1200,9 @@ function mecSync(){
 }
 function mecLab(F,id){ var f=F.filter(function(a){return a.id===id;})[0]; if(!f||!MC[id]) return ''; if(f.type==='check') return f.txt;
   var all=[]; if(f.groups) f.groups.forEach(function(g){ all=all.concat(g.o); }); else all=f.opts||[]; var m=all.filter(function(o){return o.v===MC[id];})[0]; return m?m.t:MC[id]; }
+var MEC_FURO={
+  A:{'05':[25,null],'10':[25,30],'20':[30,35],'30':[35,40],'35':[40,35],'41':[45,40],'50':[50,55],'55':[60,50],'60':[60,70],'70':[70,80],'80':[80,90],'90':[90,100]},
+  F:{'10':[25,30],'20':[30,35],'25':[35,40],'31':[35,40],'41':[40,45],'51':[50,55],'60':[60,70],'70':[80,70],'80':[90,80],'90':[100,90]}};
 function mecTokens(x){
   var F=mecSpec(x), T=[], vw=/^(VF|W)/.test(x.lin);
   function L(id){ return mecLab(F,id).replace(/^[^—:]*[—:]\s*/,''); }
