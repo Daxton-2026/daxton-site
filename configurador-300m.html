@@ -1838,6 +1838,29 @@ function m3Clean(){
     if(!ch) return F; }
   return m3Spec();
 }
+/* ---------- folha de dados: configuração mecânica por extenso ---------- */
+/* eixo de saída por tamanho, da planilha SAP da Bonfiglioli (tabela "eixosaida"): [Ø do chavetado, comprimento em mm, perfil do estriado] */
+var M3EIXO={
+ P:{'300':['38h6',58,'B40x36 DIN 5482'],'301':['50h6',82,'B40x36 DIN 5482'],'303':['60h6',105,'58x53 DIN 5482'],'304':['60h6',105,'58x53 DIN 5482'],'305':['60h6',105,'58x53 DIN 5482'],
+    '306':['80h6',130,'70x64 DIN 5482'],'307':['90h6',170,'B80x74 DIN 5482'],'309':['100m6',165,'B80x74 DIN 5482'],'310M':['110m6',210,'B100x94 DIN 5482'],'311M':['120m6',210,'B100x94 DIN 5482'],
+    '313M':['140m6',200,'W120x3 DIN 5480'],'314M':['160m6',240,'W150x5 DIN 5480'],'315M':['160m6',240,'W150x5 DIN 5480'],'316M':['180m6',260,'W170x5 DIN 5480'],'317M':['200r6',260,'W200x5 DIN 5480'],
+    '318M':['250m6',330,'W220x5 DIN 5480'],'319':['280h6',380,'W260x5 DIN 5480'],'321':['340m6',540,'W300x8 DIN 5480']},
+ M:{'300':['38h6',58,'B40x36 DIN 5482'],'301':['38h6',58,'B40x36 DIN 5482'],'303':['60h6',105,'58x53 DIN 5482'],'304':['60h6',105,'58x53 DIN 5482'],'305':['60h6',105,'58x53 DIN 5482'],
+    '306':['80h6',130,'70x64 DIN 5482'],'307':['90h6',170,'B80x74 DIN 5482']}};
+function m3Lines(x,ver,pos,opc,pad){
+  var L=[], sel=document.getElementById(M3.cfg.ver), ot=sel&&sel.selectedOptions[0]?sel.selectedOptions[0].textContent.replace(/ \(não existe no \S+\)$/,''):ver;
+  L.push(pad('Versão de saída', ot));
+  var grp=(ver==='MC'||ver==='MZ')?'M':((ver==='PC'||ver==='PZ'||ver==='HC'||ver==='HZ')?'P':null), e=grp?M3EIXO[grp][x.size]:null, est=/Z$/.test(ver);
+  if(e) L.push(pad('Eixo de saída', est?('maciço estriado '+e[2]):('maciço chavetado Ø'+e[0]+' x '+e[1]+' mm')));
+  else L.push(pad('Eixo de saída', grp?'dimensões no catálogo (não tabelado na SAP para este tamanho)':'dimensões da saída '+ver+' no catálogo, capítulo de dimensões'));
+  L.push(pad('Posição de montagem', pos||'A DEFINIR'));
+  var n=0; m3Spec().forEach(function(f){ var v=M3.st[f.id]; if(!v||f.id==='pos') return; var t;
+    if(f.type==='check') t=f.txt; else { var o=f.opts.filter(function(a){return a[0]===v;})[0]; t=o?o[1]:v; }
+    L.push(pad(f.label.replace(/ \(.*$/,''), t)); n++; });
+  if(!n) L.push(pad('Demais opções', 'padrão de fábrica'));
+  if(e) L.push('   Dimensões do eixo pela planilha SAP da Bonfiglioli; confirme no desenho do catálogo.');
+  return L;
+}
 function m3Opc(){
   var s=M3.st, o=[]; ['fit','cr'].forEach(function(k){ if(s[k]) o.push(s[k]); }); if(s.pv) o.push('PV'); if(s.lub) o.push(s.lub);
   if(s.prot) o.push(s.prot); if(s.cor) o.push(s.cor); if(s.ac) o.push('AC'); if(s.cc) o.push('CC'); if(s.rar) o.push(s.rar); if(s.lts) o.push(s.lts);
@@ -1969,8 +1992,9 @@ function ficha(){
   if($('polos').value!=='0') L.push(pad('Polos / Frequência', $('polos').value+' / '+$('freq').value+' Hz'));
   L.push(pad('Flange de entrada IEC',     (pf?pf+(x.soF?'  SOB CONSULTA A FABRICA':'')+(mf&&!pfm?'  (carcaça WEG '+mf.fr+', '+fmt(mf.P,mf.P%1?2:0)+' kW, '+mf.polos+' polos)':''):(pf0&&!flOk?'NAO DISPONIVEL neste redutor ('+pf0+'; aceita '+(flgFaixa(fl)||'nenhuma IEC')+')':'A DEFINIR — vem da carcaca do motor'))));
   if(pf&&mf&&!pfm) L.push('   Carcaça pela linha WEG W22 IR3 Premium; em outra marca ou linha pode mudar, confirme na placa do motor.');
-  L.push(pad('Posição de montagem',       (pos||'A DEFINIR')));
-  if(opc) L.push(pad('Opções e acessórios', opc));
+  L.push(Array(53).join('='));
+  L.push('CONFIGURAÇÃO MECÂNICA (SÓ O REDUTOR)');
+  m3Lines(x,ver,pos,opc,pad).forEach(function(t){ L.push(t); });
   L.push(Array(53).join('='));
   L.push('VERIFICADO CONTRA A LINHA DO CATÁLOGO');
   L.push(pad('Mn2 tabelado na coluna',   fmt(x.MnLit,0)+' Nm   '+(x.Mc<=x.MnLit?'atende':'NAO ATENDE')));
