@@ -296,13 +296,14 @@ th{color:var(--sec);font-weight:500;width:45%}
 .chero .im img{position:static;aspect-ratio:16/10;height:auto}
 .chero .im .ex{position:static;margin:0;border-radius:0;box-shadow:none;border-bottom:1px solid var(--lin)}
 }
+.logo a{color:inherit;text-decoration:none}.logo a.dx:hover{text-decoration:underline;text-underline-offset:4px}
 </style>
 <script>window.dataLayer=window.dataLayer||[];</script>
 </head>
 <body>
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5SX88V3B" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div class="top"><div class="topin">
- <a class="logo" href="#inicio"><span class="dx">DAXTON</span><span class="x">+</span><span class="csm">CSM</span></a>
+ <span class="logo"><a class="dx" href="/" title="Página inicial da Daxton" onclick="track('logo_daxton')">DAXTON</a><span class="x">+</span><a class="csm" href="#inicio" title="Início CSM">CSM</a></span>
  <div class="search"><input id="q" placeholder="Buscar: modelo, litros, kVA, toneladas ou código" oninput="S.q=this.value;if(S.q.trim())go('busca',cur==='busca');else go('inicio')"><span>⌕</span></div>
  <button class="cartbtn" onclick="openCart()"><span class="l">Cotação</span><b id="cc">0</b></button>
 </div></div>
