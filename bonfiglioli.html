@@ -604,6 +604,45 @@ footer {
   .processo-steps { grid-template-columns: 1fr; }
   .footer-inner { grid-template-columns: 1fr; }
 }
+
+/* revisão 22/11: leitura e enxugamento */
+.produto-text{font-size:15px;line-height:1.55}
+.dif-title{font-size:16px}.dif-text{font-size:15px;line-height:1.55}
+.setor-desc{font-size:15px}
+.proc-title{font-size:16px}.proc-text{font-size:14.5px;line-height:1.55}
+.hero-stat-label{font-size:13px}
+.ferr-chips li{font-size:13px}
+.form-group label{font-size:13px}
+.form-group input,.form-group select,.form-group textarea{font-size:16px}
+.cred-name{font-size:26px;font-weight:800;margin:6px 0 8px}
+.cred-text{font-size:15px;line-height:1.6;opacity:.92;margin-bottom:18px}
+.tec-det{margin-top:22px}
+.tec-det summary{cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:15px;padding:12px 18px;border:1.5px solid currentColor;border-radius:8px;list-style:none}
+.tec-det summary::-webkit-details-marker{display:none}
+.tec-det summary::after{content:"+";font-size:18px;line-height:1}
+.tec-det[open] summary::after{content:"–"}
+.tec-det[open] .dif-grid{margin-top:22px}
+.tec-det .fade-up{opacity:1!important;transform:none!important}
+.dif-right .cred-name{color:#fff;position:relative}.dif-right .cred-text{color:#dbe4f0;position:relative}
+@media(max-width:760px){
+.hero-img-col{display:none}
+.produto-img-wrap{height:120px!important;padding:10px!important}
+.dif-right{padding:28px 22px}
+.setor-img-wrap{height:130px!important;aspect-ratio:auto!important}
+}
+.cases{background:var(--gray-50,#f5f7fa)}
+.cases-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:28px}
+.case-card{background:#fff;border:1px solid #dfe5ec;border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:10px}
+.case-tag{align-self:flex-start;font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--navy,#003869);background:#fff3dc;border-radius:999px;padding:4px 10px}
+.case-card h3{font-size:19px;line-height:1.25;color:var(--navy-deep,#0b1f44);margin:2px 0}
+.case-card p{font-size:15px;line-height:1.55;color:#4a5566;margin:0}
+.case-card p b{color:var(--navy-deep,#0b1f44)}
+.case-res{list-style:none;min-height:104px;padding:12px 0 0;margin:auto 0 0;border-top:1px solid #e6ebf1;display:grid;gap:6px}
+.case-res li{font-size:14.5px;color:#4a5566}.case-res b{color:var(--navy,#003869);font-size:17px;margin-right:4px}
+.case-src{font-size:13.5px;font-weight:700;color:var(--navy,#003869);text-decoration:none;margin-top:4px}
+.cases-cta{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:24px;background:var(--navy-deep,#0b1f44);color:#fff;border-radius:14px;padding:18px 22px;font-size:17px;font-weight:700}
+.cases-note{font-size:12.5px;color:#6b7686;margin-top:12px}
+@media(max-width:900px){.cases-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -627,13 +666,12 @@ footer {
   </div>
   <div class="nav-links">
     <a href="/" class="nav-home">Home</a>
-    <a href="#continuidade">Continuidade</a>
-    <a href="#produtos">Linhas de Produto</a>
-    <a href="#aplicacoes">Aplicações</a>
-    <a href="#diferenciais">Por que Daxton</a>
-    <a href="#regioes">Cobertura</a>
     <a href="#ferramenta" class="nav-tool">Dimensionar redutor <span class="nav-tool-tag">novo</span></a>
-    <a href="#contato" class="nav-cta">Avaliar minha aplicação</a>
+    <a href="#produtos">Linhas de produto</a>
+    <a href="#aplicacoes">Aplicações</a>
+    <a href="#cases">Cases</a>
+    <a href="#diferenciais">Por que Daxton</a>
+    <a href="#contato" class="nav-cta">Falar com engenharia</a>
   </div>
   <button class="hamburger" id="hamburger" aria-label="Menu">
     <span></span><span></span><span></span>
@@ -641,13 +679,12 @@ footer {
 </nav>
 <div class="mobile-menu" id="mobile-menu">
   <a href="/">Home</a>
-  <a href="#continuidade" onclick="closeMobileMenu()">Continuidade</a>
-  <a href="#produtos" onclick="closeMobileMenu()">Linhas de Produto</a>
+  <a href="#ferramenta" onclick="closeMobileMenu()">Dimensionar redutor</a>
+  <a href="#produtos" onclick="closeMobileMenu()">Linhas de produto</a>
   <a href="#aplicacoes" onclick="closeMobileMenu()">Aplicações</a>
+  <a href="#cases" onclick="closeMobileMenu()">Cases</a>
   <a href="#diferenciais" onclick="closeMobileMenu()">Por que Daxton</a>
-  <a href="#regioes" onclick="closeMobileMenu()">Cobertura</a>
-  <a href="#ferramenta">Dimensionar redutor</a>
-  <a href="#contato" onclick="closeMobileMenu()">Avaliar minha aplicação →</a>
+  <a href="#contato" onclick="closeMobileMenu()">Falar com engenharia →</a>
 </div>
 
 <!-- HERO -->
@@ -658,13 +695,13 @@ footer {
       <h1>Acionamento especificado&nbsp;certo.<br>Máquina que <em>não para</em>.</h1>
       <p class="hero-sub">A Daxton representa a Bonfiglioli para fabricantes de máquinas em Santa Catarina e Curitiba — redutores planetários, helicoidais, coroa e rosca sem fim e motorredutores, com engenharia de aplicação e suporte técnico aqui na região.</p>
       <div class="hero-actions">
-        <a href="#contato" class="btn-primary">
-          Avaliar minha aplicação
+        <a href="#ferramenta" class="btn-primary" onclick="if(window.dataLayer)dataLayer.push({event:'bonf_hero_dimensionar'})">
+          Dimensionar meu redutor
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
-        <a href="#produtos" class="btn-secondary">
-          Ver linhas de produto
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        <a href="#contato" class="btn-secondary" onclick="if(window.dataLayer)dataLayer.push({event:'bonf_hero_engenharia'})">
+          Falar com engenharia de aplicação
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
       </div>
       <div class="hero-stats">
@@ -679,10 +716,6 @@ footer {
         <div>
           <div class="hero-stat-num">SC+PR</div>
           <div class="hero-stat-label">Atendimento presencial em SC e Curitiba</div>
-        </div>
-        <div>
-          <div class="hero-stat-num"><span class="counter" data-target="20">20</span><span>+</span></div>
-          <div class="hero-stat-label">Anos de experiência industrial no atendimento</div>
         </div>
       </div>
     </div><!-- /hero-content -->
@@ -746,22 +779,6 @@ footer {
 
 
 <!-- CONTINUIDADE DE FORNECIMENTO -->
-<section class="continuidade" id="continuidade">
-  <div class="continuidade-inner">
-    <span class="section-eyebrow fade-up">Atendimento local Bonfiglioli</span>
-    <h2 class="section-title fade-up">Bonfiglioli reforça presença<br>na <em style="color:var(--amber);font-style:normal">Região Sul</em> com atendimento local.</h2>
-    <p class="continuidade-body fade-up">A Bonfiglioli amplia sua atuação em Santa Catarina e Curitiba com atendimento técnico local e personalizado, através da Daxton — na figura de Carlos Sguario, mais de 20 anos de experiência no mercado industrial.</p>
-    <p class="continuidade-body fade-up">Esse atendimento vale tanto para quem já tem Bonfiglioli especificada em projeto — mesmos códigos, mesmo dimensional de montagem — e passa a contar com suporte mais próximo, quanto para todo fabricante de máquinas da região que ainda não trabalha com a marca e quer avaliar redutores e motorredutores de alta performance, soluções mecatrônicas avançadas com engenharia de aplicação local.</p>
-    <p class="continuidade-body fade-up">Se você fabrica máquinas em Santa Catarina ou Curitiba, fale comigo.</p>
-    <div class="continuidade-actions fade-up">
-      <a href="#contato" class="btn-primary">
-        Conhecer o atendimento
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
-    </div>
-  </div>
-</section>
-
 <!-- LINHAS DE PRODUTO -->
 <section class="produtos" id="produtos">
   <div class="section-inner">
@@ -830,6 +847,43 @@ footer {
   </div>
 </section>
 
+<!-- CASES OFICIAIS BONFIGLIOLI -->
+<section class="cases" id="cases">
+  <div class="section-inner">
+    <span class="section-eyebrow">Aplicações reais</span>
+    <h2 class="section-title">Problema, solução e <em>resultado</em>.</h2>
+    <p class="section-sub">Casos publicados pela Bonfiglioli, nos mesmos tipos de máquina que a sua engenharia projeta.</p>
+    <div class="cases-grid">
+      <article class="case-card">
+        <span class="case-tag">Processo · Misturador</span>
+        <h3>Eixo do agitador que quebrava</h3>
+        <p><b>Problema:</b> misturador de cola com motorredutor ligado direto na rede. Os picos de torque na partida quebravam o eixo do agitador com frequência.</p>
+        <p><b>Solução:</b> planetário série 300M com eixo maciço, mancais reforçados e flange de acoplamento, comandado pelo inversor Agile, que também monitora o torque.</p>
+        <ul class="case-res"><li><b>40%</b> redutor mais leve</li><li><b>10%</b> solução mais barata</li><li><b>5%</b> menos tempo de fabricação</li></ul>
+        <a class="case-src" href="https://www.bonfiglioli.com/china/zh/stories/success-stories/300-series" target="_blank" rel="noopener">Case Bonfiglioli: indústria química →</a>
+      </article>
+      <article class="case-card">
+        <span class="case-tag">Reciclagem · Pré-triturador</span>
+        <h3>Choque, carga de pico e inversão de giro</h3>
+        <p><b>Problema:</b> pré-triturador Arjes Impaktor 250 EVO, com velocidade, torque e sentido de giro mudando o tempo todo e carga de choque no acionamento.</p>
+        <p><b>Solução:</b> redutor planetário modular desenvolvido em conjunto, com base na série 300 e na nova série R3 para reciclagem: até 5 planetas por estágio e vedações testadas em condição extrema.</p>
+        <ul class="case-res"><li><b>80.000 Nm</b> de torque de saída por torre</li><li><b>46 rpm</b> na saída, relação i92</li><li><b>&gt;4.000 rpm</b> na entrada</li></ul>
+        <a class="case-src" href="https://www.bonfiglioli.com/usa/en/stories/success-stories/Bonfiglioli-Arjes" target="_blank" rel="noopener">Case Bonfiglioli: Arjes →</a>
+      </article>
+      <article class="case-card">
+        <span class="case-tag">Madeira · Transportadores</span>
+        <h3>Rampas de partida e frenagem sob controle</h3>
+        <p><b>Problema:</b> fábrica de painéis de madeira para cozinhas (VMG, Lituânia) com transportadores de roletes que só ligavam e freavam, sem controlar rampa nem variação de ciclo.</p>
+        <p><b>Solução:</b> motorredutores séries C e A com inversor embarcado DGM-MPM em cada transportador, ligados ao CLP, com rampas de aceleração e desaceleração revisadas.</p>
+        <ul class="case-res"><li><b>142</b> motorredutores com inversor</li><li><b>1</b> fornecedor para mecânica e eletrônica</li><li>Engenharia de aplicação antes da venda</li></ul>
+        <a class="case-src" href="https://www.bonfiglioli.com/international/en/stories/success-stories/Bonfiglioli-VGM" target="_blank" rel="noopener">Case Bonfiglioli: VMG →</a>
+      </article>
+    </div>
+    <div class="cases-cta"><span>Tem uma aplicação parecida na sua máquina?</span><a href="#contato" class="btn-primary" onclick="if(window.dataLayer)dataLayer.push({event:'bonf_case_cta'})">Avaliar minha aplicação <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+    <p class="cases-note">Fonte: histórias de sucesso publicadas em bonfiglioli.com. Números conforme publicados pela Bonfiglioli.</p>
+  </div>
+</section>
+
 <!-- POR QUE DAXTON -->
 <section class="diferenciais" id="diferenciais">
   <div class="section-inner">
@@ -837,7 +891,7 @@ footer {
       <div>
         <span class="section-eyebrow fade-up">Por que Daxton</span>
         <h2 class="section-title fade-up">Especificação é decidida<br>na engenharia — é lá que <em>eu atendo</em>.</h2>
-        <p class="section-sub fade-up">Representação técnica de verdade não é revenda de catálogo — é dimensionamento junto com quem projeta a máquina.</p>
+        <p class="section-sub fade-up">Dimensionamento junto com quem projeta a máquina. Vale para quem já tem Bonfiglioli especificada em projeto (mesmos códigos, mesmo dimensional de montagem) e para quem quer avaliar a marca com engenharia de aplicação aqui na região.</p>
         <div class="dif-list">
           <div class="dif-item fade-up">
             <div class="dif-num">01</div>
@@ -863,17 +917,16 @@ footer {
           <div class="dif-item fade-up">
             <div class="dif-num">04</div>
             <div>
-              <div class="dif-title">20+ anos em máquinas e equipamentos industriais</div>
-              <div class="dif-text">Experiência executiva no setor. A conversa começa na aplicação, não no catálogo.</div>
+              <div class="dif-title">Ferramentas de dimensionamento próprias</div>
+              <div class="dif-text">Configuradores Daxton para planetários, helicoidais, sem-fim, elevação e guinchos, com folha de dados pronta para cotação.</div>
             </div>
           </div>
         </div>
       </div>
       <div class="dif-right fade-in">
-        <div class="metric-block">
-          <div class="metric-val"><span class="counter" data-target="20">20</span><span>+</span></div>
-          <div class="metric-label">anos de experiência industrial no atendimento a fabricantes de máquinas</div>
-        </div>
+        <div class="metric-label" style="text-transform:uppercase;letter-spacing:.08em;font-weight:700;opacity:.8">Quem atende você</div>
+        <div class="cred-name">Carlos Sguario</div>
+        <div class="cred-text">Sócio da Daxton. Engenheiro mecânico, com carreira em Nord, Rexnord e WEG e mais de 20 anos em máquinas e equipamentos industriais. A conversa começa na aplicação, não no catálogo.</div>
         <div class="metric-divider"></div>
         <div class="metric-block">
           <div class="metric-val">SC+PR</div>
@@ -890,6 +943,7 @@ footer {
     <span class="section-eyebrow fade-up">Conteúdo técnico</span>
     <h2 class="section-title fade-up">O que separa um acionamento<br>que <em>dura</em> de um que <em>volta</em>.</h2>
     <p class="section-sub fade-up">Os quatro critérios que mais pesam na hora de dimensionar certo — e que catálogo nenhum resolve sozinho.</p>
+    <details class="tec-det"><summary>Ver os 4 critérios</summary>
     <div class="dif-grid">
       <div class="dif-item fade-up">
         <div class="dif-num">01</div>
@@ -920,30 +974,10 @@ footer {
         </div>
       </div>
     </div>
+    </details>
   </div>
 </section>
 
-
-<!-- COBERTURA -->
-<section class="regioes" id="regioes">
-  <div class="section-inner">
-    <div class="regioes-header">
-      <div>
-        <span class="section-eyebrow fade-up">Cobertura territorial</span>
-        <h2 class="section-title fade-up">De Santa Catarina a<br><em style="color:var(--navy-mid);font-style:normal">Curitiba</em>.</h2>
-      </div>
-      <p class="fade-up" style="font-size:15px; color:var(--text-light); max-width:320px; line-height:1.65;">Atendimento presencial nos principais polos industriais de SC e na região de Curitiba.</p>
-    </div>
-    <div class="regioes-grid">
-      <div class="regiao-item fade-up"><div class="regiao-dot"></div><div><div class="regiao-name">Joinville / Jaraguá do Sul</div><div class="regiao-desc">Polo metal-mecânico e de fabricantes de máquinas</div></div></div>
-      <div class="regiao-item fade-up"><div class="regiao-dot"></div><div><div class="regiao-name">Blumenau / Vale do Itajaí</div><div class="regiao-desc">Têxtil, embalagem e automação</div></div></div>
-      <div class="regiao-item fade-up"><div class="regiao-dot"></div><div><div class="regiao-name">Curitiba e região</div><div class="regiao-desc">Máquinas, automação e autopeças</div></div></div>
-      <div class="regiao-item fade-up"><div class="regiao-dot"></div><div><div class="regiao-name">Chapecó / Oeste</div><div class="regiao-desc">Alimentos, frigoríficos e agroindústria</div></div></div>
-      <div class="regiao-item fade-up"><div class="regiao-dot"></div><div><div class="regiao-name">Criciúma / Sul</div><div class="regiao-desc">Cerâmica, plásticos e mineração</div></div></div>
-      <div class="regiao-item fade-up"><div class="regiao-dot"></div><div><div class="regiao-name">Florianópolis / Itajaí</div><div class="regiao-desc">Tecnologia, naval e movimentação</div></div></div>
-    </div>
-  </div>
-</section>
 
 <!-- COMO TRABALHAMOS -->
 <section class="processo" id="metodologia">
@@ -1060,7 +1094,7 @@ footer {
       <a href="#produtos">Linhas de produto</a>
       <a href="#aplicacoes">Aplicações por segmento</a>
       <a href="#diferenciais">Por que Daxton</a>
-      <a href="#regioes">Cobertura em SC e Curitiba</a>
+      <a href="#diferenciais">Cobertura em SC e Curitiba</a>
     </div>
     <div class="footer-col">
       <div class="footer-col-title">Contato</div>
