@@ -65,7 +65,7 @@ h1{font-size:34px;line-height:1.15;color:var(--navy);margin:8px 0 8px;max-width:
 .dA{background:#fff;border:3px solid var(--amar)}
 .dA .ph{height:200px;background-size:cover;background-position:30% 40%}
 .dB{background:var(--navy);color:#fff;border:3px solid var(--navy)}
-.dB .ph{height:200px;background-size:cover;background-position:center}
+.dB .ph{height:200px;background-size:cover;background-position:center;background-color:#fff}
 .dB h2{color:#fff}.dB p{color:#dfe8f2}
 .dB .btn.y{margin-top:auto}.dA .btn.y{margin-top:auto}
 .dbody{padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px;flex:1}
@@ -82,6 +82,7 @@ h1{font-size:34px;line-height:1.15;color:var(--navy);margin:8px 0 8px;max-width:
 .chips a{background:#f2f5f8;border:1.5px solid var(--lin);border-radius:10px;padding:10px 12px;font-weight:700;color:var(--navy);font-size:15px}
 .chips a span{display:block;font-weight:400;font-size:12.5px;color:var(--sec)}
 .chips a:hover{border-color:var(--navy)}
+.pchips a{display:flex;align-items:center;gap:8px}.pchips a span.tx{flex:1;min-width:0;display:block;font-weight:700;font-size:15px;color:var(--navy)}.pchips a span.tx span{display:block;font-weight:400;font-size:12.5px;color:var(--sec)}.pchips img{flex:0 0 52px;width:52px;height:52px;object-fit:contain;background:#fff;border-radius:6px}
 .btn{display:block;text-align:center;font-weight:800;border-radius:12px;padding:13px 16px;font-size:16px;margin-top:auto}
 .btn.y{background:var(--amar);color:var(--navy)}
 .btn.w{background:#fff;color:var(--navy)}
@@ -134,6 +135,7 @@ body.engm .eng{display:block}
  .nav a.hide{display:none}
 }
 @media(max-width:560px){.quick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}.quick a{border-radius:14px;padding:14px 12px;display:flex;flex-direction:column;gap:2px;min-height:86px;justify-content:center}.quick b{font-size:17px;line-height:1.2}.quick span{font-size:12.5px}.qa{background:var(--amar);color:var(--navy)}.qb{background:var(--navy);color:#fff}.qb span{color:#dfe8f2}.door{scroll-margin-top:70px}.ind{grid-template-columns:1fr}.ic .ph{height:120px}.dA .ph,.dB .ph{height:150px}.nums b{font-size:22px}.lead{font-size:15.5px}.topin img{height:28px}}
+@media(max-width:760px){.pchips{grid-template-columns:1fr}.pchips img{flex-basis:44px;width:44px;height:44px}}
 </style>
 </head>
 <body>
@@ -150,16 +152,16 @@ body.engm .eng{display:block}
  <div class="quick"><a href="#portaB" class="qb" onclick="t('porta_rapida',{porta:'industria'})"><b>Indústria</b><span>Redutores e motorredutores Bonfiglioli</span></a><a href="#portaA" class="qa" onclick="t('porta_rapida',{porta:'csm'})"><b>Obra, loja e locadora</b><span>Equipamentos CSM</span></a></div>
  <div class="doors">
   <div class="door dB" id="portaB">
-   <div class="ph" style="background-image:url(/marcas/bonfiglioli-suporte-tecnico.jpg)"></div>
+   <div class="ph" style="background-image:url(/marcas/bonfiglioli-porta-industria.jpg)"></div>
    <div class="dbody">
     <span class="tag">Indústria · SC e Curitiba</span>
     <h2>Redutores e motorredutores Bonfiglioli</h2>
     <p>Para fabricantes de máquinas e manutenção industrial. Engenharia de aplicação na região e configuradores com folha de dados pronta para cotação.</p>
-    <div class="chips">
-     <a href="/configurador?modo=geral" onclick="t('porta_industria',{area:'300m'})">Planetários 300 M<span>Alta densidade de torque</span></a>
-     <a href="/configurador-acf" onclick="t('porta_industria',{area:'acf'})">Helicoidais A, C, F e S<span>Paralelos, cônicos, coaxiais</span></a>
-     <a href="/configurador-vfw" onclick="t('porta_industria',{area:'vfw'})">Coroa e rosca sem-fim<span>Linhas VF e W</span></a>
-     <a href="/configurador-guinchos" onclick="t('porta_industria',{area:'guinchos'})">Guinchos<span>Molinetes e carretéis</span></a>
+    <div class="chips pchips">
+     <a href="/configurador?modo=geral" onclick="t('porta_industria',{area:'300m'})"><span class="tx">Planetários 300 M<span>Alta densidade de torque</span></span><img src="/marcas/bonfiglioli-redutor-planetario.jpg" alt=""></a>
+     <a href="/configurador-acf" onclick="t('porta_industria',{area:'acf'})"><span class="tx">Helicoidais A, C, F e S<span>Paralelos, cônicos, coaxiais</span></span><img src="/marcas/bonfiglioli-motorredutor-eixos-paralelos.jpg" alt=""></a>
+     <a href="/configurador-vfw" onclick="t('porta_industria',{area:'vfw'})"><span class="tx">Coroa e rosca sem-fim<span>Linhas VF e W</span></span><img src="/marcas/bonfiglioli-motorredutor-sem-fim-vf.jpg" alt=""></a>
+     <a href="#" onclick="t('porta_industria',{area:'inversores'});return wa('inversores')"><span class="tx">Inversores de frequência<span>Agile, Active Cube, S2U</span></span><img src="/marcas/bonfiglioli-inversor.png" alt=""></a>
     </div>
     <a class="btn y" href="/bonfiglioli" onclick="t('porta_industria',{linha:'bonfiglioli'})">Ver Bonfiglioli →</a>
    </div>
@@ -221,7 +223,7 @@ body.engm .eng{display:block}
 <script>
 window.dataLayer=window.dataLayer||[];
 function t(ev,o){window.dataLayer.push(Object.assign({event:ev},o||{}))}
-const MSG={csm:"Olá, Daxton. Quero falar sobre equipamentos CSM.",bonfiglioli:"Olá, Daxton. Quero falar sobre redutores e motorredutores Bonfiglioli."};
+const MSG={csm:"Olá, Daxton. Quero falar sobre equipamentos CSM.",bonfiglioli:"Olá, Daxton. Quero falar sobre redutores e motorredutores Bonfiglioli.",inversores:"Olá, Daxton. Quero falar sobre inversores de frequência Bonfiglioli para a minha aplicação."};
 function wa(k){t("contato_whatsapp",{assunto:k});if(typeof gtag==="function"){try{gtag("event","conversion",{send_to:"AW-17062055869/YnaVCL78v8QaEL2f6cc_"})}catch(e){}}window.open("https://wa.me/5547991029909?text="+encodeURIComponent(MSG[k]),"_blank","noopener");return false}
 if(/[?&#]eng/.test(location.href))document.body.classList.add("engm");
 </script>
