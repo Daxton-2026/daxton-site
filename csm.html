@@ -324,6 +324,7 @@ h2.sec{font-size:22px;color:var(--navy);margin:28px 0 4px}p.subt{color:var(--sec
 .vb4 b{color:var(--navy);font-size:15.5px}.vb4 button{margin-top:auto;align-self:flex-start;background:var(--amar);color:var(--navy);border:0;border-radius:8px;padding:8px 10px;font-weight:800;cursor:pointer}
 @media(max-width:760px){.vb4{grid-template-columns:1fr 1fr}}
 .roinote{font-size:12.5px;color:var(--sec);margin:8px 0;line-height:1.45}.roig small{font-weight:400;opacity:.8}
+.roimd{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0 12px}.roimd>span{font-weight:700;color:var(--navy);font-size:14px;margin-right:4px}.roimd .chip.on{background:var(--navy);color:#fff;border-color:var(--navy)}
 </style>
 <script>window.dataLayer=window.dataLayer||[];</script>
 </head>
@@ -1556,24 +1557,26 @@ function vFases(k){const F=FASES.find(f=>f.k===k);
 
 /* ---- Calculadora de retorno para locadora (sem preço no site: valores digitados pelo cliente) ---- */
 function roiEq(){return Object.values(BY).filter(p=>(p.c&&p.c.linha==="Rental"&&!p.c.acc)||(p.g&&/Rental/.test(p.g.linha))||/^(rental200|rental400|force400|force400c)$/.test(p.id)).sort((a,b)=>a.n.localeCompare(b.n,"pt-BR"))}
-let R={id:"",inv:"",dia:"",dias:"15",man:"",vida:"36",q:"1"};
+let R={id:"",modo:"d",inv:"",dia:"",dias:"15",mes:"",mano:"10",man:"",vida:"36",q:"1"};
 const num=s=>{s=String(s||"").replace(/[^\d,.-]/g,"");if(s.includes(","))s=s.replace(/\./g,"").replace(",",".");else if(/^\d{1,3}(\.\d{3})+$/.test(s))s=s.replace(/\./g,"");return parseFloat(s)};
 const brl=v=>isFinite(v)?v.toLocaleString("pt-BR",{style:"currency",currency:"BRL",maximumFractionDigits:0}):"—";
-function roiCalc(){const inv=num(R.inv),dia=num(R.dia),dias=num(R.dias),man=num(R.man)||0,vida=num(R.vida)||36;
- if(!(inv>0&&dia>0&&dias>0))return null;const rec=dia*dias,luc=rec-man;return {inv,dia,dias,man,vida,rec,luc,pay:luc>0?inv/luc:Infinity,ano:luc*12-inv,tot:luc*vida-inv,diar:inv/dia}}
+function roiCalc(){const M=R.modo==="m",inv=num(R.inv),dia=num(R.dia),dias=num(R.dias),mes=num(R.mes),mano=num(R.mano),man=num(R.man)||0,vida=num(R.vida)||36;
+ if(M){if(!(inv>0&&mes>0&&mano>0))return null}else if(!(inv>0&&dia>0&&dias>0))return null;
+ const rec=M?mes*Math.min(mano,12)/12:dia*dias,luc=rec-man;return {M,inv,dia,dias,mes,mano,man,vida,rec,luc,pay:luc>0?inv/luc:Infinity,ano:luc*12-inv,tot:luc*vida-inv,diar:M?inv/mes:inv/dia}}
 function roiOut(){const r=roiCalc();const o=document.getElementById("roiout");if(!o)return;
- if(!r){o.innerHTML=`<div class="cempty"><span class="bolt">R$</span><b>Seu retorno aparece aqui</b><span>Preencha o valor do equipamento, a diária e os dias locados por mês.</span></div>`;return}
+ if(!r){o.innerHTML=`<div class="cempty"><span class="bolt">R$</span><b>Seu retorno aparece aqui</b><span>Preencha o valor do equipamento e quanto você cobra pela locação.</span></div>`;return}
  const pm=r.pay;const lvl=pm<=6?["#1a7f4b","Retorno rápido"]:pm<=12?["#2f6fb2","Retorno dentro do primeiro ano"]:pm<=24?["#d9822b","Retorno em até 2 anos"]:["#b3261e","Retorno lento: revise diária ou ocupação"];
  o.innerHTML=`<div class="rhd">Retorno por unidade</div>
  <div class="roibig" style="border-color:${lvl[0]}"><span>O equipamento se paga em</span><b style="color:${lvl[0]}">${isFinite(pm)?(pm<1?"menos de 1 mês":pm.toFixed(1).replace(".",",")+" meses"):"não paga"}</b><em style="color:${lvl[0]}">${lvl[1]}</em></div>
- <div class="roig"><div><span>Receita por mês</span><b>${brl(r.rec)}</b></div><div><span>Sobra por mês <small>(diárias − manutenção)</small></span><b>${brl(r.luc)}</b></div><div><span>Diárias para pagar</span><b>${Math.ceil(r.diar)}</b></div><div><span>Sobra em 12 meses, já descontado o equipamento</span><b>${brl(r.ano)}</b></div><div style="grid-column:1/-1"><span>Sobra em ${r.vida} meses de uso, já descontado o equipamento</span><b>${brl(r.tot)}</b></div></div>
+ <div class="roig"><div><span>Receita por mês${r.M?" <small>(média no ano)</small>":""}</span><b>${brl(r.rec)}</b></div><div><span>Sobra por mês <small>(${r.M?"mensalidades":"diárias"} − manutenção)</small></span><b>${brl(r.luc)}</b></div><div><span>${r.M?"Mensalidades":"Diárias"} para pagar</span><b>${Math.ceil(r.diar)}</b></div><div><span>Sobra em 12 meses, já descontado o equipamento</span><b>${brl(r.ano)}</b></div><div style="grid-column:1/-1"><span>Sobra em ${r.vida} meses de uso, já descontado o equipamento</span><b>${brl(r.tot)}</b></div></div>
  ${num(R.q)>1?`<p style="font-size:14px;margin:8px 0;color:var(--navy)"><b>${num(R.q)} unidades:</b> sobra de ${brl(r.luc*num(R.q))} por mês.</p>`:""}
  <button class="btn g big" onclick="roiWa()">Pedir condição para locadora</button>
  ${R.id?`<button class="btn o" style="width:100%;margin-top:8px" onclick="addCart('${R.id}',0,${Math.max(1,num(R.q)||1)})">Adicionar à cotação</button>`:""}
  <p class="fonte" style="margin-top:8px">Conta simples, antes de impostos, frete, seguro e depreciação. Os valores são os que você digitou.</p>`}
+function roiModo(m){R.modo=m;track("roi_modo",{modo:m==="m"?"mensal":"diaria"});const y=scrollY;go(cur,1);scrollTo(0,y)}
 function roiSet(k,v){R[k]=v;if(k==="id")R.lbl=v&&BY[v]?BY[v].n:"";roiOut()}
 function roiWa(){const r=roiCalc();const p=R.id&&BY[R.id];
- const msg=`Olá, Daxton. Sou locadora e quero condição comercial${p?` para ${num(R.q)||1}x ${p.n}`:""}.\nMinha conta: diária ${brl(r.dia)}, ${r.dias} dias locados por mês, retorno em ${isFinite(r.pay)?r.pay.toFixed(1).replace(".",","):"—"} meses.\nCNPJ: `;
+ const msg=`Olá, Daxton. Sou locadora e quero condição comercial${p?` para ${num(R.q)||1}x ${p.n}`:""}.\nMinha conta: ${r.M?`mensalidade ${brl(r.mes)}, ${r.mano} meses locados por ano`:`diária ${brl(r.dia)}, ${r.dias} dias locados por mês`}, retorno em ${isFinite(r.pay)?r.pay.toFixed(1).replace(".",","):"—"} meses.\nCNPJ: `;
  track("roi_locadora_whatsapp",{produto:p?p.n:"",payback:isFinite(r.pay)?+r.pay.toFixed(1):null});const a=document.createElement("a");a.href="https://wa.me/"+WA+"?text="+encodeURIComponent(msg);a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove()}
 function vRoi(pre){if(pre&&BY[pre])R.id=pre;const eq=roiEq();
  const f=(k,l,ph,h)=>`<div class="fld"><label>${l}</label><input inputmode="decimal" value="${esc(R[k])}" placeholder="${ph}" oninput="roiSet('${k}',this.value)">${h?`<small>${h}</small>`:""}</div>`;
@@ -1582,16 +1585,16 @@ function vRoi(pre){if(pre&&BY[pre])R.id=pre;const eq=roiEq();
  <div class="hero"><span class="pill">Para locadoras</span><h1>Em quanto tempo o equipamento se paga?</h1><p>Coloque o valor da proposta e a sua diária. A conta sai na hora. Não tem a proposta? Peça a condição para locadora no botão verde.</p></div>
  <div class="calcw"><div>
  <div class="cstep"><b class="sth"><i>1</i>Equipamento (opcional)</b><select class="roisel" onchange="roiSet('id',this.value)"><option value="">Escolha um equipamento da linha Rental</option>${eq.map(p=>`<option value="${p.id}" ${R.id===p.id?"selected":""}>${esc(p.n)}</option>`).join("")}</select></div>
- <div class="cstep"><b class="sth"><i>2</i>Sua conta</b><div class="lev">
+ <div class="cstep"><b class="sth"><i>2</i>Sua conta</b><div class="roimd"><span>Como você aluga?</span><button class="chip ${R.modo!=="m"?"on":""}" onclick="roiModo('d')">Por diária</button><button class="chip ${R.modo==="m"?"on":""}" onclick="roiModo('m')">Por mês</button></div><div class="lev">
  ${f("inv","Valor do equipamento (R$)","Valor da proposta","Por unidade, da proposta da Daxton")}
- ${f("dia","Diária que você cobra (R$)","Ex.: a da sua tabela")}
- ${f("dias","Dias locados por mês","15","Média realista, não o mês cheio")}
+
+ ${R.modo==="m"?f("mes","Mensalidade que você cobra (R$)","Ex.: a da sua tabela")+f("mano","Meses locados por ano","10","Média realista, considerando meses parados"):f("dia","Diária que você cobra (R$)","Ex.: a da sua tabela")+f("dias","Dias locados por mês","15","Média realista, não o mês cheio")}
  ${f("man","Custo mensal de manutenção (R$)","0","Peças, revisão, transporte")}
  ${f("vida","Meses de uso esperado","36")}
  ${f("q","Quantas unidades","1")}
  </div></div></div>
  <div class="cres" id="roiout"></div></div>
- <div class="val eng">Calculadora sem preço da CSM: todos os valores monetários são digitados pelo cliente (regra do projeto). Padrões 15 dias/mês e 36 meses são exemplos editáveis, não dado da CSM.</div>`}
+ <div class="val eng">Calculadora sem preço da CSM: todos os valores monetários são digitados pelo cliente (regra do projeto). Padrões 15 dias/mês, 10 meses locados/ano (modo mensal) e 36 meses são exemplos editáveis, não dado da CSM.</div>`}
 
 /* ---- Página Para revendas (mix sugerido = proposta Daxton, a validar com o Carlos) ---- */
 const MIX=[
