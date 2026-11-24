@@ -301,6 +301,28 @@ th{color:var(--sec);font-weight:500;width:45%}
 .bwrap:hover{opacity:.88}
 .blogo{display:block;height:36px;width:auto}.csl{height:19px}
 @media(max-width:760px){.bwrap{height:36px;padding:2px 6px}.blogo{height:30px}.csl{height:16px}.bwrap:nth-child(2){display:none}}
+.lxr{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:10px 0 6px}
+.lxc{border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:8px}
+.lx{background:#fff;border:2px solid var(--amar)}.lr{background:var(--navy);color:#fff}
+.lxt{align-self:flex-start;font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:var(--amar);color:var(--navy)}
+.lxc h3{margin:2px 0;font-size:19px}.lr h3{color:#fff}
+.lxc ul{margin:0;padding-left:18px;font-size:14.5px;line-height:1.6}
+.lxp{font-size:13.5px;margin:0;opacity:.9}
+.lxm{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+.lxm button{border:1px solid var(--lin);background:#f4f6f9;color:var(--navy);border-radius:8px;padding:6px 10px;font-weight:700;font-size:13px;cursor:pointer}
+.lr .lxm button{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.35);color:#fff}
+.lxroi{margin-top:6px;background:var(--amar);color:var(--navy);border:0;border-radius:10px;padding:11px 14px;font-weight:800;cursor:pointer;text-align:left}
+.nmr{display:flex;align-items:center;gap:22px;background:#fff;border:1px solid var(--lin);border-radius:14px;padding:18px;margin:10px 0}
+.nmw{font-size:40px;font-weight:900;letter-spacing:1px;white-space:nowrap}
+.nml{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;font-size:14px}.nml small{color:var(--sec)}
+.c1{color:#003869}.c2{color:#1a7f4b}.c3{color:#d08a00}.c4{color:#6b7686}.c5{color:#b4232a}
+@media(max-width:760px){.lxr{grid-template-columns:1fr}.nmr{flex-direction:column;align-items:flex-start;gap:10px}.nmw{font-size:34px}.nml{grid-template-columns:1fr}}
+h2.sec{font-size:22px;color:var(--navy);margin:28px 0 4px}p.subt{color:var(--sec);margin:0 0 4px;font-size:15px}
+.vb4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:10px}
+.vb4>div{background:#fff;border:1px solid var(--lin);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--sec)}
+.vb4 span{width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
+.vb4 b{color:var(--navy);font-size:15.5px}.vb4 button{margin-top:auto;align-self:flex-start;background:var(--amar);color:var(--navy);border:0;border-radius:8px;padding:8px 10px;font-weight:800;cursor:pointer}
+@media(max-width:760px){.vb4{grid-template-columns:1fr 1fr}}
 </style>
 <script>window.dataLayer=window.dataLayer||[];</script>
 </head>
@@ -564,7 +586,7 @@ const kv=x=>String(x).replace(".",",");
 const gFace=g=>g.sup.some(s=>s[0]==="t")?(g.sup.some(s=>s[0]==="m")?"Mono ou trifásico":"Trifásico"):g.bi?"Bivolt 127/220 V":"127 V ou 220 V";
 const vMain=g=>g.versoes[0];
 function gcard(p){const g=p.g,inC=cart.some(c=>c.id===p.id);
- return `<div class="card"><div class="ph" onclick="go('p-${p.id}')"><img src="${IMG[p.img]}" alt="${esc(p.n)}" loading="lazy">${/Rental/.test(g.linha)?'<span class="tag">Linha Rental</span>':g.linha==="Inverter"?'<span class="tag y">Inverter</span>':g.comb==="Diesel"?'<span class="tag">Diesel</span>':""}</div>
+ return `<div class="card"><div class="ph" onclick="go('p-${p.id}')"><img src="${IMG[p.img]}" alt="${esc(p.n)}" loading="lazy">${/Rental/.test(g.linha)?'<span class="tag">Linha Rental</span>':g.linha==="GMX"?'<span class="tag y">Linha X</span>':g.linha==="Inverter"?'<span class="tag y">Inverter</span>':g.comb==="Diesel"?'<span class="tag">Diesel</span>':""}</div>
  <div class="bd"><div class="nm" onclick="go('p-${p.id}')">${esc(p.n)}</div>
  <div class="specs"><span><b>${kv(g.kvaMax)} kVA</b> máx.</span><span>${kv(g.kvaNom)} kVA nominal</span><span>${esc(g.comb.replace(" (2 tempos)",""))}</span><span>${gFace(g)}</span></div>
  <button class="add ${inC?"in":""}" style="margin-top:auto" onclick="quickAdd('${p.id}')">${inC?"✓ Na cotação":"Adicionar à cotação"}</button></div></div>`}
@@ -579,7 +601,23 @@ function vGerHome(){
  <span class="cta">Configurar agora →</span></span>
  <span class="im"><img src="${IMG.app20}" alt="Gerador CSM ligando betoneira na obra"><span class="ex">Exemplo: betoneira 400L + vibrador + talha GT 600 → <b>GMR 10000E</b></span></span></button>
  <div class="tiles t5">${GFX.map(f=>`<button class="tile" onclick="GF={};go('${f.k}')"><img src="${IMG[f.img]}" alt=""><b>${f.t}</b><span class="m">${f.ids.length} modelos</span><span class="m">${f.d}</span><span class="go2">Ver modelos</span></button>`).join("")}</div>
- <p class="fonte">kVA nominal do Catálogo CSM 2026, pp. 56-70.</p>`}
+ <h2 class="sh">Linha X ou Linha Rental?</h2>
+ <p class="subt">Duas linhas, para intensidades de uso diferentes. Escolha pela rotina, não só pela potência.</p>
+ <div class="lxr">
+  <div class="lxc lx"><span class="lxt">Linha X · GMX</span><h3>Uso profissional em regime moderado</h3>
+   <ul><li>Melhor custo x benefício</li><li>Pensada para o varejo e a revenda</li><li>De 1,3 a 7 kVA máximos</li><li>Regulador de tensão (AVR) protege os equipamentos ligados</li></ul>
+   <p class="lxp"><b>Para quem:</b> pequenas obras, eletricistas e prestadores de serviço, pequenos comércios, propriedades rurais, falta de energia em casa e camping.</p>
+   <div class="lxm">${["gmx1300","gmx3500","gmx6500","gmx8000"].map(i=>`<button onclick="go('p-${i}')">${esc(BY[i].n.replace(/^Gerador /,''))}</button>`).join("")}</div></div>
+  <div class="lxc lr"><span class="lxt">Linha Rental · GMR e GTR</span><h3>Regime intenso e ambiente severo</h3>
+   <ul><li>Uso profissional e locação</li><li>Regime intenso e ambiente severo</li><li>De 4 a 19 kVA máximos, mono ou trifásico</li><li>Melhor escolha para locação</li></ul>
+   <p class="lxp"><b>Para quem:</b> locadoras, construtoras, empresas de infraestrutura e de eventos, agronegócio e uso com jornada prolongada.</p>
+   <div class="lxm">${["gmr4000","gmr6500","gmr10000","gtr10000","gmr11500","gmr15000","gmr22000"].map(i=>`<button onclick="go('p-${i}')">${esc(BY[i].n.replace(/^Gerador /,''))}</button>`).join("")}</div>
+   <button class="lxroi" onclick="go('locadora')">Sou locadora: em quanto tempo se paga? →</button></div>
+ </div>
+ <h2 class="sh">Como ler o nome do gerador</h2>
+ <div class="nmr"><div class="nmw"><span class="c1">G</span><span class="c2">M</span><span class="c3">R</span><span class="c4">10000</span><span class="c5">E</span></div>
+  <div class="nml"><span><b class="c1">G</b> gerador</span><span><b class="c2">M</b> monofásico <small>(T = trifásico, D = diesel, I = inverter)</small></span><span><b class="c3">X ou R</b> linha X ou Rental</span><span><b class="c4">número</b> categoria do produto</span><span><b class="c5">E ou R</b> partida elétrica ou retrátil</span></div></div>
+ <p class="fonte">kVA nominal do Catálogo CSM 2026, pp. 56-70. Linhas e nomenclatura: treinamento de vendas de geradores CSM.</p>`}
 
 let GF={};
 function gfit(g){if(GF.c&&!g.comb.startsWith(GF.c))return false;
@@ -1575,6 +1613,15 @@ function vRevendas(){const M=MIX.find(m=>m.k===MK),o=MOFF[MK]||{};const n=mixSel
  <h2 class="sh">Por que comprar via Daxton</h2>
  <div class="steps4"><div><i>1</i><b>Visita na loja</b><span>A Daxton vai até você, entende o seu público e o seu espaço.</span></div><div><i>2</i><b>Mix por giro</b><span>Começar pelo que vende na sua região, sem estoque parado.</span></div><div><i>3</i><b>Condição para CNPJ</b><span>Proposta comercial CSM para revenda, com acompanhamento do pedido.</span></div><div><i>4</i><b>Ferramentas de balcão</b><span>Configurador de geradores, seletor de betoneira e peças com código para o seu vendedor usar.</span></div></div>
  <div class="cred"><div class="credi">↗</div><div><b>A Daxton manda cliente para a sua loja</b><p>Quem entra neste site para comprar para a própria obra é direcionado às revendas parceiras da cidade. Revenda parceira aparece na lista de onde comprar.</p></div></div>
+ <h2 class="sh">Como vender gerador no balcão</h2>
+ <p class="subt">O roteiro de 4 passos do treinamento CSM, com a ferramenta da Daxton no passo 2.</p>
+ <div class="vb4">
+  <div><span>1</span><b>Perguntar</b>O que o cliente vai ligar e com que intensidade de uso.</div>
+  <div><span>2</span><b>Dimensionar</b>Use o configurador de geradores: a potência sai em 1 minuto.<button onclick="go('calc')">Abrir configurador →</button></div>
+  <div><span>3</span><b>Escolher linha e modelo</b>Linha X para uso moderado, Rental para uso intenso e locação.<button onclick="go('geradores')">Ver as duas linhas →</button></div>
+  <div><span>4</span><b>Argumentar</b>Mostre a marca e o modelo e explique os benefícios.</div>
+ </div>
+ <p class="subt" style="margin-top:8px"><b>Venda com o que vem depois:</b> a CSM tem assistência técnica e peças em todo o Brasil. O cliente compra com mais segurança e a loja vende com menos preocupação.</p>
  <h2 class="sh" id="mix">Mix sugerido por porte de loja</h2>
  <div class="chiprow">${MIX.map(m=>`<button class="chip ${MK===m.k?"on":""}" onclick="MK='${m.k}';go('revendas',true)">${m.t}</button>`).join("")}</div>
  <div class="calcw"><div><div class="cstep"><b class="sth"><i>✓</i>${M.t}: ${M.it.length} itens</b><p style="margin:2px 0 6px;color:var(--sec);font-size:14px">${M.d} Desmarque o que você já tem.</p>
