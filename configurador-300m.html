@@ -681,7 +681,7 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
             <div class="fld only-elev"><label for="vel">Velocidade <em>v</em> — m/min</label><input id="vel" type="number" step="0.1" value="6" inputmode="decimal"></div>
             <div class="fld only-elev"><label for="dt">Ø do tambor <em>D</em> — mm</label><input id="dt" type="number" step="0.1" value="500" inputmode="decimal"></div>
             <div class="fld only-elev"><label for="ram">Ramais no moitão</label><input id="ram" type="number" step="1" value="4" inputmode="numeric"></div>
-            <div class="fld only-elev"><label for="pta">Pontas de cabo no tambor</label><input id="pta" type="number" step="1" value="2" inputmode="numeric"></div>
+            <div class="fld only-elev"><label for="pta">Pontas de cabo no tambor</label><select id="pta"><option value="1">1 — cabo simples</option><option value="2" selected>2 — tambor duplo</option></select><span class="tip" id="cavtip"></span></div>
             <div class="fld only-elev"><label for="pol">Nº de polias no cabo</label><input id="pol" type="number" step="1" value="2" inputmode="numeric"></div>
           </div>
         </div>
@@ -1277,10 +1277,14 @@ function requisito(){
   var tol=V('tol')/100, leit=parseInt($('leit').value,10);
   if(fx){ fam=fx.fam; tol=1e9; }
   var fs=fsLookup(h,parseInt($('carga').value,10),parseInt($('zb').value,10));
-  var n2req,Mr2base,Mr2carga=null,Mr2mot=null,Padq=NaN,etac=null,r=null,Ptam=null,pot;
+  var n2req,Mr2base,Mr2carga=null,Mr2mot=null,Padq=NaN,etac=null,r=null,Ptam=null,pot,cabErr=false;
   if(modo==='elev'){
     var Q=V('q')*($('qunit').value==='kg'?1:1000),D=V('dt'),v=V('vel'),ram=V('ram'),pta=V('pta'),pol=V('pol');
     r=ram/pta; etac=Math.pow(0.98,pol);
+    /* cavalamento: 1 ou 2 pontas no tambor e ramais múltiplos das pontas (4/1, 4/2, 8/2...) */
+    cabErr=!(pta===1||pta===2)||!(ram>=pta)||(ram%pta)!==0||ram!==Math.round(ram);
+    var ct=$('cavtip'); if(ct) ct.innerHTML=cabErr?'<b style="color:var(--crit)">Cavalamento impossível:</b> '+(isFinite(ram)?ram:'?')+' ramais com '+(isFinite(pta)?pta:'?')+' ponta(s). Use 1 ponta ('+ram+'/1) ou 2 pontas com ramais pares.':'Cavalamento <b>'+ram+'/'+pta+'</b>: o cabo no tambor anda '+fmt(r,1).replace(/,0$/,'')+'× a velocidade do gancho.';
+    if(cabErr){ v=NaN; r=NaN; }
     if(fx) v=(n1/fx.i)*Math.PI*D/(r*1000);   /* com o modelo fixo a velocidade de içamento é resultado */
     n2req=v*r*1000/(Math.PI*D);
     Ptam=Q*9.81*v/60/1000/etac;
@@ -1297,7 +1301,7 @@ function requisito(){
     Mr2base=9550*Pm*0.91/n2req;   // referência a 3 estágios; por candidato usa o eta dele
     pot=true;
   }
-  return {npol:(parseInt($('polos').value,10)||0),n1:n1,ne:ne,n1op:n1op,n1lib:n1lib,Pm:Pm,h:h,tfr:tfr,fam:fam,tol:tol,leit:leit,fs:fs,
+  return {cabErr:cabErr,npol:(parseInt($('polos').value,10)||0),n1:n1,ne:ne,n1op:n1op,n1lib:n1lib,Pm:Pm,h:h,tfr:tfr,fam:fam,tol:tol,leit:leit,fs:fs,
           Q:(modo==='elev'?V('q')*($('qunit').value==='kg'?1:1000):NaN),n2req:n2req,Mr2base:Mr2base,Mr2carga:Mr2carga,Mr2mot:Mr2mot,Padq:Padq,fsm:fsm,base:(modo==='elev'?$('base').value:null),etac:etac,r:r,Ptam:Ptam,pot:pot,thc:{ver:$('ver').value,pos:($('pos').value||'').trim().toUpperCase(),t40:$('tamb').value==='40',conf:$('tair').value==='1',ed:parseInt($('ted').value,10)||100,n1:n1,cr:((/\bCR[123]\b/.exec($('opc').value||''))||[''])[0],pf:!!(M3&&M3.st&&M3.st.pf==='1')},fix:fx||null,nomod:(ENTR==='mod'&&!arguments.length&&!fx),vres:(fx&&modo==='elev')?(n1/fx.i)*Math.PI*V('dt')/((V('ram')/V('pta'))*1000):NaN};
 }
 
@@ -1556,7 +1560,7 @@ function render(){
     ? 'Classificação de mecanismos da NBR 8400. A vida útil informada — <b>'+fmt(q.h,0)+' h</b> — corresponde à classe <b>T'+ti+'</b>. Confirme contra a tabela da norma na revisão vigente.'
     : 'Classificação de mecanismos da NBR 8400. A vida de <b>'+fmt(q.h,0)+' h</b> não corresponde a nenhuma classe da tabela — em ponte rolante e pórtico é a classe que fixa o <b>h</b>, não o contrário.';
 
-  list=q.nomod?[]:buscar(q); lastQ=q;
+  list=(q.nomod||(modo==='elev'&&q.cabErr))?[]:buscar(q); lastQ=q;
   var ok=list.filter(function(x){return x.fail===0;});
   CONS=null; for(var j=0;j<list.length;j++){ var y=list[j]; if(y.soF&&(!ok.length||y.si<ok[0].si)){ CONS=y; break; } }
   if(ok.length&&q.fs.v){ var x0=ok[0], kp='';
@@ -1572,7 +1576,9 @@ function render(){
     if(mm<0.10){ mw.hidden=false; $('margtxt').innerHTML='O menor redutor que passa (<b>'+ok[0].size+' '+ok[0].fam+ok[0].st+' i='+fmt(ok[0].i,0)+'</b>) tem só <b>'+fmt(mm*100,1)+'%</b> de folga sobre o torque de cálculo'+((q.Mr2mot>q.Mr2carga*1.0001&&q.base!=='carga')?', que aqui vem do <b>motor instalado</b> ('+fmt(ok[0].Mr,0)+' Nm). Sobre a carga ('+fmt(q.Mr2carga,0)+' Nm) a folga é de <b>'+fmt((ok[0].Mn/(q.Mr2carga*q.fs.v)-1)*100,1)+'%</b>':'')+'. Uma mudança pequena de premissa — classe T, número de polias, rotação — pode trocar o tamanho. Em elevação, confirme com a engenharia Bonfiglioli.'; } }
   var tb=$('tb');
   if(!list.length){
-    var msg = (q.nomod&&q.fs.v&&isFinite(q.h))
+    var msg = (modo==='elev'&&q.cabErr)
+      ? '<b style="color:var(--crit)">Cavalamento impossível.</b> As pontas de cabo no tambor são 1 (cabo simples) ou 2 (tambor duplo), e o número de ramais tem que ser múltiplo delas. Ex.: 4 ramais com 1 ponta (4/1) ou com 2 pontas (4/2).'
+      : (q.nomod&&q.fs.v&&isFinite(q.h))
       ? '<b style="color:var(--crit)">Nenhum modelo desta configuração atende aos dados informados.</b> Troque a configuração, reveja os dados ou fale com a Daxton.'
       : (modo==='elev'&&!isFinite(q.h))
       ? '<b style="color:var(--crit)">Escolha a classe de utilização T</b> para calcular. Em elevação ela define a vida e o fator de serviço.'
@@ -1670,6 +1676,7 @@ function renderSum(){
   if(q.nomod){
     el.innerHTML='<div class="sum-st bad">Sem resultado</div><div class="sum-k">Redutor</div><div class="sum-m sm">Nenhum modelo atende</div><p class="sum-p">Nenhum tamanho desta configuração passa com os dados informados.</p>'+foot; return; }
   if(!list.length){
+    if(modo==='elev'&&q.cabErr){ el.innerHTML='<div class="sum-st bad">Sem resultado</div><div class="sum-k">Cavalamento</div><div class="sum-m sm">Combinação impossível</div><p class="sum-p">As pontas de cabo no tambor são 1 (cabo simples) ou 2 (tambor duplo), e os ramais têm que ser múltiplos delas. Ex.: 4 ramais com 1 ponta (4/1) ou com 2 pontas (4/2).</p>'+foot; return; }
     el.innerHTML='<div class="sum-st bad">Sem resultado</div><div class="sum-k">Redutor</div><div class="sum-m sm">Nenhuma combinação no desvio de ±'+fmt(q.tol*100,0)+'%</div><p class="sum-p">Amplie o desvio de rotação em Opções avançadas ou revise velocidade, tambor e cavalamento. Relação necessária: <b>'+fmt(q.n1/q.n2req,1)+'</b>.</p>'+foot; return; }
   var x=sel||list[0], pass=(x.fail===0), cons=!!(x.soF||x.soH);
   var nchip=chip(x.warnX?false:(x.warnN?'w':true),'n₁');
@@ -1971,7 +1978,7 @@ function ficha(){
     L.push(pad('Capacidade',               fmt(qk,qk%1?2:0)+' t'));
     L.push(pad('Velocidade',               fmt(vn,vn%1?2:0)+' m/min'));
     L.push(pad('Ø Tambor',                 fmt(dn,dn%1?1:0)+' mm'));
-    L.push(pad('Cavalamento',              $('ram').value+' ramais, '+$('pta').value+' ponta(s) no tambor, '+$('pol').value+' polia(s)'));
+    L.push(pad('Cavalamento',              $('ram').value+'/'+$('pta').value+' ('+$('ram').value+' ramais, '+$('pta').value+' ponta(s) no tambor, '+$('pol').value+' polia(s))'));
     L.push(pad('Classe de utilização',     'T'+$('tcl').value+' ('+TBAND[+$('tcl').value]+', '+fmt(q.h,0)+' h)'));
     L.push(Array(53).join('='));
   } else {
