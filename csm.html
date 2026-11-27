@@ -613,16 +613,15 @@ function gcard(p){const g=p.g,inC=cart.some(c=>c.id===p.id);
 
 function vGerHome(){
  return `<div class="crumb"><a href="#inicio">Início</a> / Geração de energia</div>
- <div class="hero"><h1>Geradores CSM</h1><p>De 0,9 a 18 kVA, a gasolina e a diesel. Escolha pela potência ou calcule pelo que vai ligar.</p></div>
+ <div class="hero"><h1>Geradores CSM</h1><p>De 0,9 a 18 kVA, a gasolina e a diesel. Escolha pela linha ou calcule pelo que vai ligar.</p></div>
  <button class="chero" onclick="track('calc_destaque_click',{origem:'geradores'});go('calc')"><span class="tx"><span class="badge">Ferramenta Daxton</span>
  <h2>Configurador Daxton para dimensionar geradores. <em>Descubra o seu em 1 minuto.</em></h2>
  <p>Toque nos equipamentos que vai ligar. O cálculo considera a partida dos motores, que é onde gerador pequeno falha.</p>
  <span class="steps3"><span><b>1</b>Escolha a energia</span><span><b>2</b>Toque no que vai ligar</span><span><b>3</b>Veja o gerador indicado</span></span>
  <span class="cta">Configurar agora →</span></span>
  <span class="im"><img src="${IMG.app20}" alt="Gerador CSM ligando betoneira na obra"><span class="ex">Exemplo: betoneira 400L + vibrador + talha GT 600 → <b>GMR 10000E</b></span></span></button>
- <h2 class="sh">Escolha pela potência</h2>
- <div class="tiles t5">${GFX.map(f=>`<button class="tile" onclick="GF={};go('${f.k}')"><img src="${IMG[f.img]}" alt=""><b>${f.t}</b><span class="m">${f.ids.length} modelos</span><span class="m">${f.d}</span><span class="go2">Ver modelos</span></button>`).join("")}</div>
- <h2 class="sh">Ou escolha pela linha</h2>
+ <h2 class="sh">Escolha pela linha</h2>
+ <p class="subt">Já sabe a potência? Digite na busca, por exemplo: <b>8 kVA</b>.</p>
  <div class="tiles t5">${GFL.map(f=>`<button class="tile" onclick="GF={};go('${f.k}')"><img src="${IMG[f.img]}" alt=""><b>${f.t}</b><span class="m">${f.ids.length} ${f.ids.length>1?"modelos":"modelo"}</span><span class="m">${f.d}</span><span class="go2">Ver modelos</span></button>`).join("")}</div>
  <h2 class="sh">Linha X ou Linha Rental?</h2>
  <p class="subt">Duas linhas, para intensidades de uso diferentes. Escolha pela rotina, não só pela potência.</p>
