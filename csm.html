@@ -336,6 +336,7 @@ h2.sec{font-size:22px;color:var(--navy);margin:28px 0 4px}p.subt{color:var(--sec
 .rbl span[style]{position:absolute;transform:translateX(-50%);font-weight:700;color:var(--navy)}
 .rvtot{background:#eef7f1;border-radius:10px;padding:12px;text-align:center;font-size:15.5px;margin-bottom:12px}.rvtot b{color:#1a7f4b;font-size:20px}
 .rmk{background:#f4f6f9;border-radius:10px;padding:10px 12px;font-size:14px;display:flex;flex-direction:column;gap:2px;margin-bottom:10px}.rmk small{color:var(--sec)}.rmk b{color:var(--navy)}
+.crumb{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.bkb{background:var(--navy);color:#fff;border:0;border-radius:999px;padding:6px 14px;font-weight:800;font-size:13.5px;cursor:pointer;margin-right:8px}.bkb:hover{background:#0b4f8f}
 </style>
 <script>window.dataLayer=window.dataLayer||[];</script>
 </head>
@@ -595,6 +596,12 @@ const GFX=[
  {k:"g3",t:"5 a 6,5 kVA",ids:["gmx6500","gmr6500","gmd7000","gmx8000"],img:"gmr6500",d:"Gasolina ou diesel"},
  {k:"g4",t:"8,5 a 10 kVA",ids:["gmr10000","gtr10000","gmr11500","gmd12000"],img:"gmr10000",d:"Mono, bivolt ou trifásico"},
  {k:"g5",t:"13 a 18 kVA",ids:["gmr15000","gmi15000","gmr22000"],img:"gmr22000",d:"Maior potência da linha"}];
+const GFL=[
+ {k:"gl-inv",t:"Inverter",ids:["inv2000","inv4800","gmi15000"],img:"inv4800",d:"Gasolina, de 2 a 14 kVA"},
+ {k:"gl-x",t:"Linha X",ids:["gmx1300","gmx3500","gmx6500","gmx8000"],img:"gmx8000",d:"Custo x benefício, de 1,3 a 7 kVA"},
+ {k:"gl-r",t:"Linha Rental",ids:["gmr4000","gmr6500","gmr10000","gtr10000","gmr11500","gmr15000","gmr22000"],img:"gmr10000",d:"Locação e uso intenso, de 4 a 19 kVA"},
+ {k:"gl-d",t:"Diesel",ids:["gmd5000","gmd7000","gmd12000"],img:"gmd7000",d:"De 4,5 a 11 kVA"},
+ {k:"gl-2t",t:"2 tempos",ids:["gm900"],img:"gm900",d:"O mais leve, 1,1 kVA"}];
 const kv=x=>String(x).replace(".",",");
 const gFace=g=>g.sup.some(s=>s[0]==="t")?(g.sup.some(s=>s[0]==="m")?"Mono ou trifásico":"Trifásico"):g.bi?"Bivolt 127/220 V":"127 V ou 220 V";
 const vMain=g=>g.versoes[0];
@@ -613,7 +620,10 @@ function vGerHome(){
  <span class="steps3"><span><b>1</b>Escolha a energia</span><span><b>2</b>Toque no que vai ligar</span><span><b>3</b>Veja o gerador indicado</span></span>
  <span class="cta">Configurar agora →</span></span>
  <span class="im"><img src="${IMG.app20}" alt="Gerador CSM ligando betoneira na obra"><span class="ex">Exemplo: betoneira 400L + vibrador + talha GT 600 → <b>GMR 10000E</b></span></span></button>
+ <h2 class="sh">Escolha pela potência</h2>
  <div class="tiles t5">${GFX.map(f=>`<button class="tile" onclick="GF={};go('${f.k}')"><img src="${IMG[f.img]}" alt=""><b>${f.t}</b><span class="m">${f.ids.length} modelos</span><span class="m">${f.d}</span><span class="go2">Ver modelos</span></button>`).join("")}</div>
+ <h2 class="sh">Ou escolha pela linha</h2>
+ <div class="tiles t5">${GFL.map(f=>`<button class="tile" onclick="GF={};go('${f.k}')"><img src="${IMG[f.img]}" alt=""><b>${f.t}</b><span class="m">${f.ids.length} ${f.ids.length>1?"modelos":"modelo"}</span><span class="m">${f.d}</span><span class="go2">Ver modelos</span></button>`).join("")}</div>
  <h2 class="sh">Linha X ou Linha Rental?</h2>
  <p class="subt">Duas linhas, para intensidades de uso diferentes. Escolha pela rotina, não só pela potência.</p>
  <div class="lxr">
@@ -637,17 +647,17 @@ function gfit(g){if(GF.c&&!g.comb.startsWith(GF.c))return false;
  if(GF.e==="m127"&&!g.sup.includes("m127"))return false;if(GF.e==="m220"&&!g.sup.includes("m220"))return false;if(GF.e==="tri"&&!g.sup.some(s=>s[0]==="t"))return false;
  if(GF.r&&!/Rental/.test(g.linha))return false;return true}
 function vGerFam(k){
- const f=GFX.find(x=>x.k===k),ps=f.ids.map(i=>BY[i]);
+ const L=k.startsWith("gl-"),f=(L?GFL:GFX).find(x=>x.k===k),ps=f.ids.map(i=>BY[i]);
  const ch=(key,val,lab)=>`<button class="chip ${GF[key]===val?"on":""}" onclick="GF['${key}']=GF['${key}']==='${val}'?undefined:'${val}';go('${k}',true)">${lab}</button>`;
  const vis=ps.filter(p=>gfit(p.g));
- return `<div class="crumb"><a href="#inicio">Início</a> / <a href="#geradores">Geração de energia</a> / ${f.t}</div><div class="hero"><h1>Geradores de ${f.t}</h1><p>${ps.length} modelos. ${esc(f.d)}.</p></div>
- <div class="chiprow"><b>Combustível:</b>${ch("c","Gasolina","Gasolina")}${ch("c","Diesel","Diesel")}</div>
- <div class="chiprow"><b>Energia:</b>${ch("e","m127","127 V")}${ch("e","m220","220 V")}${ch("e","tri","Trifásico")}<b style="margin-left:8px">Uso:</b>${ch("r","1","Para alugar (linha Rental)")}</div>
+ return `<div class="crumb"><a href="#inicio">Início</a> / <a href="#geradores">Geração de energia</a> / ${f.t}</div><div class="hero"><h1>Geradores ${L?f.t:f.t.startsWith("Até")?"até "+f.t.slice(4):"de "+f.t}</h1><p>${ps.length} ${ps.length>1?"modelos":"modelo"}. ${esc(f.d)}.</p></div>
+ ${L?`<div class="chiprow"><b>Energia:</b>${ch("e","m127","127 V")}${ch("e","m220","220 V")}${ch("e","tri","Trifásico")}</div>`:`<div class="chiprow"><b>Combustível:</b>${ch("c","Gasolina","Gasolina")}${ch("c","Diesel","Diesel")}</div>
+ <div class="chiprow"><b>Energia:</b>${ch("e","m127","127 V")}${ch("e","m220","220 V")}${ch("e","tri","Trifásico")}<b style="margin-left:8px">Uso:</b>${ch("r","1","Para alugar (linha Rental)")}</div>`}
  <div class="famt"><table><tr><th>Modelo</th><th>Nominal</th><th>Máxima</th><th>Combustível</th><th>Energia</th><th>Partida</th><th>Autonomia</th><th>Peso</th></tr>
  ${ps.map(p=>{const g=p.g,v=vMain(g);return `<tr class="${gfit(g)?"":"dim"}"><td><a href="#p-${p.id}" style="color:var(--navy);font-weight:700">${esc(g.nome)}</a></td><td>${kv(g.kvaNom)} kVA</td><td>${kv(g.kvaMax)} kVA</td><td>${esc(g.comb.replace(" (2 tempos)"," 2T"))}</td><td>${gFace(g)}</td><td>${esc(v.partida)}</td><td>${v.auton?kv(v.auton)+" h":"-"}</td><td>${v.peso?kv(v.peso)+" kg":"-"}</td></tr>`}).join("")}</table></div>
  <div class="grid">${vis.map(gcard).join("")||"<p>Nenhum modelo nessa faixa com essa combinação.</p>"}</div>
  <p class="fonte">Catálogo CSM 2026, pp. 56-70. Autonomia e peso da primeira versão de cada modelo.</p>
- <div class="skip"><button onclick="go('geradores')">← Outras potências</button><button onclick="go('calc')">Calcular pelo que vou ligar →</button></div>`}
+ <div class="skip"><button onclick="go('geradores')">← Voltar para geradores</button><button onclick="go('calc')">Calcular pelo que vou ligar →</button></div>`}
 
 function vGer(id){
  const p=BY[id],g=p.g,vi=curVar[id]||0,v=g.versoes[vi];
@@ -1662,9 +1672,10 @@ function vRevendas(){const M=MIX.find(m=>m.k===MK),o=MOFF[MK]||{};const n=mixSel
 let cur="inicio";
 function go(h,keep){if(!keep&&("#"+h)!==location.hash){location.hash=h;return}cur=h;
  const V={comparar:vCmp,guia:vGuia,loja:vLoja,betoneiras:vInicio,geradores:vGerHome,calc:vCalc,elevacao:vElev,busca:vBusca,construcao:vCons,"c-solo":vSolo,"c-vib":vVib,"c-arg":vArg,"c-corte":vCorte,"c-acab":vAcab,"c-guincho":vGuincho,"c-mov":vMov,"c-mb":vMb,pecas:vPecas,fases:()=>vFases(),locadora:()=>vRoi(),pontes:vPortico,revendas:vRevendas};
- document.getElementById("app").innerHTML=h.startsWith("p-")?vProd(h.slice(2)):/^f\d+$/.test(h)?vFam(h):/^g\d$/.test(h)?vGerFam(h):h.startsWith("e-")?vElevTipo(h.slice(2)):h.startsWith("f-")?vFases(h):h.startsWith("roi-")?vRoi(h.slice(4)):V[h]?V[h]():vHub();
- const sec=h==="e-portico"||h==="pontes"?"pon":h.startsWith("e-")?"ele":/^c-|^f-|construcao|fases/.test(h)?"con":h.startsWith("p-")?(BY[h.slice(2)]&&BY[h.slice(2)].kind==="ger"?"ger":BY[h.slice(2)]&&BY[h.slice(2)].kind==="ele"?"ele":BY[h.slice(2)]&&BY[h.slice(2)].kind==="con"?"con":"con"):/^f\d|betoneiras|loja|comparar/.test(h)?"con":/^g\d|geradores/.test(h)?"ger":h==="calc"?"calc":h==="elevacao"?"ele":h==="pecas"?"pec":h==="pontes"||h==="e-portico"?"pon":h==="inicio"||!h?"inicio":"";
+ document.getElementById("app").innerHTML=h.startsWith("p-")?vProd(h.slice(2)):/^f\d+$/.test(h)?vFam(h):/^g\d$|^gl-/.test(h)?vGerFam(h):h.startsWith("e-")?vElevTipo(h.slice(2)):h.startsWith("f-")?vFases(h):h.startsWith("roi-")?vRoi(h.slice(4)):V[h]?V[h]():vHub();
+ const sec=h==="e-portico"||h==="pontes"?"pon":h.startsWith("e-")?"ele":/^c-|^f-|construcao|fases/.test(h)?"con":h.startsWith("p-")?(BY[h.slice(2)]&&BY[h.slice(2)].kind==="ger"?"ger":BY[h.slice(2)]&&BY[h.slice(2)].kind==="ele"?"ele":BY[h.slice(2)]&&BY[h.slice(2)].kind==="con"?"con":"con"):/^f\d|betoneiras|loja|comparar/.test(h)?"con":/^g\d|^gl-|geradores/.test(h)?"ger":h==="calc"?"calc":h==="elevacao"?"ele":h==="pecas"?"pec":h==="pontes"||h==="e-portico"?"pon":h==="inicio"||!h?"inicio":"";
  document.querySelectorAll(".nav a").forEach(a=>a.classList.toggle("on",a.dataset.n===sec));calcBar();
+ const cb=document.querySelector("#app .crumb");if(cb&&h!=="inicio"){const ls=cb.querySelectorAll("a"),par=ls.length?ls[ls.length-1].getAttribute("href"):"#inicio";const bk=document.createElement("button");bk.className="bkb";bk.type="button";bk.textContent="← Voltar";bk.onclick=()=>{track("voltar",{de:h});location.hash=par};cb.prepend(bk)}
  renderCmpBar();save();if(!keep)window.scrollTo(0,0);
  const qi=document.getElementById("q");if(keep&&document.activeElement!==qi){}}
 window.addEventListener("hashchange",()=>{go((location.hash||"#inicio").slice(1).replace(/^eng$/,"inicio"),true);window.scrollTo(0,0)});
